@@ -31,6 +31,11 @@ export default function Nav({ logoInNav, showExtras, contentScale }: NavProps) {
   const buttonRadius = scalePx(NAV_BUTTON_RADIUS, contentScale, 10);
   const dividerHeight = scalePx(NAV_DIVIDER_H, contentScale, 2);
   const navPaddingX = scalePx(56, contentScale, 16);
+  const navExtraTransition = {
+    duration: STEPS.navReveal.duration,
+    ease: EASE,
+    delay: D800 * 0.2,
+  };
 
   return (
     <header className="pointer-events-none fixed inset-x-0 top-0 z-40">
@@ -78,11 +83,7 @@ export default function Nav({ logoInNav, showExtras, contentScale }: NavProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{
-                duration: STEPS.navReveal.duration,
-                ease: EASE,
-                delay: D800 * 0.2,
-              }}
+              transition={navExtraTransition}
             >
               Gute Entscheidung
             </motion.button>
@@ -90,18 +91,18 @@ export default function Nav({ logoInNav, showExtras, contentScale }: NavProps) {
         </AnimatePresence>
       </div>
 
-      {showExtras && (
-        <motion.div
-          className="origin-left bg-purple"
-          style={{ height: dividerHeight }}
-          initial={{ scaleX: 0, opacity: 0 }}
-          animate={{ scaleX: 1, opacity: 1 }}
-          transition={{
-            duration: STEPS.navReveal.duration,
-            ease: EASE,
-          }}
-        />
-      )}
+      <AnimatePresence>
+        {showExtras && (
+          <motion.div
+            className="bg-purple"
+            style={{ height: dividerHeight }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={navExtraTransition}
+          />
+        )}
+      </AnimatePresence>
     </header>
   );
 }
