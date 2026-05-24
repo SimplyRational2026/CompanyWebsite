@@ -1,15 +1,33 @@
 export const EASE = [0.22, 1, 0.36, 1] as const;
 export const EASE_BOUNCE = [0.34, 1.18, 0.64, 1] as const;
 
+/** Figma prototype durations — tuned for playback feel vs literal frame ms */
+export const D800 = 0.8;
+export const D600 = 0.6;
+export const D1000 = 1.0;
+export const DASHED_DUR = D800 * 3.75;
+export const LINE_DROP = 2.8;
+
+/** ballEnter delay + entry + hold, then dashed line retracts */
+export const DASHED_RETRACT_START = 4.0 + D1000 + D1000;
+/** Dashed retract finishes — line-drop phase begins */
+export const LINE_DROP_DELAY = DASHED_RETRACT_START + D1000;
+/** Titles return + ball lands; description follows */
+export const LINE_PHASE_DROP = 0.38;
+export const LINE_PHASE_TO_NAV = 0.88;
+
 export const STEPS = {
-  logoIntro: { delay: 0.0, duration: 1.6 },
-  logoToNav: { delay: 1.6, duration: 1.2 },
-  headlineEnter: { delay: 1.9, duration: 1.3 },
-  headlineCenterPause: { delay: 3.2, duration: 0.55 },
-  headlineShiftLeft: { delay: 3.75, duration: 0.8 },
-  navReveal: { delay: 3.55, duration: 0.8 },
-  ballEnter: { delay: 4.75, duration: 1.5 },
-  subheadEnter: { delay: 7.05, duration: 1.1 },
-  lineDrop: { delay: 8.35, duration: 3.2 },
-  subtextFade: { delay: 10.85, duration: 0.9 },
+  logoIntro: { delay: 0.0, duration: D800 },
+  logoToNav: { delay: 0.8, duration: D800 },
+  headlineEnter: { delay: 0.8, duration: D800 },
+  headlineCenterPause: { delay: 1.6, duration: D600 },
+  headlineShiftLeft: { delay: 2.2, duration: D600 },
+  navReveal: { delay: 2.8, duration: D800 },
+  ballEnter: { delay: 4.0, duration: D1000 },
+  subheadEnter: { delay: DASHED_RETRACT_START, duration: D800 },
+  lineDrop: { delay: LINE_DROP_DELAY, duration: LINE_DROP },
+  subtextFade: {
+    delay: LINE_DROP_DELAY + LINE_DROP * LINE_PHASE_TO_NAV,
+    duration: D600,
+  },
 } as const;

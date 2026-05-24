@@ -31,7 +31,7 @@ const bricolageGrotesque = Bricolage_Grotesque({
 export const metadata: Metadata = {
   title: "Simply Rational",
   description:
-    "Gute Entscheidungen scheitern nicht an Daten. Sondern daran, dass sie nicht entscheidbar sind.",
+    "Gute Entscheidungen scheitern nicht an zu wenig Daten. Sondern an fehlender Klarheit, Struktur und Nachvollziehbarkeit.",
 };
 
 export default function RootLayout({
