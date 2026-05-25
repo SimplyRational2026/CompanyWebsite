@@ -28,6 +28,9 @@ export const STEPS = {
   lineDrop: { delay: LINE_DROP_DELAY, duration: LINE_DROP },
   subtextFade: {
     delay: LINE_DROP_DELAY + LINE_DROP * LINE_PHASE_TO_NAV,
-    duration: D600,
+    duration: D800,
   },
 } as const;
+
+export const INTRO_END =
+  STEPS.subtextFade.delay + STEPS.subtextFade.duration;

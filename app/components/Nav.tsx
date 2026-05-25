@@ -19,9 +19,15 @@ interface NavProps {
   logoInNav: boolean;
   showExtras: boolean;
   contentScale: number;
+  staticExtras?: boolean;
 }
 
-export default function Nav({ logoInNav, showExtras, contentScale }: NavProps) {
+export default function Nav({
+  logoInNav,
+  showExtras,
+  contentScale,
+  staticExtras = false,
+}: NavProps) {
   const navHeight = scalePx(NAV_HEIGHT_BASE, contentScale, 56);
   const logoWidth = scalePx(NAV_LOGO_W_BASE, contentScale, 72);
   const logoSlotHeight = scalePx(NAV_LOGO_H_BASE, contentScale, 32);
@@ -31,11 +37,13 @@ export default function Nav({ logoInNav, showExtras, contentScale }: NavProps) {
   const buttonRadius = scalePx(NAV_BUTTON_RADIUS, contentScale, 10);
   const dividerHeight = scalePx(NAV_DIVIDER_H, contentScale, 2);
   const navPaddingX = scalePx(56, contentScale, 16);
-  const navExtraTransition = {
-    duration: STEPS.navReveal.duration,
-    ease: EASE,
-    delay: D800 * 0.2,
-  };
+  const navExtraTransition = staticExtras
+    ? { duration: 0 }
+    : {
+        duration: STEPS.navReveal.duration,
+        ease: EASE,
+        delay: D800 * 0.2,
+      };
 
   return (
     <header className="pointer-events-none fixed inset-x-0 top-0 z-40">
@@ -70,38 +78,55 @@ export default function Nav({ logoInNav, showExtras, contentScale }: NavProps) {
         </div>
 
         <AnimatePresence>
-          {showExtras && (
-            <motion.button
-              type="button"
-              className="font-bricolage cursor-pointer whitespace-nowrap bg-purple font-semibold tracking-wide text-cream shadow-[0_10px_28px_-10px_rgba(92,29,190,0.55)] transition hover:bg-purple-deep focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple"
-              style={{
-                paddingInline: buttonPaddingX,
-                paddingBlock: buttonPaddingY,
-                fontSize: buttonFontSize,
-                borderRadius: buttonRadius,
-              }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={navExtraTransition}
-            >
-              Gute Entscheidung
-            </motion.button>
-          )}
+          {showExtras &&
+            (staticExtras ? (
+              <button
+                type="button"
+                className="font-bricolage cursor-pointer whitespace-nowrap bg-purple font-semibold tracking-wide text-cream shadow-[0_10px_28px_-10px_rgba(102,26,174,0.55)] transition hover:bg-purple-deep focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple"
+                style={{
+                  paddingInline: buttonPaddingX,
+                  paddingBlock: buttonPaddingY,
+                  fontSize: buttonFontSize,
+                  borderRadius: buttonRadius,
+                }}
+              >
+                Gute Entscheidung
+              </button>
+            ) : (
+              <motion.button
+                type="button"
+                className="font-bricolage cursor-pointer whitespace-nowrap bg-purple font-semibold tracking-wide text-cream shadow-[0_10px_28px_-10px_rgba(102,26,174,0.55)] transition hover:bg-purple-deep focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple"
+                style={{
+                  paddingInline: buttonPaddingX,
+                  paddingBlock: buttonPaddingY,
+                  fontSize: buttonFontSize,
+                  borderRadius: buttonRadius,
+                }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={navExtraTransition}
+              >
+                Gute Entscheidung
+              </motion.button>
+            ))}
         </AnimatePresence>
       </div>
 
       <AnimatePresence>
-        {showExtras && (
-          <motion.div
-            className="bg-purple"
-            style={{ height: dividerHeight }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={navExtraTransition}
-          />
-        )}
+        {showExtras &&
+          (staticExtras ? (
+            <div className="bg-purple" style={{ height: dividerHeight }} />
+          ) : (
+            <motion.div
+              className="bg-purple"
+              style={{ height: dividerHeight }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={navExtraTransition}
+            />
+          ))}
       </AnimatePresence>
     </header>
   );

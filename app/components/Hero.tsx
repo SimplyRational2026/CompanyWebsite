@@ -11,6 +11,7 @@ import {
   EASE_BOUNCE,
   LINE_PHASE_DROP,
   LINE_PHASE_TO_NAV,
+  INTRO_END,
   STEPS,
 } from "@/app/lib/anim";
 import {
@@ -40,14 +41,28 @@ import {
 } from "@/app/lib/scale";
 import Nav from "./Nav";
 
+const STATIC_TRANSITION = { duration: 0 };
+
 export default function Hero() {
-  const titleRef = useRef<HTMLHeadingElement>(null);
+  const isIntroPlayingRef = useRef(true);
+  const [isIntroPlaying, setIsIntroPlaying] = useState(true);
   const [logoInNav, setLogoInNav] = useState(false);
   const [showNavExtras, setShowNavExtras] = useState(false);
   const [viewportH, setViewportH] = useState(800);
   const [viewportW, setViewportW] = useState(1024);
+  const [isLayoutReady, setIsLayoutReady] = useState(false);
+
+  useLayoutEffect(() => {
+    setViewportH(window.innerHeight);
+    setViewportW(window.innerWidth);
+    setIsLayoutReady(true);
+  }, []);
 
   useEffect(() => {
+    if (!isLayoutReady) {
+      return;
+    }
+
     const t1 = window.setTimeout(
       () => setLogoInNav(true),
       STEPS.logoToNav.delay * 1000,
@@ -58,10 +73,12 @@ export default function Hero() {
     );
 
     const updateSize = () => {
+      if (isIntroPlayingRef.current) {
+        return;
+      }
       setViewportH(window.innerHeight);
       setViewportW(window.innerWidth);
     };
-    updateSize();
     window.addEventListener("resize", updateSize);
 
     return () => {
@@ -69,7 +86,22 @@ export default function Hero() {
       window.clearTimeout(t2);
       window.removeEventListener("resize", updateSize);
     };
-  }, []);
+  }, [isLayoutReady]);
+
+  useEffect(() => {
+    if (!isLayoutReady) {
+      return;
+    }
+
+    const t = window.setTimeout(() => {
+      isIntroPlayingRef.current = false;
+      setIsIntroPlaying(false);
+      setLogoInNav(true);
+      setShowNavExtras(true);
+    }, INTRO_END * 1000);
+
+    return () => window.clearTimeout(t);
+  }, [isLayoutReady]);
 
   const preScale = Math.min(1, viewportW / DESIGN_WIDTH);
   const preBallColW = scalePx(BALL_COL_W_BASE, preScale, 40);
@@ -93,10 +125,6 @@ export default function Hero() {
   const [descFontPx, setDescFontPx] = useState(() =>
     Math.max(10, Math.min(DESC_PX_DESIGN, viewportDescCap)),
   );
-  const [titleFromCenter, setTitleFromCenter] = useState<{
-    x: number;
-    y: number;
-  } | null>(null);
 
   useLayoutEffect(() => {
     const fontFamily =
@@ -124,22 +152,6 @@ export default function Hero() {
       ),
     );
   }, [titleMaxW, viewportTitleCap, viewportDescCap]);
-
-  useLayoutEffect(() => {
-    const el = titleRef.current;
-    if (!el) {
-      return;
-    }
-
-    const rect = el.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-
-    setTitleFromCenter({
-      x: viewportW / 2 - centerX,
-      y: viewportH / 2 - centerY,
-    });
-  }, [titleFontPx, titleMaxW, viewportH, viewportW]);
 
   const contentScale = titleFontPx / TITLE_PX_DESIGN;
 
@@ -171,6 +183,7 @@ export default function Hero() {
     descLineHeightRatio,
   );
   const ballDrop = columnHeight / 2 + descriptionGap + descHeight / 2;
+  const descriptionTop = columnHeight / 2 + ballDrop - descHeight / 2;
   const titleLineH = titleFontPx * 1.15;
   const ballGapOffset = titleLineH * 0.5;
   const ballStartY = viewportH / 2 - ballGapOffset;
@@ -245,9 +258,10 @@ export default function Hero() {
         logoInNav={logoInNav}
         showExtras={showNavExtras}
         contentScale={contentScale}
+        staticExtras={!isIntroPlaying}
       />
 
-      {!logoInNav && (
+      {!logoInNav && isIntroPlaying && (
         <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center">
           <motion.div
             layoutId="srLogo"
@@ -272,56 +286,85 @@ export default function Hero() {
         </div>
       )}
 
-      <motion.div
-        aria-hidden
-        className="absolute left-1/2 z-10 -translate-x-1/2 bg-purple"
-        style={{ width: lineWidth }}
-        initial={{ top: ballStartY, height: 0, opacity: 1 }}
-        animate={{
-          top: [ballStartY, ballStartY, navHeight, navHeight],
-          height: [0, centerLineDrop, finalLineHeight, finalLineHeight],
-          opacity: 1,
-        }}
-        transition={{
-          duration: STEPS.lineDrop.duration,
-          delay: STEPS.lineDrop.delay,
-          times: [0, linePhaseDrop, linePhaseToNav, 1],
-          ease: EASE,
-        }}
-      />
+      {isLayoutReady && (
+        <motion.div
+          aria-hidden
+          className="absolute left-1/2 z-10 -translate-x-1/2 bg-purple"
+          style={{ width: `${lineWidth}px` }}
+          initial={
+            isIntroPlaying
+              ? { top: `${ballStartY}px`, height: "0px", opacity: 1 }
+              : false
+          }
+          animate={
+            isIntroPlaying
+              ? {
+                  top: [
+                    `${ballStartY}px`,
+                    `${ballStartY}px`,
+                    `${navHeight}px`,
+                    `${navHeight}px`,
+                  ],
+                  height: [
+                    "0px",
+                    `${centerLineDrop}px`,
+                    `${finalLineHeight}px`,
+                    `${finalLineHeight}px`,
+                  ],
+                  opacity: 1,
+                }
+              : {
+                  top: `${navHeight}px`,
+                  height: `${finalLineHeight}px`,
+                  opacity: 1,
+                }
+          }
+          transition={
+            isIntroPlaying
+              ? {
+                  duration: STEPS.lineDrop.duration,
+                  delay: STEPS.lineDrop.delay,
+                  times: [0, linePhaseDrop, linePhaseToNav, 1],
+                  ease: EASE,
+                }
+              : STATIC_TRANSITION
+          }
+        />
+      )}
 
-      <motion.div
-        aria-hidden
-        className="absolute z-5"
-        style={{
-          top: `calc(50vh - ${ballGapOffset + lineWidth / 2}px)`,
-          height: lineWidth,
-          backgroundImage: `repeating-linear-gradient(90deg, #661aae 0, #661aae ${dashLength}px, transparent ${dashLength}px, transparent ${dashPeriod}px)`,
-          backgroundRepeat: "repeat-x",
-          backgroundSize: `${dashPeriod}px ${lineWidth}px`,
-        }}
-        initial={{ right: lineRightStart, width: viewportW, opacity: 1 }}
-        animate={{
-          right: [
-            lineRightStart,
-            lineRightEnd,
-            lineRightEnd,
-            lineRightEnd,
-          ],
-          width: [viewportW, viewportW, viewportW, 0],
-        }}
-        transition={{
-          duration: dashedDur,
-          delay: STEPS.ballEnter.delay,
-          times: [0, dashedEntryEnd, dashedRetractStart, 1],
-          ease: EASE,
-        }}
-      />
+      {isLayoutReady && isIntroPlaying && (
+        <motion.div
+          aria-hidden
+          className="absolute z-5"
+          style={{
+            top: `calc(50vh - ${ballGapOffset + lineWidth / 2}px)`,
+            height: `${lineWidth}px`,
+            backgroundImage: `repeating-linear-gradient(90deg, var(--purple) 0, var(--purple) ${dashLength}px, transparent ${dashLength}px, transparent ${dashPeriod}px)`,
+            backgroundRepeat: "repeat-x",
+            backgroundSize: `${dashPeriod}px ${lineWidth}px`,
+          }}
+          initial={{ right: lineRightStart, width: viewportW, opacity: 1 }}
+          animate={{
+            right: [
+              lineRightStart,
+              lineRightEnd,
+              lineRightEnd,
+              lineRightEnd,
+            ],
+            width: [viewportW, viewportW, viewportW, 0],
+          }}
+          transition={{
+            duration: dashedDur,
+            delay: STEPS.ballEnter.delay,
+            times: [0, dashedEntryEnd, dashedRetractStart, 1],
+            ease: EASE,
+          }}
+        />
+      )}
 
       <main className="relative flex h-screen items-center">
         <div className="grid w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-[2vw] px-[3vw]">
           <motion.h1
-            ref={titleRef}
             className="relative z-30 mx-auto text-center font-serif font-extrabold tracking-tight text-ink"
             style={{
               fontSize: titleFontPx,
@@ -329,33 +372,28 @@ export default function Hero() {
               transformOrigin: "center center",
             }}
             initial={
-              titleFromCenter
-                ? {
-                    x: titleFromCenter.x,
-                    y: titleFromCenter.y,
-                    scale: 1.6,
-                    opacity: 0,
-                  }
-                : { opacity: 0 }
+              isIntroPlaying
+                ? { x: "120vw", scale: 1.6, y: titleOffsetY, opacity: 0 }
+                : false
             }
             animate={
-              titleFromCenter
+              isIntroPlaying
                 ? {
                     x: [
-                      titleFromCenter.x,
-                      titleFromCenter.x,
-                      titleFromCenter.x,
-                      0,
-                      0,
-                      0,
-                      0,
-                      0,
+                      "120vw",
+                      "26vw",
+                      "26vw",
+                      "0vw",
+                      "0vw",
+                      "0vw",
+                      "0vw",
+                      "0vw",
                     ],
                     scale: [1.6, 1.6, 1.6, 1, 1, 1, 1, 1],
                     y: [
-                      titleFromCenter.y,
-                      titleFromCenter.y,
-                      titleFromCenter.y,
+                      titleOffsetY,
+                      titleOffsetY,
+                      titleOffsetY,
                       titleOffsetY,
                       titleOffsetY,
                       titleOffsetY - blackDiverge,
@@ -364,16 +402,16 @@ export default function Hero() {
                     ],
                     opacity: [0, 1, 1, 1, 1, 1, 1, 1],
                   }
-                : { opacity: 0 }
+                : { x: 0, y: titleOffsetY, scale: 1, opacity: 1 }
             }
             transition={
-              titleFromCenter
+              isIntroPlaying
                 ? {
                     duration: hlDur,
                     delay: STEPS.headlineEnter.delay,
                     times: [0, hl_t1, hl_t2, hl_t3, hl_t4, hl_t5, hl_t6, 1],
                     ease: [
-                      EASE,
+                      EASE_BOUNCE,
                       EASE,
                       EASE_BOUNCE,
                       EASE,
@@ -382,7 +420,7 @@ export default function Hero() {
                       EASE,
                     ],
                   }
-                : { duration: 0 }
+                : STATIC_TRANSITION
             }
           >
             {BLACK_TITLE_LINES.map((line) => (
@@ -400,24 +438,36 @@ export default function Hero() {
               aria-hidden
               className="absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 rounded-full bg-purple"
               style={{ width: ballSize, height: ballSize }}
-              initial={{ x: "-95vw", y: -ballGapOffset, opacity: 0 }}
-              animate={{
-                x: ["-95vw", "0vw", "0vw", "0vw", "0vw"],
-                y: [
-                  -ballGapOffset,
-                  -ballGapOffset,
-                  -ballGapOffset,
-                  ballDrop,
-                  ballDrop,
-                ],
-                opacity: [0, 1, 1, 1, 1],
-              }}
-              transition={{
-                duration: ballDur,
-                delay: STEPS.ballEnter.delay,
-                times: [0, ball_t1, ball_t_fuse, ball_t_nav, 1],
-                ease: EASE,
-              }}
+              initial={
+                isIntroPlaying
+                  ? { x: "-95vw", y: -ballGapOffset, opacity: 0 }
+                  : false
+              }
+              animate={
+                isIntroPlaying
+                  ? {
+                      x: ["-95vw", "0vw", "0vw", "0vw", "0vw"],
+                      y: [
+                        -ballGapOffset,
+                        -ballGapOffset,
+                        -ballGapOffset,
+                        ballDrop,
+                        ballDrop,
+                      ],
+                      opacity: [0, 1, 1, 1, 1],
+                    }
+                  : { x: "0vw", y: ballDrop, opacity: 1 }
+              }
+              transition={
+                isIntroPlaying
+                  ? {
+                      duration: ballDur,
+                      delay: STEPS.ballEnter.delay,
+                      times: [0, ball_t1, ball_t_fuse, ball_t_nav, 1],
+                      ease: EASE,
+                    }
+                  : STATIC_TRANSITION
+              }
             />
           </div>
 
@@ -426,30 +476,42 @@ export default function Hero() {
             style={{ height: columnHeight }}
           >
             <motion.h2
-              className="mx-auto text-center font-serif font-extrabold tracking-tight text-purple-deep"
+              className="mx-auto text-center font-serif font-extrabold tracking-tight text-purple"
               style={{
                 fontSize: titleFontPx,
                 lineHeight: `${titleLineH}px`,
               }}
-              initial={{ x: "60vw", y: titleOffsetY, opacity: 0 }}
-              animate={{
-                x: ["60vw", "0vw", "0vw", "0vw", "0vw", "0vw"],
-                y: [
-                  titleOffsetY,
-                  titleOffsetY,
-                  titleOffsetY,
-                  titleOffsetY + purpleDiverge,
-                  titleOffsetY,
-                  titleOffsetY,
-                ],
-                opacity: [0, 1, 1, 1, 1, 1],
-              }}
-              transition={{
-                duration: shDur,
-                delay: STEPS.subheadEnter.delay,
-                times: [0, sh_t1, sh_t2, sh_t3, sh_t4, 1],
-                ease: EASE,
-              }}
+              initial={
+                isIntroPlaying
+                  ? { x: "60vw", y: titleOffsetY, opacity: 0 }
+                  : false
+              }
+              animate={
+                isIntroPlaying
+                  ? {
+                      x: ["60vw", "0vw", "0vw", "0vw", "0vw", "0vw"],
+                      y: [
+                        titleOffsetY,
+                        titleOffsetY,
+                        titleOffsetY,
+                        titleOffsetY + purpleDiverge,
+                        titleOffsetY,
+                        titleOffsetY,
+                      ],
+                      opacity: [0, 1, 1, 1, 1, 1],
+                    }
+                  : { x: "0vw", y: titleOffsetY, opacity: 1 }
+              }
+              transition={
+                isIntroPlaying
+                  ? {
+                      duration: shDur,
+                      delay: STEPS.subheadEnter.delay,
+                      times: [0, sh_t1, sh_t2, sh_t3, sh_t4, 1],
+                      ease: EASE,
+                    }
+                  : STATIC_TRANSITION
+              }
             >
               {PURPLE_TITLE_LINES.map((line) => (
                 <span key={line} className="block whitespace-nowrap">
@@ -459,20 +521,24 @@ export default function Hero() {
             </motion.h2>
 
             <motion.p
-              className="font-bricolage absolute inset-x-0 mx-auto text-left font-medium text-ink"
+              className="font-bricolage absolute left-0 text-left font-medium text-ink"
               style={{
-                top: `calc(100% + ${descriptionGap}px)`,
+                top: descriptionTop,
                 width: descContentWidth,
                 fontSize: descFontPx,
                 lineHeight: descLineHeightRatio,
               }}
-              initial={{ opacity: 0 }}
+              initial={isIntroPlaying ? { opacity: 0 } : false}
               animate={{ opacity: 1 }}
-              transition={{
-                duration: STEPS.subtextFade.duration,
-                delay: STEPS.subtextFade.delay,
-                ease: EASE,
-              }}
+              transition={
+                isIntroPlaying
+                  ? {
+                      duration: STEPS.subtextFade.duration,
+                      delay: STEPS.subtextFade.delay,
+                      ease: EASE,
+                    }
+                  : STATIC_TRANSITION
+              }
             >
               {DESCRIPTION_LINES.map((line) => (
                 <span key={line} className="block whitespace-nowrap">

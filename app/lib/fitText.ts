@@ -17,8 +17,13 @@ const DESCRIPTION_LINES = [
   "entscheiden, wenn es keine eindeutige Antwort gibt.",
 ] as const;
 
-const REFERENCE_SIZE = 64;
-const DESC_REFERENCE_SIZE = 28;
+import {
+  DESC_PX_DESIGN,
+  TITLE_PX_DESIGN,
+} from "@/app/lib/scale";
+
+const REFERENCE_SIZE = TITLE_PX_DESIGN;
+const DESC_REFERENCE_SIZE = DESC_PX_DESIGN;
 
 export function measureLongestTitleLine(
   lines: readonly string[],
