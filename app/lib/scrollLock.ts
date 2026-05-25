@@ -74,24 +74,51 @@ export function useSectionScrollGate(
   sectionRef: RefObject<HTMLElement | null>,
   active: boolean,
 ) {
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!active) {
       return;
     }
 
     const section = sectionRef.current;
-    if (!section) {
+    if (!section || !findNextScrollSection(section)) {
       return;
     }
 
-    if (!findNextScrollSection(section)) {
+    const maxScrollY = getMaxScrollYBeforeNextSection(section);
+    if (maxScrollY !== null && window.scrollY > maxScrollY) {
+      window.scrollTo(0, maxScrollY);
+    }
+  }, [active, sectionRef]);
+
+  useEffect(() => {
+    if (!active) {
       return;
     }
 
-    let touchStartY = 0;
+    const getSection = () => sectionRef.current;
+
+    function getMaxScrollY(): number | null {
+      const section = getSection();
+      if (!section) {
+        return null;
+      }
+
+      return getMaxScrollYBeforeNextSection(section);
+    }
+
+    function clampScroll() {
+      const maxScrollY = getMaxScrollY();
+      if (maxScrollY === null) {
+        return;
+      }
+
+      if (window.scrollY > maxScrollY) {
+        window.scrollTo(0, maxScrollY);
+      }
+    }
 
     function wouldCrossIntoNextSection(deltaY: number): boolean {
-      const maxScrollY = getMaxScrollYBeforeNextSection(section!);
+      const maxScrollY = getMaxScrollY();
       if (maxScrollY === null || deltaY <= 0) {
         return false;
       }
@@ -100,10 +127,21 @@ export function useSectionScrollGate(
     }
 
     function onWheel(event: WheelEvent) {
-      if (wouldCrossIntoNextSection(event.deltaY)) {
+      if (event.deltaY <= 0) {
+        return;
+      }
+
+      const maxScrollY = getMaxScrollY();
+      if (maxScrollY === null) {
+        return;
+      }
+
+      if (window.scrollY >= maxScrollY - 1 || wouldCrossIntoNextSection(event.deltaY)) {
         event.preventDefault();
       }
     }
+
+    let touchStartY = 0;
 
     function onTouchStart(event: TouchEvent) {
       touchStartY = event.touches[0]?.clientY ?? 0;
@@ -123,7 +161,7 @@ export function useSectionScrollGate(
         return;
       }
 
-      const maxScrollY = getMaxScrollYBeforeNextSection(section!);
+      const maxScrollY = getMaxScrollY();
       if (maxScrollY === null) {
         return;
       }
@@ -133,12 +171,17 @@ export function useSectionScrollGate(
       }
     }
 
+    clampScroll();
+    window.addEventListener("scroll", clampScroll, { passive: true });
+    window.addEventListener("resize", clampScroll);
     document.addEventListener("wheel", onWheel, { passive: false });
     document.addEventListener("touchstart", onTouchStart, { passive: true });
     document.addEventListener("touchmove", onTouchMove, { passive: false });
     document.addEventListener("keydown", onKeyDown);
 
     return () => {
+      window.removeEventListener("scroll", clampScroll);
+      window.removeEventListener("resize", clampScroll);
       document.removeEventListener("wheel", onWheel);
       document.removeEventListener("touchstart", onTouchStart);
       document.removeEventListener("touchmove", onTouchMove);

@@ -15,16 +15,19 @@ import {
   SECTION_TITLE_PAUSE,
   SECTION_TITLE_PHASE,
 } from "@/app/lib/anim";
-import { fitDescriptionFontSize, RISIKO_BODY_LINES } from "@/app/lib/fitText";
+import {
+  fitDescriptionFontSize,
+  UNGEWISSHEIT_BODY_LINES,
+} from "@/app/lib/fitText";
 import { useSectionScrollGate } from "@/app/lib/scrollLock";
 import {
   DESC_PX_DESIGN,
   DESIGN_WIDTH,
-  EXCLAMATION_DOT_X_RATIO,
-  EXCLAMATION_DOT_Y_RATIO,
-  EXCLAMATION_H_BASE,
-  EXCLAMATION_W_BASE,
   LINE_WIDTH_BASE,
+  QUESTION_DOT_X_RATIO,
+  QUESTION_DOT_Y_RATIO,
+  QUESTION_H_BASE,
+  QUESTION_W_BASE,
   RISIKO_DASH_GAP_BASE,
   RISIKO_DASH_LENGTH_BASE,
   SECTION_TITLE_ENTER_PX_DESIGN,
@@ -32,27 +35,27 @@ import {
   scalePx,
 } from "@/app/lib/scale";
 
-const RISIKO_BULLETS = [
-  "Transparente, erklärbare Analysen",
-  "EU-AI-Act-konform",
-  "Nachvollziehbar & auditierbar",
+const UNGEWISSHEIT_BULLETS = [
+  "Es entstehen Entscheidungslogiken",
+  "Erfahrung wird nutzbar gemacht",
+  "Wissen bleibt im Unternehmen",
 ] as const;
 
 const BODY_LINE_HEIGHT = 1.35;
 const STATIC_TRANSITION = { duration: 0 };
 
-function measureLineExtendWidth(
+function measureLineExtendWidthLeft(
   sectionEl: HTMLElement,
   hostEl: HTMLElement,
   markW: number,
 ): number {
   const sectionRect = sectionEl.getBoundingClientRect();
   const hostRect = hostEl.getBoundingClientRect();
-  const dotCenterX = hostRect.left + markW * EXCLAMATION_DOT_X_RATIO;
-  return Math.max(0, sectionRect.right - dotCenterX);
+  const dotCenterX = hostRect.left + markW * QUESTION_DOT_X_RATIO;
+  return Math.max(0, dotCenterX - sectionRect.left);
 }
 
-export default function RisikoSection({
+export default function UngewissheitSection({
   heroIntroComplete,
 }: {
   heroIntroComplete: boolean;
@@ -72,11 +75,16 @@ export default function RisikoSection({
   const [scrollGateActive, setScrollGateActive] = useState(false);
   const [viewportW, setViewportW] = useState(1024);
   const [lineExtendWidth, setLineExtendWidth] = useState(0);
+  const [titleRestOffsetPx, setTitleRestOffsetPx] = useState(0);
+  const [titleCenterOffsetPx, setTitleCenterOffsetPx] = useState(0);
+  const [titleEnterOffsetPx, setTitleEnterOffsetPx] = useState(0);
+  const titleMeasureRef = useRef<HTMLSpanElement>(null);
+  const textColumnRef = useRef<HTMLDivElement>(null);
 
   useSectionScrollGate(sectionRef, scrollGateActive);
 
   const preScale = Math.min(1, viewportW / DESIGN_WIDTH);
-  const preMarkW = scalePx(EXCLAMATION_W_BASE, preScale, 24);
+  const preMarkW = scalePx(QUESTION_W_BASE, preScale, 24);
   const horizontalPad = viewportW * 0.06 * 2;
   const layoutGaps = viewportW * 0.14;
   const textMaxW = Math.max(
@@ -110,7 +118,7 @@ export default function RisikoSection({
         textMaxW,
         viewportDescCap,
         bricolageFont,
-        RISIKO_BODY_LINES,
+        UNGEWISSHEIT_BODY_LINES,
         10,
         DESC_PX_DESIGN,
       ),
@@ -124,12 +132,31 @@ export default function RisikoSection({
   const dashLength = scalePx(RISIKO_DASH_LENGTH_BASE, contentScale, 8);
   const dashGap = scalePx(RISIKO_DASH_GAP_BASE, contentScale, 6);
   const dashPeriod = dashLength + dashGap;
-  const markW = scalePx(EXCLAMATION_W_BASE, contentScale, 24);
-  const markH = scalePx(EXCLAMATION_H_BASE, contentScale, 72);
-  const dotX = markW * EXCLAMATION_DOT_X_RATIO;
-  const dotY = markH * EXCLAMATION_DOT_Y_RATIO;
+  const markW = scalePx(QUESTION_W_BASE, contentScale, 24);
+  const markH = scalePx(QUESTION_H_BASE, contentScale, 72);
+  const dotX = markW * QUESTION_DOT_X_RATIO;
+  const dotY = markH * QUESTION_DOT_Y_RATIO;
   const bodyGap = scalePx(40, contentScale, 16);
   const bulletGap = scalePx(32, contentScale, 12);
+  const titleScale = titleLargePx / titleRestPx;
+  const titleLineH = titleRestPx * 1.05;
+
+  useLayoutEffect(() => {
+    if (!titleMeasureRef.current || !textColumnRef.current || !sectionRef.current) {
+      return;
+    }
+
+    const titleW = titleMeasureRef.current.offsetWidth;
+    const sectionRect = sectionRef.current.getBoundingClientRect();
+    const columnLeft =
+      textColumnRef.current.getBoundingClientRect().left - sectionRect.left;
+    const sectionCenter = sectionRect.width / 2;
+    const centerOffsetPx = -(titleW * titleScale) / 2;
+
+    setTitleCenterOffsetPx(Math.round(centerOffsetPx));
+    setTitleEnterOffsetPx(Math.round(viewportW * 1.2));
+    setTitleRestOffsetPx(Math.round(columnLeft - sectionCenter));
+  }, [viewportW, titleRestPx, titleScale, contentScale]);
 
   useEffect(() => {
     if (!heroIntroComplete || !isInView || hasPlayedRef.current) {
@@ -154,7 +181,7 @@ export default function RisikoSection({
       setScrollGateActive(false);
 
       if (sectionRef.current && markHostRef.current) {
-        const width = measureLineExtendWidth(
+        const width = measureLineExtendWidthLeft(
           sectionRef.current,
           markHostRef.current,
           markW,
@@ -181,7 +208,7 @@ export default function RisikoSection({
     }
 
     setLineExtendWidth(
-      measureLineExtendWidth(sectionRef.current, markHostRef.current, markW),
+      measureLineExtendWidthLeft(sectionRef.current, markHostRef.current, markW),
     );
   }, [isAnimPlaying, markW]);
 
@@ -217,61 +244,94 @@ export default function RisikoSection({
   return (
     <section
       ref={sectionRef}
-      data-scroll-section="risiko"
-      className="relative min-h-screen w-full overflow-hidden bg-cream px-[6vw] pt-[10vh] pb-0"
+      data-scroll-section="ungewissheit"
+      className="relative -mt-[4vh] min-h-screen w-full overflow-hidden bg-cream px-[6vw] pt-0 pb-[10vh]"
     >
-      <div className="flex min-h-[68vh] w-full flex-row flex-nowrap items-start gap-x-[4vw] pt-[2vh]">
-        <div className="relative z-10 w-fit max-w-full shrink-0">
-          <motion.h2
-            className="w-fit font-serif font-extrabold tracking-tight text-purple"
-            style={{
-              fontSize: titleRestPx,
-              lineHeight: 1.05,
-              transformOrigin: "center center",
-            }}
-            initial={
-              isAnimPlaying
-                ? { x: "-120vw", opacity: 0, fontSize: titleLargePx }
-                : false
-            }
-            animate={
-              isAnimPlaying
-                ? {
-                    x: ["-120vw", "32vw", "32vw", "0vw"],
-                    opacity: [0, 1, 1, 1],
-                    fontSize: [titleLargePx, titleLargePx, titleLargePx, titleRestPx],
+      <span
+        ref={titleMeasureRef}
+        aria-hidden
+        className="pointer-events-none invisible absolute left-0 top-0 whitespace-nowrap font-serif font-extrabold tracking-tight"
+        style={{ fontSize: titleRestPx }}
+      >
+        Ungewissheit
+      </span>
+
+      {(isAnimPlaying || hasFinished) && (
+        <motion.h2
+          className="pointer-events-none absolute top-[2vh] left-1/2 z-30 w-fit whitespace-nowrap font-serif font-extrabold tracking-tight text-purple"
+          style={{
+            fontSize: titleRestPx,
+            lineHeight: 1.05,
+            transformOrigin: "left center",
+            backfaceVisibility: "hidden",
+            willChange: isAnimPlaying ? "transform" : undefined,
+          }}
+          initial={
+            isAnimPlaying
+              ? {
+                  x: titleEnterOffsetPx,
+                  opacity: 0,
+                  scale: titleScale,
+                }
+              : false
+          }
+          animate={
+            isAnimPlaying
+              ? {
+                  x: [
+                    titleEnterOffsetPx,
+                    titleCenterOffsetPx,
+                    titleCenterOffsetPx,
+                    titleRestOffsetPx,
+                  ],
+                  opacity: [0, 1, 1, 1],
+                  scale: [titleScale, titleScale, titleScale, 1],
+                }
+              : hasFinished
+                ? { x: titleRestOffsetPx, opacity: 1, scale: 1 }
+                : {
+                    x: titleEnterOffsetPx,
+                    opacity: 0,
+                    scale: titleScale,
                   }
-                : hasFinished
-                  ? { x: "0vw", opacity: 1, fontSize: titleRestPx }
-                  : { x: "-120vw", opacity: 0, fontSize: titleLargePx }
-            }
-            transition={
-              isAnimPlaying
-                ? {
-                    duration: SECTION_TITLE_PHASE,
-                    times: titleTimes,
-                    ease: [EASE, EASE, EASE_BOUNCE, EASE],
-                  }
-                : STATIC_TRANSITION
-            }
-          >
-            Risiko
-          </motion.h2>
+          }
+          transition={
+            isAnimPlaying
+              ? {
+                  duration: SECTION_TITLE_PHASE,
+                  times: titleTimes,
+                  ease: [EASE, EASE, EASE_BOUNCE, EASE],
+                }
+              : STATIC_TRANSITION
+          }
+        >
+          Ungewissheit
+        </motion.h2>
+      )}
+
+      <div className="flex min-h-[68vh] w-full flex-row-reverse flex-nowrap items-start gap-x-[4vw] pt-[2vh]">
+        <div
+          ref={textColumnRef}
+          className="relative z-10 w-fit max-w-full shrink-0 text-left"
+        >
+          <div
+            aria-hidden
+            style={{ height: titleLineH + bodyGap }}
+          />
 
           <motion.div
-            className="w-fit max-w-full"
+            className="w-fit max-w-full text-left"
             style={{
-              marginTop: bodyGap,
               fontSize: bodyFontPx,
               lineHeight: BODY_LINE_HEIGHT,
             }}
-            initial={isAnimPlaying ? { x: "-100vw", opacity: 0 } : false}
+            initial={isAnimPlaying ? { x: "100vw", opacity: 0 } : false}
             animate={
               isAnimPlaying
-                ? { x: ["-100vw", "0vw"], opacity: [0, 1] }
+                ? { x: ["100vw", "0vw"], opacity: [0, 1] }
                 : hasFinished
                   ? { x: "0vw", opacity: 1 }
-                  : { x: "-100vw", opacity: 0 }
+                  : { x: "100vw", opacity: 0 }
             }
             transition={
               isAnimPlaying
@@ -284,7 +344,7 @@ export default function RisikoSection({
             }
           >
             <p className="font-bricolage font-medium text-ink">
-              {RISIKO_BODY_LINES.map((line) => (
+              {UNGEWISSHEIT_BODY_LINES.map((line) => (
                 <span key={line} className="block whitespace-nowrap">
                   {line}
                 </span>
@@ -294,7 +354,7 @@ export default function RisikoSection({
               className="font-bricolage space-y-3 font-bold text-ink"
               style={{ marginTop: bulletGap }}
             >
-              {RISIKO_BULLETS.map((item) => (
+              {UNGEWISSHEIT_BULLETS.map((item) => (
                 <li key={item} className="flex gap-3">
                   <span aria-hidden className="text-purple">
                     •
@@ -310,19 +370,19 @@ export default function RisikoSection({
 
         <div
           ref={markHostRef}
-          className="relative shrink-0 self-start mr-[2vw]"
+          className="relative shrink-0 self-start ml-[2vw]"
           style={{ width: markW, height: markH }}
         >
           <motion.div
             className="absolute top-0 left-0 z-10 overflow-visible"
             style={{ width: markW, height: markH }}
-            initial={isAnimPlaying ? { x: "95vw", opacity: 0 } : false}
+            initial={isAnimPlaying ? { x: "-95vw", opacity: 0 } : false}
             animate={
               isAnimPlaying
-                ? { x: ["95vw", "0vw"], opacity: [0, 1] }
+                ? { x: ["-95vw", "0vw"], opacity: [0, 1] }
                 : hasFinished
                   ? { x: "0vw", opacity: 1 }
-                  : { x: "95vw", opacity: 0 }
+                  : { x: "-95vw", opacity: 0 }
             }
             transition={
               isAnimPlaying
@@ -338,7 +398,7 @@ export default function RisikoSection({
               aria-hidden
               className="absolute z-0"
               style={{
-                left: dotX,
+                left: dotX - lineExtendWidth,
                 top: dotY - lineWidth / 2,
                 width: lineExtendWidth,
                 height: lineWidth,
@@ -349,10 +409,10 @@ export default function RisikoSection({
             />
 
             <Image
-              src="/exclamation_point.svg"
+              src="/question_mark.svg"
               alt=""
-              width={189}
-              height={568}
+              width={349}
+              height={459}
               className="relative z-10 block h-full w-full"
               aria-hidden
             />

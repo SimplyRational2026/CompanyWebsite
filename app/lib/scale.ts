@@ -29,6 +29,10 @@ export const EXCLAMATION_W_BASE = 189;
 export const EXCLAMATION_H_BASE = 568;
 export const EXCLAMATION_DOT_X_RATIO = 34.5 / 189;
 export const EXCLAMATION_DOT_Y_RATIO = 533.5 / 568;
+export const QUESTION_W_BASE = 349;
+export const QUESTION_H_BASE = 459;
+export const QUESTION_DOT_X_RATIO = 119.5 / 349;
+export const QUESTION_DOT_Y_RATIO = 424.5 / 459;
 
 export function scalePx(base: number, scale: number, min = 0): number {
   return Math.max(min, Math.round(base * scale));

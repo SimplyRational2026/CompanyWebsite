@@ -26,6 +26,13 @@ const RISIKO_BODY_LINES = [
   "Entscheidungen wirklich tragfähig sind.",
 ] as const;
 
+const UNGEWISSHEIT_BODY_LINES = [
+  "Wenn Zukunft nicht berechenbar ist, braucht es menschliche",
+  "Urteilskraft.",
+  "Wir schaffen Strukturen, damit Erfahrung, Intuition und Wissen",
+  "klar genutzt werden können.",
+] as const;
+
 const REFERENCE_SIZE = TITLE_PX_DESIGN;
 const DESC_REFERENCE_SIZE = DESC_PX_DESIGN;
 
@@ -140,4 +147,5 @@ export {
   DESCRIPTION_LINES,
   PURPLE_TITLE_LINES,
   RISIKO_BODY_LINES,
+  UNGEWISSHEIT_BODY_LINES,
 };
