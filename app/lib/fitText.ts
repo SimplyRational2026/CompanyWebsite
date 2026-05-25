@@ -1,3 +1,5 @@
+import { DESC_PX_DESIGN, TITLE_PX_DESIGN } from "@/app/lib/scale";
+
 const BLACK_TITLE_LINES = [
   "Gute Entscheidungen",
   "scheitern nicht an zu",
@@ -17,15 +19,17 @@ const DESCRIPTION_LINES = [
   "entscheiden, wenn es keine eindeutige Antwort gibt.",
 ] as const;
 
-import {
-  DESC_PX_DESIGN,
-  TITLE_PX_DESIGN,
-} from "@/app/lib/scale";
+const RISIKO_BODY_LINES = [
+  "Wenn Wahrscheinlichkeiten bekannt sind, entscheiden Daten. Wir",
+  "machen komplexe Informationen verständlich, nachvollziehbar",
+  "und regulatorisch belastbar – damit datenbasierte",
+  "Entscheidungen wirklich tragfähig sind.",
+] as const;
 
 const REFERENCE_SIZE = TITLE_PX_DESIGN;
 const DESC_REFERENCE_SIZE = DESC_PX_DESIGN;
 
-export function measureLongestTitleLine(
+function measureLongestTitleLine(
   lines: readonly string[],
   fontFamily: string,
 ): { text: string; widthAtReference: number } {
@@ -73,7 +77,7 @@ export function fitTitleFontSize(
   return Math.max(minPx, Math.min(maxPx, viewportCap, fitPx));
 }
 
-export function measureLongestDescriptionLine(
+function measureLongestDescriptionLine(
   lines: readonly string[],
   fontFamily: string,
 ): { text: string; widthAtReference: number } {
@@ -108,6 +112,7 @@ export function fitDescriptionFontSize(
   maxWidth: number,
   viewportCap: number,
   fontFamily: string,
+  lines: readonly string[] = DESCRIPTION_LINES,
   minPx = 10,
   maxPx = DESC_REFERENCE_SIZE,
 ): number {
@@ -115,10 +120,7 @@ export function fitDescriptionFontSize(
     return Math.max(minPx, Math.min(maxPx, viewportCap));
   }
 
-  const { widthAtReference } = measureLongestDescriptionLine(
-    DESCRIPTION_LINES,
-    fontFamily,
-  );
+  const { widthAtReference } = measureLongestDescriptionLine(lines, fontFamily);
   const widthRatio = widthAtReference / DESC_REFERENCE_SIZE;
   const fitPx = Math.floor(maxWidth / widthRatio);
 
@@ -137,4 +139,5 @@ export {
   BLACK_TITLE_LINES,
   DESCRIPTION_LINES,
   PURPLE_TITLE_LINES,
+  RISIKO_BODY_LINES,
 };

@@ -2,18 +2,13 @@ import type { Metadata } from "next";
 import {
   Bricolage_Grotesque,
   Geist,
-  Geist_Mono,
   Noto_Serif_JP,
 } from "next/font/google";
 import "./globals.css";
+import { ScrollToTopOnLoad } from "./lib/scrollLock";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
@@ -42,9 +37,12 @@ export default function RootLayout({
   return (
     <html
       lang="de"
-      className={`${geistSans.variable} ${geistMono.variable} ${notoSerifJp.variable} ${bricolageGrotesque.variable} antialiased`}
+      className={`${geistSans.variable} ${notoSerifJp.variable} ${bricolageGrotesque.variable} antialiased`}
     >
-      <body>{children}</body>
+      <body>
+        <ScrollToTopOnLoad />
+        {children}
+      </body>
     </html>
   );
 }

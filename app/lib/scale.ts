@@ -1,15 +1,15 @@
 export const DESIGN_WIDTH = 1024;
 
 export const NAV_HEIGHT_BASE = 120;
-export const BALL_DROP_BASE = 340;
 export const BALL_SIZE_BASE = 68;
 export const LINE_WIDTH_BASE = 6;
 export const DASH_LENGTH_BASE = 36;
 export const DASH_GAP_BASE = 40;
+export const RISIKO_DASH_LENGTH_BASE = 30;
+export const RISIKO_DASH_GAP_BASE = 26;
 export const CENTER_LINE_DROP_BASE = 220;
 export const TITLE_DIVERGE_BLACK_BASE = 120;
 export const TITLE_DIVERGE_PURPLE_BASE = 160;
-export const TITLE_RAISE_BASE = 36;
 export const DESCRIPTION_GAP_BASE = 32;
 export const TITLE_PX_DESIGN = 60;
 export const DESC_PX_DESIGN = 26;
@@ -22,6 +22,13 @@ export const NAV_BUTTON_PX_Y = 16;
 export const NAV_BUTTON_FONT = 22;
 export const NAV_BUTTON_RADIUS = 20;
 export const NAV_DIVIDER_H = 6;
+
+export const SECTION_TITLE_PX_DESIGN = 88;
+export const SECTION_TITLE_ENTER_PX_DESIGN = 164;
+export const EXCLAMATION_W_BASE = 189;
+export const EXCLAMATION_H_BASE = 568;
+export const EXCLAMATION_DOT_X_RATIO = 34.5 / 189;
+export const EXCLAMATION_DOT_Y_RATIO = 533.5 / 568;
 
 export function scalePx(base: number, scale: number, min = 0): number {
   return Math.max(min, Math.round(base * scale));

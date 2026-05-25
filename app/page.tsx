@@ -1,5 +1,19 @@
+"use client";
+
+import { useCallback, useState } from "react";
 import Hero from "./components/Hero";
+import RisikoSection from "./components/RisikoSection";
 
 export default function Home() {
-  return <Hero />;
+  const [heroIntroComplete, setHeroIntroComplete] = useState(false);
+  const handleHeroIntroComplete = useCallback(() => {
+    setHeroIntroComplete(true);
+  }, []);
+
+  return (
+    <>
+      <Hero onIntroComplete={handleHeroIntroComplete} />
+      <RisikoSection heroIntroComplete={heroIntroComplete} />
+    </>
+  );
 }

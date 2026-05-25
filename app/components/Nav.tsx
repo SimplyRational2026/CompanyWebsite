@@ -46,7 +46,7 @@ export default function Nav({
       };
 
   return (
-    <header className="pointer-events-none fixed inset-x-0 top-0 z-40">
+    <header className="pointer-events-none relative z-40 w-full">
       <div
         className="pointer-events-auto flex items-center justify-between"
         style={{ height: navHeight, paddingInline: navPaddingX }}

@@ -4,7 +4,6 @@ import Image from "next/image";
 import { motion } from "motion/react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
-  D800,
   D1000,
   DASHED_DUR,
   EASE,
@@ -39,11 +38,16 @@ import {
   TITLE_DIVERGE_PURPLE_BASE,
   TITLE_PX_DESIGN,
 } from "@/app/lib/scale";
+import { useIntroScrollLock } from "@/app/lib/scrollLock";
 import Nav from "./Nav";
 
 const STATIC_TRANSITION = { duration: 0 };
 
-export default function Hero() {
+interface HeroProps {
+  onIntroComplete?: () => void;
+}
+
+export default function Hero({ onIntroComplete }: HeroProps) {
   const isIntroPlayingRef = useRef(true);
   const [isIntroPlaying, setIsIntroPlaying] = useState(true);
   const [logoInNav, setLogoInNav] = useState(false);
@@ -51,6 +55,8 @@ export default function Hero() {
   const [viewportH, setViewportH] = useState(800);
   const [viewportW, setViewportW] = useState(1024);
   const [isLayoutReady, setIsLayoutReady] = useState(false);
+
+  useIntroScrollLock(isIntroPlaying);
 
   useLayoutEffect(() => {
     setViewportH(window.innerHeight);
@@ -98,10 +104,11 @@ export default function Hero() {
       setIsIntroPlaying(false);
       setLogoInNav(true);
       setShowNavExtras(true);
+      onIntroComplete?.();
     }, INTRO_END * 1000);
 
     return () => window.clearTimeout(t);
-  }, [isLayoutReady]);
+  }, [isLayoutReady, onIntroComplete]);
 
   const preScale = Math.min(1, viewportW / DESIGN_WIDTH);
   const preBallColW = scalePx(BALL_COL_W_BASE, preScale, 40);
@@ -147,6 +154,7 @@ export default function Hero() {
         descContentWidth,
         viewportDescCap,
         bricolageFont,
+        DESCRIPTION_LINES,
         10,
         DESC_PX_DESIGN,
       ),
@@ -186,13 +194,15 @@ export default function Hero() {
   const descriptionTop = columnHeight / 2 + ballDrop - descHeight / 2;
   const titleLineH = titleFontPx * 1.15;
   const ballGapOffset = titleLineH * 0.5;
-  const ballStartY = viewportH / 2 - ballGapOffset;
-  const ballEndY = viewportH / 2 + ballDrop;
+  const viewportMidY = viewportH / 2;
+  const ballCenterY = viewportMidY - ballGapOffset;
+  const ballStartY = ballCenterY;
+  const ballEndY = viewportMidY + ballDrop;
   const finalLineHeight = Math.max(ballEndY - navHeight, 120);
   const titleOffsetY = 0;
 
   const lineRightStart = viewportW + 0.95 * viewportW + ballSize / 2;
-  const lineRightEnd = viewportW / 2 + ballSize / 2;
+  const lineRightEnd = viewportW / 2 + ballSize / 4;
   const dashedDur = DASHED_DUR;
   const dashedEntryEnd = STEPS.ballEnter.duration / dashedDur;
   const dashedRetractStart = (STEPS.ballEnter.duration + D1000) / dashedDur;
@@ -253,13 +263,18 @@ export default function Hero() {
     ballDur;
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-cream">
-      <Nav
-        logoInNav={logoInNav}
-        showExtras={showNavExtras}
-        contentScale={contentScale}
-        staticExtras={!isIntroPlaying}
-      />
+    <div
+      data-scroll-section="hero"
+      className="relative min-h-screen w-full overflow-hidden bg-cream"
+    >
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-40">
+        <Nav
+          logoInNav={logoInNav}
+          showExtras={showNavExtras}
+          contentScale={contentScale}
+          staticExtras={!isIntroPlaying}
+        />
+      </div>
 
       {!logoInNav && isIntroPlaying && (
         <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center">
@@ -337,7 +352,7 @@ export default function Hero() {
           aria-hidden
           className="absolute z-5"
           style={{
-            top: `calc(50vh - ${ballGapOffset + lineWidth / 2}px)`,
+            top: `${ballCenterY - lineWidth / 2}px`,
             height: `${lineWidth}px`,
             backgroundImage: `repeating-linear-gradient(90deg, var(--purple) 0, var(--purple) ${dashLength}px, transparent ${dashLength}px, transparent ${dashPeriod}px)`,
             backgroundRepeat: "repeat-x",
@@ -362,7 +377,7 @@ export default function Hero() {
         />
       )}
 
-      <main className="relative flex h-screen items-center">
+      <main className="relative flex min-h-screen items-center">
         <div className="grid w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-[2vw] px-[3vw]">
           <motion.h1
             className="relative z-30 mx-auto text-center font-serif font-extrabold tracking-tight text-ink"
