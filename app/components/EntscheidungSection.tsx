@@ -10,6 +10,7 @@ import {
   BRAIN_CLOSE_DELAY,
   BRAIN_CLOSE_DUR,
   BRAIN_CROSSFADE_DUR,
+  BRAIN_EXIT_DUR,
   BRAIN_EXIT_START,
   BRAIN_SHIFT_DUR,
   BRAIN_SHIFT_START,
@@ -205,7 +206,7 @@ export default function EntscheidungSection({
                 },
                 x: {
                   delay: BRAIN_EXIT_START,
-                  duration: BRAIN_CROSSFADE_DUR,
+                  duration: BRAIN_EXIT_DUR,
                   ease: EASE,
                 },
               }}

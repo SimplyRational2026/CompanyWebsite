@@ -11,6 +11,8 @@ import {
   WAS_CIRCLE_START,
   WAS_HUB_START,
   WAS_REVEAL_DUR,
+  WAS_RING_SPIN_DUR,
+  WAS_RING_SPIN_STEP,
   WAS_TEXT_CYCLE,
   WAS_TITLE_ENTER,
   WAS_TITLE_PAUSE,
@@ -175,7 +177,7 @@ export default function WasAndersSection({
 
       revealTimers.push(
         window.setTimeout(() => {
-          setRingRotation((prev) => prev + 360);
+          setRingRotation((prev) => prev + WAS_RING_SPIN_STEP);
           setVisibleBullets(i + 1);
         }, revealAt),
       );
@@ -191,7 +193,7 @@ export default function WasAndersSection({
       setIsAnimPlaying(false);
       setHasFinished(true);
       setVisibleBullets(4);
-      setRingRotation(1440);
+      setRingRotation(WAS_RING_SPIN_STEP * 4);
     }, WAS_ANIM_END * 1000);
 
     return () => {
@@ -312,7 +314,7 @@ export default function WasAndersSection({
                 animate={{ rotate: ringRotation }}
                 transition={
                   isAnimPlaying && !hasFinished
-                    ? { duration: WAS_REVEAL_DUR, ease: "linear" }
+                    ? { duration: WAS_RING_SPIN_DUR, ease: EASE }
                     : STATIC_TRANSITION
                 }
               >
