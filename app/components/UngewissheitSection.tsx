@@ -62,6 +62,7 @@ export default function UngewissheitSection({
 }) {
   const sectionRef = useRef<HTMLElement>(null);
   const markHostRef = useRef<HTMLDivElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
   const isAnimPlayingRef = useRef(false);
   const hasPlayedRef = useRef(false);
   const lineBaselineRef = useRef<{
@@ -75,6 +76,7 @@ export default function UngewissheitSection({
   const [scrollGateActive, setScrollGateActive] = useState(false);
   const [viewportW, setViewportW] = useState(1024);
   const [lineExtendWidth, setLineExtendWidth] = useState(0);
+  const [markTopOffset, setMarkTopOffset] = useState(0);
   const [titleRestOffsetPx, setTitleRestOffsetPx] = useState(0);
   const [titleCenterOffsetPx, setTitleCenterOffsetPx] = useState(0);
   const [titleEnterOffsetPx, setTitleEnterOffsetPx] = useState(0);
@@ -157,6 +159,15 @@ export default function UngewissheitSection({
     setTitleEnterOffsetPx(Math.round(viewportW * 1.2));
     setTitleRestOffsetPx(Math.round(columnLeft - sectionCenter));
   }, [viewportW, titleRestPx, titleScale, contentScale]);
+
+  useLayoutEffect(() => {
+    if (!bodyRef.current) {
+      return;
+    }
+
+    const bodyH = bodyRef.current.offsetHeight;
+    setMarkTopOffset(Math.round(titleLineH + bodyGap + bodyH - markH));
+  }, [titleLineH, bodyGap, markH, bodyFontPx, contentScale]);
 
   useEffect(() => {
     if (!heroIntroComplete || !isInView || hasPlayedRef.current) {
@@ -258,7 +269,7 @@ export default function UngewissheitSection({
 
       {(isAnimPlaying || hasFinished) && (
         <motion.h2
-          className="pointer-events-none absolute top-[2vh] left-1/2 z-30 w-fit whitespace-nowrap font-serif font-extrabold tracking-tight text-purple"
+          className="pointer-events-none absolute top-[8vh] left-1/2 z-30 w-fit whitespace-nowrap font-serif font-extrabold tracking-tight text-purple"
           style={{
             fontSize: titleRestPx,
             lineHeight: 1.05,
@@ -314,14 +325,13 @@ export default function UngewissheitSection({
           ref={textColumnRef}
           className="relative z-10 w-fit max-w-full shrink-0 text-left"
         >
-          <div
-            aria-hidden
-            style={{ height: titleLineH + bodyGap }}
-          />
+          <div aria-hidden style={{ height: titleLineH }} />
 
           <motion.div
+            ref={bodyRef}
             className="w-fit max-w-full text-left"
             style={{
+              marginTop: bodyGap,
               fontSize: bodyFontPx,
               lineHeight: BODY_LINE_HEIGHT,
             }}
@@ -371,7 +381,7 @@ export default function UngewissheitSection({
         <div
           ref={markHostRef}
           className="relative shrink-0 self-start ml-[2vw]"
-          style={{ width: markW, height: markH }}
+          style={{ width: markW, height: markH, marginTop: markTopOffset }}
         >
           <motion.div
             className="absolute top-0 left-0 z-10 overflow-visible"

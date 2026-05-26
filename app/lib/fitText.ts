@@ -26,6 +26,11 @@ const RISIKO_BODY_LINES = [
   "Entscheidungen wirklich tragfähig sind.",
 ] as const;
 
+const ENTSCHEIDUNG_HEADLINE_LINES = [
+  "Das Problem ist nicht fehlendes Wissen,",
+  "sondern die Qualität der Entscheidung.",
+] as const;
+
 const UNGEWISSHEIT_BODY_LINES = [
   "Wenn Zukunft nicht berechenbar ist, braucht es menschliche",
   "Urteilskraft.",
@@ -63,6 +68,59 @@ function measureLongestTitleLine(
   }
 
   return { text: longest, widthAtReference: maxWidth };
+}
+
+function measureLongestHeadlineLine(
+  lines: readonly string[],
+  fontFamily: string,
+  referenceSize: number,
+): { text: string; widthAtReference: number } {
+  if (typeof document === "undefined") {
+    return { text: lines[0], widthAtReference: lines[0].length * 36 };
+  }
+
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  if (!ctx) {
+    return { text: lines[0], widthAtReference: lines[0].length * 36 };
+  }
+
+  let longest = lines[0];
+  let maxWidth = 0;
+
+  for (const line of lines) {
+    ctx.font = `800 ${referenceSize}px ${fontFamily}, serif`;
+    const width = ctx.measureText(line).width;
+    if (width > maxWidth) {
+      maxWidth = width;
+      longest = line;
+    }
+  }
+
+  return { text: longest, widthAtReference: maxWidth };
+}
+
+export function fitHeadlineFontSize(
+  maxWidth: number,
+  viewportCap: number,
+  fontFamily: string,
+  lines: readonly string[],
+  minPx = 10,
+  maxPx = REFERENCE_SIZE,
+): number {
+  if (maxWidth <= 0) {
+    return Math.max(minPx, Math.min(maxPx, viewportCap));
+  }
+
+  const { widthAtReference } = measureLongestHeadlineLine(
+    lines,
+    fontFamily,
+    maxPx,
+  );
+  const widthRatio = widthAtReference / maxPx;
+  const fitPx = Math.floor(maxWidth / widthRatio);
+
+  return Math.max(minPx, Math.min(maxPx, viewportCap, fitPx));
 }
 
 export function fitTitleFontSize(
@@ -145,6 +203,7 @@ export function measureDescriptionHeight(
 export {
   BLACK_TITLE_LINES,
   DESCRIPTION_LINES,
+  ENTSCHEIDUNG_HEADLINE_LINES,
   PURPLE_TITLE_LINES,
   RISIKO_BODY_LINES,
   UNGEWISSHEIT_BODY_LINES,

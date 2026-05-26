@@ -33,6 +33,15 @@ export const QUESTION_W_BASE = 349;
 export const QUESTION_H_BASE = 459;
 export const QUESTION_DOT_X_RATIO = 119.5 / 349;
 export const QUESTION_DOT_Y_RATIO = 424.5 / 459;
+export const BRAIN_W_BASE = 232;
+export const BRAIN_H_BASE = 516;
+export const BRAIN_GAP_BASE = 64;
+export const BRAIN_BALL_SIZE_BASE = 50;
+export const BRAIN_HEADLINE_PX_DESIGN = 52;
+export const BRAIN_VIDEO_W_BASE = 480;
+export const BRAIN_VIDEO_H_BASE = 580;
+export const BRAIN_VIDEO_RADIUS_BASE = 28;
+export const BRAIN_VIDEO_BORDER_BASE = 5;
 
 export function scalePx(base: number, scale: number, min = 0): number {
   return Math.max(min, Math.round(base * scale));

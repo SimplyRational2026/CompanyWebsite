@@ -234,7 +234,7 @@ export default function RisikoSection({
     <section
       ref={sectionRef}
       data-scroll-section="risiko"
-      className="relative -mt-[3vh] w-full overflow-hidden bg-cream px-[6vw] pt-[5vh] pb-[8vh]"
+      className="relative -mt-[3vh] w-full overflow-hidden bg-cream px-[6vw] pt-[5vh] pb-[10vh]"
     >
       <div className="flex w-full flex-row flex-nowrap items-start gap-x-[4vw] pt-[2vh]">
         <div className="relative z-10 w-fit max-w-full shrink-0">
