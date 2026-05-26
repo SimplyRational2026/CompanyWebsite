@@ -25,6 +25,7 @@ import {
   EXCLAMATION_H_BASE,
   EXCLAMATION_W_BASE,
   LINE_WIDTH_BASE,
+  QUESTION_H_BASE,
   RISIKO_DASH_GAP_BASE,
   RISIKO_DASH_LENGTH_BASE,
   SECTION_TITLE_ENTER_PX_DESIGN,
@@ -40,6 +41,9 @@ const RISIKO_BULLETS = [
 
 const BODY_LINE_HEIGHT = 1.35;
 const STATIC_TRANSITION = { duration: 0 };
+const EXCLAMATION_MARK_W_BASE = Math.round(
+  EXCLAMATION_W_BASE * (QUESTION_H_BASE / EXCLAMATION_H_BASE),
+);
 
 function measureLineExtendWidth(
   sectionEl: HTMLElement,
@@ -59,6 +63,7 @@ export default function RisikoSection({
 }) {
   const sectionRef = useRef<HTMLElement>(null);
   const markHostRef = useRef<HTMLDivElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
   const isAnimPlayingRef = useRef(false);
   const hasPlayedRef = useRef(false);
   const lineBaselineRef = useRef<{
@@ -72,11 +77,12 @@ export default function RisikoSection({
   const [scrollGateActive, setScrollGateActive] = useState(false);
   const [viewportW, setViewportW] = useState(1024);
   const [lineExtendWidth, setLineExtendWidth] = useState(0);
+  const [markTopOffset, setMarkTopOffset] = useState(0);
 
   useSectionScrollGate(sectionRef, scrollGateActive);
 
   const preScale = Math.min(1, viewportW / DESIGN_WIDTH);
-  const preMarkW = scalePx(EXCLAMATION_W_BASE, preScale, 24);
+  const preMarkW = scalePx(EXCLAMATION_MARK_W_BASE, preScale, 24);
   const horizontalPad = viewportW * 0.06 * 2;
   const layoutGaps = viewportW * 0.14;
   const textMaxW = Math.max(
@@ -124,12 +130,22 @@ export default function RisikoSection({
   const dashLength = scalePx(RISIKO_DASH_LENGTH_BASE, contentScale, 8);
   const dashGap = scalePx(RISIKO_DASH_GAP_BASE, contentScale, 6);
   const dashPeriod = dashLength + dashGap;
-  const markW = scalePx(EXCLAMATION_W_BASE, contentScale, 24);
-  const markH = scalePx(EXCLAMATION_H_BASE, contentScale, 72);
+  const markW = scalePx(EXCLAMATION_MARK_W_BASE, contentScale, 24);
+  const markH = scalePx(QUESTION_H_BASE, contentScale, 72);
   const dotX = markW * EXCLAMATION_DOT_X_RATIO;
   const dotY = markH * EXCLAMATION_DOT_Y_RATIO;
   const bodyGap = scalePx(40, contentScale, 16);
   const bulletGap = scalePx(32, contentScale, 12);
+  const titleLineH = titleRestPx * 1.05;
+
+  useLayoutEffect(() => {
+    if (!bodyRef.current) {
+      return;
+    }
+
+    const bodyH = bodyRef.current.offsetHeight;
+    setMarkTopOffset(Math.round(titleLineH + bodyGap + bodyH - markH));
+  }, [titleLineH, bodyGap, markH, bodyFontPx, contentScale]);
 
   useEffect(() => {
     if (!heroIntroComplete || !isInView || hasPlayedRef.current) {
@@ -218,9 +234,9 @@ export default function RisikoSection({
     <section
       ref={sectionRef}
       data-scroll-section="risiko"
-      className="relative min-h-screen w-full overflow-hidden bg-cream px-[6vw] pt-[10vh] pb-0"
+      className="relative -mt-[3vh] w-full overflow-hidden bg-cream px-[6vw] pt-[5vh] pb-[8vh]"
     >
-      <div className="flex min-h-[68vh] w-full flex-row flex-nowrap items-start gap-x-[4vw] pt-[2vh]">
+      <div className="flex w-full flex-row flex-nowrap items-start gap-x-[4vw] pt-[2vh]">
         <div className="relative z-10 w-fit max-w-full shrink-0">
           <motion.h2
             className="w-fit font-serif font-extrabold tracking-tight text-purple"
@@ -259,6 +275,7 @@ export default function RisikoSection({
           </motion.h2>
 
           <motion.div
+            ref={bodyRef}
             className="w-fit max-w-full"
             style={{
               marginTop: bodyGap,
@@ -311,7 +328,7 @@ export default function RisikoSection({
         <div
           ref={markHostRef}
           className="relative shrink-0 self-start mr-[2vw]"
-          style={{ width: markW, height: markH }}
+          style={{ width: markW, height: markH, marginTop: markTopOffset }}
         >
           <motion.div
             className="absolute top-0 left-0 z-10 overflow-visible"

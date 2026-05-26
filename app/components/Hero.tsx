@@ -265,7 +265,7 @@ export default function Hero({ onIntroComplete }: HeroProps) {
   return (
     <div
       data-scroll-section="hero"
-      className="relative min-h-screen w-full overflow-hidden bg-cream"
+      className="relative min-h-screen w-full overflow-hidden bg-cream pb-[2vh]"
     >
       <div className="pointer-events-none absolute inset-x-0 top-0 z-40">
         <Nav

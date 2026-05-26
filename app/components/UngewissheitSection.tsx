@@ -245,7 +245,7 @@ export default function UngewissheitSection({
     <section
       ref={sectionRef}
       data-scroll-section="ungewissheit"
-      className="relative -mt-[4vh] min-h-screen w-full overflow-hidden bg-cream px-[6vw] pt-0 pb-[10vh]"
+      className="relative w-full overflow-hidden bg-cream px-[6vw] pt-[6vh] pb-[5vh]"
     >
       <span
         ref={titleMeasureRef}
@@ -309,7 +309,7 @@ export default function UngewissheitSection({
         </motion.h2>
       )}
 
-      <div className="flex min-h-[68vh] w-full flex-row-reverse flex-nowrap items-start gap-x-[4vw] pt-[2vh]">
+      <div className="flex w-full flex-row-reverse flex-nowrap items-start gap-x-[4vw] pt-[2vh]">
         <div
           ref={textColumnRef}
           className="relative z-10 w-fit max-w-full shrink-0 text-left"
