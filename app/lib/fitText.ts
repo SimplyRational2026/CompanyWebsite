@@ -31,6 +31,29 @@ const ENTSCHEIDUNG_HEADLINE_LINES = [
   "sondern die Qualität der Entscheidung.",
 ] as const;
 
+const WAS_ANDERS_TITLE = "Was anders wird mit uns" as const;
+
+const WAS_ANDERS_BULLETS = [
+  [
+    "Entscheidungen werden",
+    "nachvollziehbar - auch wenn KI im",
+    "Spiel ist",
+  ],
+  [
+    "Komplexität steht Entscheidungen",
+    "nicht mehr im Weg",
+  ],
+  [
+    "Erfahrung wird zugänglich -",
+    "unabhängig von Einzelpersonen",
+  ],
+  [
+    "Entscheidungen werden",
+    "getroffen, auch wenn noch nicht",
+    "alles klar ist",
+  ],
+] as const;
+
 const UNGEWISSHEIT_BODY_LINES = [
   "Wenn Zukunft nicht berechenbar ist, braucht es menschliche",
   "Urteilskraft.",
@@ -145,6 +168,7 @@ export function fitTitleFontSize(
 function measureLongestDescriptionLine(
   lines: readonly string[],
   fontFamily: string,
+  fontWeight = 500,
 ): { text: string; widthAtReference: number } {
   if (typeof document === "undefined") {
     const longest = lines.reduce((a, b) => (a.length >= b.length ? a : b), lines[0]);
@@ -162,7 +186,7 @@ function measureLongestDescriptionLine(
   let maxWidth = 0;
 
   for (const line of lines) {
-    ctx.font = `500 ${DESC_REFERENCE_SIZE}px ${fontFamily}, sans-serif`;
+    ctx.font = `${fontWeight} ${DESC_REFERENCE_SIZE}px ${fontFamily}, sans-serif`;
     const width = ctx.measureText(line).width;
     if (width > maxWidth) {
       maxWidth = width;
@@ -180,12 +204,17 @@ export function fitDescriptionFontSize(
   lines: readonly string[] = DESCRIPTION_LINES,
   minPx = 10,
   maxPx = DESC_REFERENCE_SIZE,
+  fontWeight = 500,
 ): number {
   if (maxWidth <= 0) {
     return Math.max(minPx, Math.min(maxPx, viewportCap));
   }
 
-  const { widthAtReference } = measureLongestDescriptionLine(lines, fontFamily);
+  const { widthAtReference } = measureLongestDescriptionLine(
+    lines,
+    fontFamily,
+    fontWeight,
+  );
   const widthRatio = widthAtReference / DESC_REFERENCE_SIZE;
   const fitPx = Math.floor(maxWidth / widthRatio);
 
@@ -207,4 +236,6 @@ export {
   PURPLE_TITLE_LINES,
   RISIKO_BODY_LINES,
   UNGEWISSHEIT_BODY_LINES,
+  WAS_ANDERS_BULLETS,
+  WAS_ANDERS_TITLE,
 };

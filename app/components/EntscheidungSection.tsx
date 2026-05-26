@@ -7,6 +7,7 @@ import {
   BRAIN_ANIM_END,
   BRAIN_BALL_DUR,
   BRAIN_BALL_START,
+  BRAIN_CLOSE_DELAY,
   BRAIN_CLOSE_DUR,
   BRAIN_CROSSFADE_DUR,
   BRAIN_EXIT_START,
@@ -16,14 +17,17 @@ import {
   BRAIN_TEXT_START,
   BRAIN_VIDEO_START,
   EASE,
+  EASE_BRAIN_CLOSE,
 } from "@/app/lib/anim";
+import { ENTSCHEIDUNG_HEADLINE_LINES } from "@/app/lib/fitText";
 import {
-  ENTSCHEIDUNG_HEADLINE_LINES,
-  fitHeadlineFontSize,
-} from "@/app/lib/fitText";
-import { useSectionScrollGate } from "@/app/lib/scrollLock";
+  fitSectionHeadlineFontPx,
+  sectionAvailableWidth,
+  useSectionContentScale,
+} from "@/app/lib/sectionTypography";
 import {
   BRAIN_BALL_SIZE_BASE,
+  BRAIN_BALL_DROP_BASE,
   BRAIN_GAP_BASE,
   BRAIN_H_BASE,
   BRAIN_HEADLINE_PX_DESIGN,
@@ -32,7 +36,6 @@ import {
   BRAIN_VIDEO_RADIUS_BASE,
   BRAIN_VIDEO_W_BASE,
   BRAIN_W_BASE,
-  DESIGN_WIDTH,
   LINE_WIDTH_BASE,
   scalePx,
 } from "@/app/lib/scale";
@@ -53,28 +56,12 @@ export default function EntscheidungSection({
   const isInView = useInView(sectionRef, { amount: 0.35 });
   const [isAnimPlaying, setIsAnimPlaying] = useState(false);
   const [hasFinished, setHasFinished] = useState(false);
-  const [scrollGateActive, setScrollGateActive] = useState(false);
   const [videoVisible, setVideoVisible] = useState(false);
   const [headlineVisible, setHeadlineVisible] = useState(false);
-  const [viewportW, setViewportW] = useState(1024);
-  const [viewportH, setViewportH] = useState(800);
+  const [headlineFontPx, setHeadlineFontPx] = useState(BRAIN_HEADLINE_PX_DESIGN);
 
-  useSectionScrollGate(sectionRef, scrollGateActive);
-
-  const horizontalPad = viewportW * 0.06 * 2;
-  const textMaxW = Math.max(80, Math.floor(viewportW - horizontalPad));
-  const viewportHeadlineCap = Math.round(
-    viewportW * (BRAIN_HEADLINE_PX_DESIGN / DESIGN_WIDTH),
-  );
-
-  const [headlineFontPx, setHeadlineFontPx] = useState(() =>
-    Math.max(10, Math.min(BRAIN_HEADLINE_PX_DESIGN, viewportHeadlineCap)),
-  );
-
-  useLayoutEffect(() => {
-    setViewportW(window.innerWidth);
-    setViewportH(window.innerHeight);
-  }, []);
+  const { viewportW, bodyFontPx, contentScale } =
+    useSectionContentScale(isAnimPlayingRef);
 
   useLayoutEffect(() => {
     if (isAnimPlayingRef.current) {
@@ -87,35 +74,36 @@ export default function EntscheidungSection({
         .trim() || "serif";
 
     setHeadlineFontPx(
-      fitHeadlineFontSize(
-        textMaxW,
-        viewportHeadlineCap,
+      fitSectionHeadlineFontPx(
+        viewportW,
         serifFont,
         ENTSCHEIDUNG_HEADLINE_LINES,
-        10,
         BRAIN_HEADLINE_PX_DESIGN,
+        bodyFontPx,
       ),
     );
-  }, [textMaxW, viewportHeadlineCap]);
+  }, [viewportW, bodyFontPx]);
 
-  const contentScale = headlineFontPx / BRAIN_HEADLINE_PX_DESIGN;
   const brainW = scalePx(BRAIN_W_BASE, contentScale, 48);
   const brainH = scalePx(BRAIN_H_BASE, contentScale, 100);
   const brainGap = scalePx(BRAIN_GAP_BASE, contentScale, 10);
   const ballSize = scalePx(BRAIN_BALL_SIZE_BASE, contentScale, 16);
   const lineWidth = scalePx(LINE_WIDTH_BASE, contentScale, 2);
   const headlineGap = scalePx(48, contentScale, 20);
-  const videoGap = scalePx(56, contentScale, 24);
   const headlineBlockH = Math.round(
     headlineFontPx * HEADLINE_LINE_HEIGHT * ENTSCHEIDUNG_HEADLINE_LINES.length,
   );
   const brainShiftToCenter =
     headlineBlockH + headlineGap + scalePx(56, contentScale, 24);
   const ballRiseEnd = -Math.round(ballSize * 1.2);
-  const ballStartTop = brainH + Math.round(viewportH * 0.55);
+  const ballStartTop = brainH + scalePx(BRAIN_BALL_DROP_BASE, contentScale, 120);
   const lineRiseHeight = ballStartTop - ballRiseEnd;
-  const videoW = scalePx(BRAIN_VIDEO_W_BASE, contentScale, 200);
-  const videoH = scalePx(BRAIN_VIDEO_H_BASE, contentScale, 240);
+  const availableW = sectionAvailableWidth(viewportW);
+  const videoW = Math.min(
+    scalePx(BRAIN_VIDEO_W_BASE, contentScale, 120),
+    availableW,
+  );
+  const videoH = scalePx(BRAIN_VIDEO_H_BASE, contentScale, 140);
   const videoRadius = scalePx(BRAIN_VIDEO_RADIUS_BASE, contentScale, 12);
   const videoBorder = scalePx(BRAIN_VIDEO_BORDER_BASE, contentScale, 3);
   const brainRestTop = brainShiftToCenter;
@@ -133,7 +121,6 @@ export default function EntscheidungSection({
 
     hasPlayedRef.current = true;
     isAnimPlayingRef.current = true;
-    setScrollGateActive(true);
     setIsAnimPlaying(true);
   }, [heroIntroComplete, isInView]);
 
@@ -154,7 +141,6 @@ export default function EntscheidungSection({
       isAnimPlayingRef.current = false;
       setIsAnimPlaying(false);
       setHasFinished(true);
-      setScrollGateActive(false);
     }, BRAIN_ANIM_END * 1000);
 
     return () => {
@@ -163,19 +149,6 @@ export default function EntscheidungSection({
       window.clearTimeout(endTimer);
     };
   }, [isAnimPlaying]);
-
-  useEffect(() => {
-    const onResize = () => {
-      if (isAnimPlayingRef.current) {
-        return;
-      }
-      setViewportW(window.innerWidth);
-      setViewportH(window.innerHeight);
-    };
-
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
 
   const showBrainCluster = isAnimPlaying && !hasFinished;
   const showVideoFrame = videoVisible || hasFinished;
@@ -242,8 +215,9 @@ export default function EntscheidungSection({
                 initial={{ x: "-55vw" }}
                 animate={{ x: "0vw" }}
                 transition={{
+                  delay: BRAIN_CLOSE_DELAY,
                   duration: BRAIN_CLOSE_DUR,
-                  ease: EASE,
+                  ease: EASE_BRAIN_CLOSE,
                 }}
               >
                 <Image
@@ -300,8 +274,9 @@ export default function EntscheidungSection({
                 initial={{ x: "55vw" }}
                 animate={{ x: "0vw" }}
                 transition={{
+                  delay: BRAIN_CLOSE_DELAY,
                   duration: BRAIN_CLOSE_DUR,
-                  ease: EASE,
+                  ease: EASE_BRAIN_CLOSE,
                 }}
               >
                 <Image

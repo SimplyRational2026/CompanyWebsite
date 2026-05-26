@@ -16,13 +16,15 @@ import {
   SECTION_TITLE_PHASE,
 } from "@/app/lib/anim";
 import {
-  fitDescriptionFontSize,
-  UNGEWISSHEIT_BODY_LINES,
-} from "@/app/lib/fitText";
-import { useSectionScrollGate } from "@/app/lib/scrollLock";
+  fitSectionBodyFontPx,
+  sectionContentScale,
+  sectionTitleLargePx,
+  sectionTitleRestPx,
+  sectionViewportDescCap,
+} from "@/app/lib/sectionTypography";
+import { UNGEWISSHEIT_BODY_LINES } from "@/app/lib/fitText";
 import {
   DESC_PX_DESIGN,
-  DESIGN_WIDTH,
   LINE_WIDTH_BASE,
   QUESTION_DOT_X_RATIO,
   QUESTION_DOT_Y_RATIO,
@@ -30,8 +32,6 @@ import {
   QUESTION_W_BASE,
   RISIKO_DASH_GAP_BASE,
   RISIKO_DASH_LENGTH_BASE,
-  SECTION_TITLE_ENTER_PX_DESIGN,
-  SECTION_TITLE_PX_DESIGN,
   scalePx,
 } from "@/app/lib/scale";
 
@@ -73,7 +73,6 @@ export default function UngewissheitSection({
   const isInView = useInView(sectionRef, { amount: 0.35 });
   const [isAnimPlaying, setIsAnimPlaying] = useState(false);
   const [hasFinished, setHasFinished] = useState(false);
-  const [scrollGateActive, setScrollGateActive] = useState(false);
   const [viewportW, setViewportW] = useState(1024);
   const [lineExtendWidth, setLineExtendWidth] = useState(0);
   const [markTopOffset, setMarkTopOffset] = useState(0);
@@ -83,19 +82,7 @@ export default function UngewissheitSection({
   const titleMeasureRef = useRef<HTMLSpanElement>(null);
   const textColumnRef = useRef<HTMLDivElement>(null);
 
-  useSectionScrollGate(sectionRef, scrollGateActive);
-
-  const preScale = Math.min(1, viewportW / DESIGN_WIDTH);
-  const preMarkW = scalePx(QUESTION_W_BASE, preScale, 24);
-  const horizontalPad = viewportW * 0.06 * 2;
-  const layoutGaps = viewportW * 0.14;
-  const textMaxW = Math.max(
-    80,
-    Math.floor(viewportW - horizontalPad - layoutGaps - preMarkW),
-  );
-  const viewportDescCap = Math.round(
-    viewportW * (DESC_PX_DESIGN / DESIGN_WIDTH),
-  );
+  const viewportDescCap = sectionViewportDescCap(viewportW);
 
   const [bodyFontPx, setBodyFontPx] = useState(() =>
     Math.max(10, Math.min(DESC_PX_DESIGN, viewportDescCap)),
@@ -115,21 +102,12 @@ export default function UngewissheitSection({
         .getPropertyValue("--font-bricolage-grotesque")
         .trim() || "sans-serif";
 
-    setBodyFontPx(
-      fitDescriptionFontSize(
-        textMaxW,
-        viewportDescCap,
-        bricolageFont,
-        UNGEWISSHEIT_BODY_LINES,
-        10,
-        DESC_PX_DESIGN,
-      ),
-    );
-  }, [textMaxW, viewportDescCap]);
+    setBodyFontPx(fitSectionBodyFontPx(viewportW, bricolageFont));
+  }, [viewportW]);
 
-  const contentScale = bodyFontPx / DESC_PX_DESIGN;
-  const titleRestPx = scalePx(SECTION_TITLE_PX_DESIGN, contentScale, 28);
-  const titleLargePx = scalePx(SECTION_TITLE_ENTER_PX_DESIGN, contentScale, 40);
+  const contentScale = sectionContentScale(bodyFontPx);
+  const titleRestPx = sectionTitleRestPx(contentScale);
+  const titleLargePx = sectionTitleLargePx(contentScale);
   const lineWidth = scalePx(LINE_WIDTH_BASE, contentScale, 2);
   const dashLength = scalePx(RISIKO_DASH_LENGTH_BASE, contentScale, 8);
   const dashGap = scalePx(RISIKO_DASH_GAP_BASE, contentScale, 6);
@@ -176,7 +154,6 @@ export default function UngewissheitSection({
 
     hasPlayedRef.current = true;
     isAnimPlayingRef.current = true;
-    setScrollGateActive(true);
     setIsAnimPlaying(true);
   }, [heroIntroComplete, isInView]);
 
@@ -189,7 +166,6 @@ export default function UngewissheitSection({
       isAnimPlayingRef.current = false;
       setIsAnimPlaying(false);
       setHasFinished(true);
-      setScrollGateActive(false);
 
       if (sectionRef.current && markHostRef.current) {
         const width = measureLineExtendWidthLeft(
@@ -256,7 +232,7 @@ export default function UngewissheitSection({
     <section
       ref={sectionRef}
       data-scroll-section="ungewissheit"
-      className="relative w-full overflow-hidden bg-cream px-[6vw] pt-[6vh] pb-[5vh]"
+      className="relative w-full overflow-hidden bg-cream px-[6vw] pt-[6vh] pb-[8vh]"
     >
       <span
         ref={titleMeasureRef}

@@ -42,6 +42,23 @@ export const BRAIN_VIDEO_W_BASE = 480;
 export const BRAIN_VIDEO_H_BASE = 580;
 export const BRAIN_VIDEO_RADIUS_BASE = 28;
 export const BRAIN_VIDEO_BORDER_BASE = 5;
+export const BRAIN_BALL_DROP_BASE = 440;
+export const WAS_HUB_ENTER_DROP_BASE = 440;
+
+export const WAS_ANDERS_TITLE_PX_DESIGN = 72;
+export const WAS_ANDERS_TITLE_ENTER_PX_DESIGN = 132;
+export const WAS_HUB_DOT_SIZE_BASE = 68;
+export const WAS_HUB_RING_SIZE_BASE = 380;
+export const WAS_HUB_RING_STROKE_BASE = 4;
+export const WAS_HUB_RING_DASH_COUNT = 22;
+export const WAS_HUB_GAP_BASE = 48;
+export const WAS_VIDEO_GAP_BASE = 88;
+export const WAS_HUB_BULLET_OFFSET_X_BASE = 300;
+export const WAS_HUB_BULLET_OFFSET_Y_BASE = 72;
+export const WAS_HUB_BULLET_MAX_W_BASE = 420;
+export const WAS_HUB_BULLET_DOT_BASE = 20;
+export const WAS_HUB_COLUMN_GAP_BASE = 136;
+export const WAS_HUB_TEXT_COLUMN_GAP_BASE = 80;
 
 export function scalePx(base: number, scale: number, min = 0): number {
   return Math.max(min, Math.round(base * scale));

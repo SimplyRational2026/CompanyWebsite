@@ -1,8 +1,10 @@
 export const EASE = [0.22, 1, 0.36, 1] as const;
 export const EASE_BOUNCE = [0.34, 1.18, 0.64, 1] as const;
+export const EASE_BRAIN_CLOSE = [0.4, 0, 0.2, 1] as const;
 
 export const D800 = 0.8;
 const D600 = 0.6;
+const D400 = 0.4;
 export const D1000 = 1.0;
 export const DASHED_DUR = D800 * 3.75;
 const LINE_DROP = 2.8;
@@ -43,17 +45,42 @@ export const SECTION_BODY_START = SECTION_TITLE_PHASE;
 export const SECTION_MARK_START = SECTION_BODY_START + SECTION_BODY_ENTER;
 export const SECTION_ANIM_END = SECTION_MARK_START + SECTION_MARK_ENTER;
 
-export const BRAIN_CLOSE_DUR = D1000 * 1.2;
+export const BRAIN_CLOSE_DELAY = D600;
+export const BRAIN_CLOSE_DUR = D1000 * 1.75;
 export const BRAIN_PAUSE = D800 * 1.15;
 export const BRAIN_SHIFT_DUR = D1000 * 1.2;
 export const BRAIN_TEXT_DUR = D1000 * 1.2;
 export const BRAIN_BALL_DUR = D1000 * 1.65;
 export const BRAIN_CROSSFADE_DUR = D1000 * 1.2;
 
-export const BRAIN_SHIFT_START = BRAIN_CLOSE_DUR + BRAIN_PAUSE;
+export const BRAIN_SHIFT_START =
+  BRAIN_CLOSE_DELAY + BRAIN_CLOSE_DUR + BRAIN_PAUSE;
 export const BRAIN_TEXT_START = BRAIN_SHIFT_START;
 export const BRAIN_BALL_START =
   BRAIN_SHIFT_START + BRAIN_SHIFT_DUR + BRAIN_PAUSE;
 export const BRAIN_EXIT_START = BRAIN_BALL_START + BRAIN_BALL_DUR;
 export const BRAIN_VIDEO_START = BRAIN_EXIT_START;
 export const BRAIN_ANIM_END = BRAIN_EXIT_START + BRAIN_CROSSFADE_DUR;
+
+export const WAS_TITLE_ENTER = D1000 * 1.2;
+export const WAS_TITLE_PAUSE = D800;
+export const WAS_TITLE_SHRINK = D800;
+export const WAS_TITLE_PHASE =
+  WAS_TITLE_ENTER + WAS_TITLE_PAUSE + WAS_TITLE_SHRINK;
+
+export const WAS_CIRCLE_ENTER = D1000 * 1.2;
+export const WAS_CIRCLE_GAP = D600;
+export const WAS_CIRCLE_START = WAS_TITLE_PHASE + WAS_CIRCLE_GAP;
+
+export const WAS_SPIN_DUR = D1000;
+export const WAS_TEXT_SLIDE_DUR = D1000;
+export const WAS_REVEAL_DUR = D1000 * 1.6;
+export const WAS_TEXT_GAP = D800 * 0.75;
+export const WAS_TEXT_CYCLE = WAS_REVEAL_DUR + WAS_TEXT_GAP;
+
+export const WAS_HUB_START = WAS_CIRCLE_START + WAS_CIRCLE_ENTER;
+export const WAS_HUB_PHASE = WAS_TEXT_CYCLE * 4;
+
+export const WAS_VIDEO_ENTER = D1000 * 1.2;
+export const WAS_VIDEO_START = WAS_HUB_START + WAS_HUB_PHASE;
+export const WAS_ANIM_END = WAS_VIDEO_START + WAS_VIDEO_ENTER;
