@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 import Hero from "./components/Hero";
 import EntscheidungSection from "./components/EntscheidungSection";
+import EntscheidbarSection from "./components/EntscheidbarSection";
 import RisikoSection from "./components/RisikoSection";
 import UngewissheitSection from "./components/UngewissheitSection";
 import WasAndersSection from "./components/WasAndersSection";
@@ -20,6 +21,7 @@ export default function Home() {
       <UngewissheitSection heroIntroComplete={heroIntroComplete} />
       <EntscheidungSection heroIntroComplete={heroIntroComplete} />
       <WasAndersSection heroIntroComplete={heroIntroComplete} />
+      <EntscheidbarSection heroIntroComplete={heroIntroComplete} />
     </>
   );
 }

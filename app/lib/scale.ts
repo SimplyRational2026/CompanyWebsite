@@ -49,7 +49,6 @@ export const WAS_ANDERS_TITLE_PX_DESIGN = 72;
 export const WAS_ANDERS_TITLE_ENTER_PX_DESIGN = 132;
 export const WAS_HUB_DOT_SIZE_BASE = 68;
 export const WAS_HUB_RING_SIZE_BASE = 380;
-export const WAS_HUB_RING_STROKE_BASE = 4;
 export const WAS_HUB_RING_DASH_COUNT = 30;
 export const WAS_HUB_GAP_BASE = 48;
 export const WAS_VIDEO_GAP_BASE = 88;
@@ -59,6 +58,21 @@ export const WAS_HUB_BULLET_MAX_W_BASE = 420;
 export const WAS_HUB_BULLET_DOT_BASE = 20;
 export const WAS_HUB_COLUMN_GAP_BASE = 152;
 export const WAS_HUB_TEXT_COLUMN_GAP_BASE = 80;
+
+export const ENTSCHEIDBAR_TITLE_PX_DESIGN = 72;
+export const ENTSCHEIDBAR_TITLE_ENTER_PX_DESIGN = 104;
+export const ENT_TREE_BALL_SIZE_BASE = 68;
+export const ENT_TREE_LINE_W_BASE = 6;
+export const ENT_TREE_TITLE_GAP_BASE = 48;
+export const ENT_TREE_H_BRANCH_W_BASE = 280;
+export const ENT_TREE_ICON_SIZE_BASE = 160;
+export const ENT_TREE_BRANCH_GAP_BASE = 156;
+export const ENT_TREE_FIRST_BRANCH_RATIO = 0.42;
+export const ENT_TREE_TEXT_MAX_W_BASE = 380;
+export const ENT_TREE_BRANCH_INNER_GAP_BASE = 24;
+export const ENT_TREE_BULLET_DOT_BASE = 20;
+export const ENT_TREE_SPINE_BOTTOM_BASE = 168;
+export const ENT_TREE_ICON_LINE_NUDGE = 0.05;
 
 export function scalePx(base: number, scale: number, min = 0): number {
   return Math.max(min, Math.round(base * scale));

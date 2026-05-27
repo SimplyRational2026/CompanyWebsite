@@ -54,6 +54,54 @@ const WAS_ANDERS_BULLETS = [
   ],
 ] as const;
 
+const ENTSCHEIDBAR_TITLE_LINES = [
+  "Wir machen Entscheidungen",
+  "entscheidbar",
+] as const;
+
+const ENTSCHEIDBAR_ICON_REF_MAX = 155;
+
+const entIconScale = (viewBoxW: number, viewBoxH: number) =>
+  Math.max(viewBoxW, viewBoxH) / ENTSCHEIDBAR_ICON_REF_MAX;
+
+const ENTSCHEIDBAR_BRANCHES = [
+  {
+    side: "left" as const,
+    text: "Investitionen werden klar entschieden - statt subjektiv",
+    icon: "/icon_1.svg",
+    lineAnchorY: 78.5 / 155,
+    iconVisualScale: entIconScale(155, 155),
+  },
+  {
+    side: "right" as const,
+    text: "Risiken werden klar erkannt und bewertet",
+    icon: "/icon_2.svg",
+    lineAnchorY: 166.339 / 265,
+    iconVisualScale: entIconScale(198, 265),
+  },
+  {
+    side: "left" as const,
+    text: "Strategie wird klar und umsetzbar",
+    icon: "/icon_3.svg",
+    lineAnchorY: 76.7932 / 165,
+    iconVisualScale: entIconScale(141, 165),
+  },
+  {
+    side: "right" as const,
+    text: "Potenziale werden aus Unsicherheit sichtbar",
+    icon: "/icon_4.svg",
+    lineAnchorY: 121.402 / 183,
+    iconVisualScale: entIconScale(140, 183),
+  },
+  {
+    side: "left" as const,
+    text: "Governance wird wirksam",
+    icon: "/icon_5.svg",
+    lineAnchorY: 65.5 / 143,
+    iconVisualScale: entIconScale(143, 143),
+  },
+] as const;
+
 const UNGEWISSHEIT_BODY_LINES = [
   "Wenn Zukunft nicht berechenbar ist, braucht es menschliche",
   "Urteilskraft.",
@@ -232,6 +280,8 @@ export function measureDescriptionHeight(
 export {
   BLACK_TITLE_LINES,
   DESCRIPTION_LINES,
+  ENTSCHEIDBAR_BRANCHES,
+  ENTSCHEIDBAR_TITLE_LINES,
   ENTSCHEIDUNG_HEADLINE_LINES,
   PURPLE_TITLE_LINES,
   RISIKO_BODY_LINES,

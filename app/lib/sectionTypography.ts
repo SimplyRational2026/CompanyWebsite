@@ -17,6 +17,11 @@ import {
   WAS_HUB_BULLET_MAX_W_BASE,
   WAS_HUB_COLUMN_GAP_BASE,
   WAS_HUB_RING_SIZE_BASE,
+  ENT_TREE_BRANCH_GAP_BASE,
+  ENT_TREE_BRANCH_INNER_GAP_BASE,
+  ENT_TREE_H_BRANCH_W_BASE,
+  ENT_TREE_ICON_SIZE_BASE,
+  ENT_TREE_TEXT_MAX_W_BASE,
   scalePx,
 } from "@/app/lib/scale";
 
@@ -130,6 +135,56 @@ export function fitWasHubLayout(
   }
 
   return { ringSize, hubColumnGap, bulletMaxW, hubGridW };
+}
+
+export function fitEntscheidbarTreeLayout(
+  contentScale: number,
+  viewportW: number,
+): {
+  branchLineW: number;
+  iconSize: number;
+  textMaxW: number;
+  branchSpacing: number;
+  branchInnerGap: number;
+  treeStageW: number;
+} {
+  const availableW = sectionAvailableWidth(viewportW);
+  let branchLineW = scalePx(ENT_TREE_H_BRANCH_W_BASE, contentScale, 60);
+  let iconSize = scalePx(ENT_TREE_ICON_SIZE_BASE, contentScale, 40);
+  let textMaxW = scalePx(ENT_TREE_TEXT_MAX_W_BASE, contentScale, 100);
+  let branchSpacing = scalePx(ENT_TREE_BRANCH_GAP_BASE, contentScale, 48);
+  let branchInnerGap = scalePx(ENT_TREE_BRANCH_INNER_GAP_BASE, contentScale, 8);
+
+  const halfTreeW = branchLineW + iconSize + textMaxW + branchInnerGap * 2;
+  const treeStageW = halfTreeW * 2;
+
+  if (treeStageW > availableW) {
+    const shrink = availableW / treeStageW;
+    branchLineW = Math.max(48, Math.round(branchLineW * shrink));
+    iconSize = Math.max(56, Math.round(iconSize * shrink));
+    textMaxW = Math.max(
+      88,
+      Math.floor(
+        (availableW -
+          (branchLineW + iconSize + branchInnerGap * 2) * 2) /
+          2,
+      ),
+    );
+    branchSpacing = Math.max(48, Math.round(branchSpacing * shrink));
+    branchInnerGap = Math.max(6, Math.round(branchInnerGap * shrink));
+  }
+
+  return {
+    branchLineW,
+    iconSize,
+    textMaxW,
+    branchSpacing,
+    branchInnerGap,
+    treeStageW: Math.min(
+      availableW,
+      (branchLineW + iconSize + textMaxW + branchInnerGap * 2) * 2,
+    ),
+  };
 }
 
 export function useSectionContentScale(

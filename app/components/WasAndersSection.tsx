@@ -32,6 +32,7 @@ import {
   BRAIN_VIDEO_H_BASE,
   BRAIN_VIDEO_RADIUS_BASE,
   BRAIN_VIDEO_W_BASE,
+  LINE_WIDTH_BASE,
   scalePx,
   WAS_ANDERS_TITLE_ENTER_PX_DESIGN,
   WAS_ANDERS_TITLE_PX_DESIGN,
@@ -39,7 +40,6 @@ import {
   WAS_HUB_DOT_SIZE_BASE,
   WAS_HUB_GAP_BASE,
   WAS_HUB_RING_DASH_COUNT,
-  WAS_HUB_RING_STROKE_BASE,
   WAS_HUB_TEXT_COLUMN_GAP_BASE,
   WAS_HUB_ENTER_DROP_BASE,
   WAS_VIDEO_GAP_BASE,
@@ -106,7 +106,7 @@ export default function WasAndersSection({
   const bulletFontPx = bodyFontPx;
   const titleHubGap = scalePx(WAS_HUB_GAP_BASE, contentScale, 24);
   const hubDotSize = scalePx(WAS_HUB_DOT_SIZE_BASE, contentScale, 32);
-  const ringStroke = scalePx(WAS_HUB_RING_STROKE_BASE, contentScale, 3);
+  const ringStroke = scalePx(LINE_WIDTH_BASE, contentScale, 2);
   const bulletDotSize = scalePx(WAS_HUB_BULLET_DOT_BASE, contentScale, 10);
   const bulletGap = scalePx(16, contentScale, 8);
   const textColumnGap = scalePx(WAS_HUB_TEXT_COLUMN_GAP_BASE, contentScale, 8);
@@ -332,7 +332,7 @@ export default function WasAndersSection({
                     stroke="var(--purple)"
                     strokeWidth={ringStroke}
                     strokeDasharray={`${ringDashLength} ${ringDashGap}`}
-                    strokeLinecap="round"
+                    strokeLinecap="butt"
                   />
                 </svg>
               </motion.div>
