@@ -74,6 +74,60 @@ export const ENT_TREE_BULLET_DOT_BASE = 20;
 export const ENT_TREE_SPINE_BOTTOM_BASE = 168;
 export const ENT_TREE_ICON_LINE_NUDGE = 0.05;
 
+export const TEAM_TITLE_PX_DESIGN = 72;
+export const TEAM_TITLE_ENTER_PX_DESIGN = 132;
+export const TEAM_MEMBER_GAP_BASE = 20;
+export const TEAM_TITLE_MEMBER_GAP_BASE = 8;
+export const TEAM_MEMBER_FOOTER_GAP_BASE = 88;
+export const TEAM_MEMBER_DOT_SIZE_BASE = 56;
+export const TEAM_MEMBER_PORTRAIT_GAP_BASE = 0;
+export const TEAM_MEMBER_LABEL_GAP_BASE = 10;
+export const TEAM_MEMBER_ROLE_PX_DESIGN = 20;
+export const TEAM_MEMBER_NAME_PX_DESIGN = 30;
+export const TEAM_FOOTER_RING_SIZE_BASE = 272;
+export const TEAM_FOOTER_DOT_SIZE_BASE = 58;
+export const TEAM_FOOTER_LINE_EXTEND_BASE = 420;
+export const TEAM_FOOTER_TEXT_GAP_BASE = 56;
+export const TEAM_FOOTER_RING_DASH_COUNT = 24;
+
+export const RING_DASH_LENGTH_RATIO = 0.58;
+export const RING_DASH_GAP_RATIO = 0.42;
+
+export function getRingDashStyle(
+  ringSize: number,
+  dashCount: number,
+  contentScale: number,
+): {
+  ringStroke: number;
+  ringRadius: number;
+  ringCenter: number;
+  ringCircumference: number;
+  ringDashPeriod: number;
+  ringDashLength: number;
+  ringDashGap: number;
+  ringInnerSize: number;
+} {
+  const ringStroke = scalePx(LINE_WIDTH_BASE, contentScale, 2);
+  const ringCenter = ringSize / 2;
+  const ringRadius = Math.max(0, (ringSize - ringStroke) / 2);
+  const ringCircumference = 2 * Math.PI * ringRadius;
+  const ringDashPeriod = ringCircumference / dashCount;
+
+  const ringDashGap = ringDashPeriod * RING_DASH_GAP_RATIO;
+  const ringDashLength = ringDashPeriod - ringDashGap;
+
+  return {
+    ringStroke,
+    ringRadius,
+    ringCenter,
+    ringCircumference,
+    ringDashPeriod,
+    ringDashLength,
+    ringDashGap,
+    ringInnerSize: Math.max(0, ringSize - ringStroke * 2),
+  };
+}
+
 export function scalePx(base: number, scale: number, min = 0): number {
   return Math.max(min, Math.round(base * scale));
 }

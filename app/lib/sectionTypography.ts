@@ -3,6 +3,7 @@ import {
   fitDescriptionFontSize,
   fitHeadlineFontSize,
   RISIKO_BODY_LINES,
+  TEAM_TITLE_LINES,
   UNGEWISSHEIT_BODY_LINES,
 } from "@/app/lib/fitText";
 import {
@@ -22,6 +23,10 @@ import {
   ENT_TREE_H_BRANCH_W_BASE,
   ENT_TREE_ICON_SIZE_BASE,
   ENT_TREE_TEXT_MAX_W_BASE,
+  TEAM_FOOTER_TEXT_GAP_BASE,
+  TEAM_MEMBER_GAP_BASE,
+  TEAM_TITLE_ENTER_PX_DESIGN,
+  TEAM_TITLE_PX_DESIGN,
   scalePx,
 } from "@/app/lib/scale";
 
@@ -108,6 +113,47 @@ export function sectionAvailableWidth(viewportW: number): number {
   return Math.max(200, Math.floor(viewportW - horizontalPad));
 }
 
+/** Fit rest + enter sizes so all three title lines stay on one row each. */
+export function fitTeamTitleSizes(
+  viewportW: number,
+  fontFamily: string,
+  bodyFontPx: number,
+): { titleRestPx: number; titleLargePx: number } {
+  const contentScale = sectionContentScale(bodyFontPx);
+  const maxWidth = sectionAvailableWidth(viewportW);
+  const restMaxPx = scalePx(TEAM_TITLE_PX_DESIGN, contentScale, 28);
+  const largeMaxPx = scalePx(TEAM_TITLE_ENTER_PX_DESIGN, contentScale, 40);
+  const restViewportCap = Math.round(
+    viewportW * (TEAM_TITLE_PX_DESIGN / DESIGN_WIDTH),
+  );
+  const largeViewportCap = Math.round(
+    viewportW * (TEAM_TITLE_ENTER_PX_DESIGN / DESIGN_WIDTH),
+  );
+
+  const titleRestPx = fitHeadlineFontSize(
+    maxWidth,
+    restViewportCap,
+    fontFamily,
+    TEAM_TITLE_LINES,
+    10,
+    restMaxPx,
+  );
+
+  const titleLargePx = Math.max(
+    titleRestPx,
+    fitHeadlineFontSize(
+      maxWidth,
+      largeViewportCap,
+      fontFamily,
+      TEAM_TITLE_LINES,
+      10,
+      largeMaxPx,
+    ),
+  );
+
+  return { titleRestPx, titleLargePx };
+}
+
 export function fitWasHubLayout(
   contentScale: number,
   viewportW: number,
@@ -185,6 +231,55 @@ export function fitEntscheidbarTreeLayout(
       (branchLineW + iconSize + textMaxW + branchInnerGap * 2) * 2,
     ),
   };
+}
+
+export function fitTeamLayout(
+  contentScale: number,
+  viewportW: number,
+): {
+  memberW: number;
+  memberGap: number;
+  rowW: number;
+} {
+  const availableW = sectionAvailableWidth(viewportW);
+  const memberGap = scalePx(TEAM_MEMBER_GAP_BASE, contentScale, 8);
+  let memberW = Math.floor((availableW - memberGap * 3) / 4);
+  memberW = Math.max(80, memberW);
+  const rowW = memberW * 4 + memberGap * 3;
+
+  return { memberW, memberGap, rowW };
+}
+
+export function fitTeamFooterLayout(
+  rowW: number,
+  ringCenter: number,
+  contentScale: number,
+  textFontPx: number,
+  text: string,
+  fontFamily: string,
+): {
+  lineExtend: number;
+  textGap: number;
+  textWidth: number;
+} {
+  const textGap = scalePx(TEAM_FOOTER_TEXT_GAP_BASE, contentScale, 16);
+
+  let textWidth = text.length * textFontPx * 0.52;
+  if (typeof document !== "undefined") {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      ctx.font = `500 ${textFontPx}px ${fontFamily}, sans-serif`;
+      textWidth = ctx.measureText(text).width;
+    }
+  }
+
+  const lineExtend = Math.max(
+    48,
+    Math.floor(rowW - ringCenter - textGap - textWidth),
+  );
+
+  return { lineExtend, textGap, textWidth };
 }
 
 export function useSectionContentScale(

@@ -59,6 +59,46 @@ const ENTSCHEIDBAR_TITLE_LINES = [
   "entscheidbar",
 ] as const;
 
+const TEAM_TITLE_LINES = [
+  "Ein Team aus international",
+  "renommierten Experten aus",
+  "Wissenschaft und Praxis",
+] as const;
+
+const TEAM_FOOTER_TEXT =
+  "Basierend auf jahrzehntelanger, wissenschaftlicher Arbeit." as const;
+
+const TEAM_MEMBERS = [
+  {
+    image: "/philip_leipold.svg",
+    width: 412,
+    height: 345,
+    role: "Dipl. Psychologe",
+    name: "Philipp Leipold",
+  },
+  {
+    image: "/susanne_jung.svg",
+    width: 411,
+    height: 345,
+    role: "Dipl. Andragogin, M.A.",
+    name: "Susanne Jung",
+  },
+  {
+    image: "/florian_artinger.svg",
+    width: 411,
+    height: 345,
+    role: "Prof. Dr.",
+    name: "Florian Artinger",
+  },
+  {
+    image: "/gerd_gigerenzer.svg",
+    width: 400,
+    height: 345,
+    role: "Prof. Dr.",
+    name: "Gerd Gigerenzer",
+  },
+] as const;
+
 const ENTSCHEIDBAR_ICON_REF_MAX = 155;
 
 const entIconScale = (viewBoxW: number, viewBoxH: number) =>
@@ -285,6 +325,9 @@ export {
   ENTSCHEIDUNG_HEADLINE_LINES,
   PURPLE_TITLE_LINES,
   RISIKO_BODY_LINES,
+  TEAM_FOOTER_TEXT,
+  TEAM_MEMBERS,
+  TEAM_TITLE_LINES,
   UNGEWISSHEIT_BODY_LINES,
   WAS_ANDERS_BULLETS,
   WAS_ANDERS_TITLE,

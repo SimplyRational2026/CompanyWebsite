@@ -5,6 +5,7 @@ import Hero from "./components/Hero";
 import EntscheidungSection from "./components/EntscheidungSection";
 import EntscheidbarSection from "./components/EntscheidbarSection";
 import RisikoSection from "./components/RisikoSection";
+import TeamSection from "./components/TeamSection";
 import UngewissheitSection from "./components/UngewissheitSection";
 import WasAndersSection from "./components/WasAndersSection";
 
@@ -22,6 +23,7 @@ export default function Home() {
       <EntscheidungSection heroIntroComplete={heroIntroComplete} />
       <WasAndersSection heroIntroComplete={heroIntroComplete} />
       <EntscheidbarSection heroIntroComplete={heroIntroComplete} />
+      <TeamSection heroIntroComplete={heroIntroComplete} />
     </>
   );
 }
