@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useState, type RefObject } from "react";
 import {
   fitDescriptionFontSize,
   fitHeadlineFontSize,
+  FOOTER_HEADLINE_LINES,
   RISIKO_BODY_LINES,
   TEAM_TITLE_LINES,
   UNGEWISSHEIT_BODY_LINES,
@@ -15,6 +16,7 @@ import {
   QUESTION_W_BASE,
   SECTION_TITLE_ENTER_PX_DESIGN,
   SECTION_TITLE_PX_DESIGN,
+  TEAM_TITLE_PX_DESIGN,
   WAS_HUB_BULLET_MAX_W_BASE,
   WAS_HUB_COLUMN_GAP_BASE,
   WAS_HUB_RING_SIZE_BASE,
@@ -25,8 +27,6 @@ import {
   ENT_TREE_TEXT_MAX_W_BASE,
   TEAM_FOOTER_TEXT_GAP_BASE,
   TEAM_MEMBER_GAP_BASE,
-  TEAM_TITLE_ENTER_PX_DESIGN,
-  TEAM_TITLE_PX_DESIGN,
   scalePx,
 } from "@/app/lib/scale";
 
@@ -108,50 +108,29 @@ export function fitSectionHeadlineFontPx(
   );
 }
 
-export function sectionAvailableWidth(viewportW: number): number {
-  const horizontalPad = viewportW * 0.06 * 2;
-  return Math.max(200, Math.floor(viewportW - horizontalPad));
-}
+const TEAM_AND_FOOTER_HEADLINE_LINES = [
+  ...TEAM_TITLE_LINES,
+  ...FOOTER_HEADLINE_LINES,
+] as const;
 
-/** Fit rest + enter sizes so all three title lines stay on one row each. */
-export function fitTeamTitleSizes(
+/** Same rest size for Team + contact/footer headlines at every viewport. */
+export function fitTeamAndFooterHeadlineFontPx(
   viewportW: number,
   fontFamily: string,
   bodyFontPx: number,
-): { titleRestPx: number; titleLargePx: number } {
-  const contentScale = sectionContentScale(bodyFontPx);
-  const maxWidth = sectionAvailableWidth(viewportW);
-  const restMaxPx = scalePx(TEAM_TITLE_PX_DESIGN, contentScale, 28);
-  const largeMaxPx = scalePx(TEAM_TITLE_ENTER_PX_DESIGN, contentScale, 40);
-  const restViewportCap = Math.round(
-    viewportW * (TEAM_TITLE_PX_DESIGN / DESIGN_WIDTH),
-  );
-  const largeViewportCap = Math.round(
-    viewportW * (TEAM_TITLE_ENTER_PX_DESIGN / DESIGN_WIDTH),
-  );
-
-  const titleRestPx = fitHeadlineFontSize(
-    maxWidth,
-    restViewportCap,
+): number {
+  return fitSectionHeadlineFontPx(
+    viewportW,
     fontFamily,
-    TEAM_TITLE_LINES,
-    10,
-    restMaxPx,
+    TEAM_AND_FOOTER_HEADLINE_LINES,
+    TEAM_TITLE_PX_DESIGN,
+    bodyFontPx,
   );
+}
 
-  const titleLargePx = Math.max(
-    titleRestPx,
-    fitHeadlineFontSize(
-      maxWidth,
-      largeViewportCap,
-      fontFamily,
-      TEAM_TITLE_LINES,
-      10,
-      largeMaxPx,
-    ),
-  );
-
-  return { titleRestPx, titleLargePx };
+export function sectionAvailableWidth(viewportW: number): number {
+  const horizontalPad = viewportW * 0.06 * 2;
+  return Math.max(200, Math.floor(viewportW - horizontalPad));
 }
 
 export function fitWasHubLayout(

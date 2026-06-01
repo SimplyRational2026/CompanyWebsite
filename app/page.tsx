@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import Hero from "./components/Hero";
 import EntscheidungSection from "./components/EntscheidungSection";
 import EntscheidbarSection from "./components/EntscheidbarSection";
+import FooterSection from "./components/FooterSection";
 import RisikoSection from "./components/RisikoSection";
 import TeamSection from "./components/TeamSection";
 import UngewissheitSection from "./components/UngewissheitSection";
@@ -24,6 +25,7 @@ export default function Home() {
       <WasAndersSection heroIntroComplete={heroIntroComplete} />
       <EntscheidbarSection heroIntroComplete={heroIntroComplete} />
       <TeamSection heroIntroComplete={heroIntroComplete} />
+      <FooterSection />
     </>
   );
 }

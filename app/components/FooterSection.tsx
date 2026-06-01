@@ -1,0 +1,341 @@
+"use client";
+
+import Image from "next/image";
+import { useLayoutEffect, useRef, useState } from "react";
+import { FOOTER_CONTACT, FOOTER_HEADLINE_LINES } from "@/app/lib/fitText";
+import {
+  fitTeamAndFooterHeadlineFontPx,
+  sectionAvailableWidth,
+  useSectionContentScale,
+} from "@/app/lib/sectionTypography";
+import {
+  FOOTER_CONTACT_PX_DESIGN,
+  FOOTER_ARCH_R_BASE,
+  FOOTER_ARCH_CUT_DROP_BASE,
+  FOOTER_ARCH_VISIBLE_RATIO,
+  FOOTER_BAR_H_BASE,
+  FOOTER_BAR_PAD_Y_BASE,
+  FOOTER_FORM_GAP_BASE,
+  FOOTER_FORM_PAD_BASE,
+  FOOTER_FORM_RADIUS_BASE,
+  FOOTER_FORM_TEXTAREA_H_BASE,
+  FOOTER_LOGO_W_BASE,
+  FOOTER_CREAM_BOTTOM_VH,
+  TEAM_TITLE_PX_DESIGN,
+  scalePx,
+} from "@/app/lib/scale";
+
+const TITLE_LINE_HEIGHT = 1.05;
+const CONTACT_LINE_HEIGHT = 1.45;
+
+function ContactDetails({
+  fontPx,
+  variant,
+  showCompany = true,
+  contentScale,
+  compact = false,
+}: {
+  fontPx: number;
+  variant: "light" | "dark";
+  showCompany?: boolean;
+  contentScale: number;
+  compact?: boolean;
+}) {
+  const textClass = variant === "dark" ? "text-ink" : "text-cream";
+  const companyClass =
+    variant === "dark"
+      ? "font-bricolage font-bold text-ink"
+      : "font-bricolage font-bold text-cream";
+  const linkClass = `underline underline-offset-2 ${textClass}`;
+  const emailGap = scalePx(compact ? 6 : 10, contentScale, compact ? 4 : 6);
+  const groupGap = scalePx(compact ? 16 : 28, contentScale, compact ? 8 : 14);
+  const namePhoneGap = scalePx(compact ? 2 : 4, contentScale, 1);
+  const lineHeight = compact ? 1.35 : CONTACT_LINE_HEIGHT;
+
+  return (
+    <div
+      className={`font-bricolage font-medium ${textClass}`}
+      style={{ fontSize: fontPx, lineHeight }}
+    >
+      {showCompany && <p className={companyClass}>{FOOTER_CONTACT.company}</p>}
+
+      <p style={{ marginTop: showCompany ? groupGap : undefined }}>
+        {FOOTER_CONTACT.address}
+      </p>
+
+      <p style={{ marginTop: emailGap }}>
+        <a href={`mailto:${FOOTER_CONTACT.email}`} className={linkClass}>
+          {FOOTER_CONTACT.email}
+        </a>
+      </p>
+
+      {FOOTER_CONTACT.phones.map((phone) => (
+        <div key={phone.name} style={{ marginTop: groupGap }}>
+          <p>{phone.name}</p>
+          <p style={{ marginTop: namePhoneGap }}>
+            <a
+              href={`tel:${phone.number.replace(/\s/g, "")}`}
+              className={linkClass}
+            >
+              {phone.number}
+            </a>
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function PurpleFooterBar({
+  contentW,
+  contentScale,
+  viewportW,
+  contactFontPx,
+  smallFontPx,
+}: {
+  contentW: number;
+  contentScale: number;
+  viewportW: number;
+  contactFontPx: number;
+  smallFontPx: number;
+}) {
+  const archR = Math.min(
+    scalePx(FOOTER_ARCH_R_BASE, contentScale, 340),
+    Math.round(viewportW * 0.55),
+  );
+  const archD = archR * 2;
+  const archVisibleH = Math.round(archR * FOOTER_ARCH_VISIBLE_RATIO);
+  const archCutDrop = scalePx(FOOTER_ARCH_CUT_DROP_BASE, contentScale, 96);
+  const archClipTop = -archVisibleH + archCutDrop;
+  const barPadY = scalePx(FOOTER_BAR_PAD_Y_BASE, contentScale, 16);
+  const barMinH = scalePx(FOOTER_BAR_H_BASE, contentScale, 88);
+  const logoW = scalePx(FOOTER_LOGO_W_BASE, contentScale, 265);
+  const copyrightGap = scalePx(20, contentScale, 14);
+  const copyrightPad = scalePx(14, contentScale, 10);
+
+  return (
+    <footer className="relative overflow-visible text-cream">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 z-0 -translate-x-1/2 overflow-hidden"
+        style={{ top: archClipTop, width: archD, height: archVisibleH }}
+      >
+        <div
+          className="absolute rounded-full bg-purple"
+          style={{ width: archD, height: archD, left: 0, top: 0 }}
+        />
+      </div>
+
+      <div className="relative z-10 bg-purple px-[6vw]">
+        <div
+          className="mx-auto"
+          style={{
+            maxWidth: contentW,
+            paddingTop: barPadY,
+            paddingBottom: barPadY,
+          }}
+        >
+          <div
+            className="relative flex items-center max-lg:flex-col max-lg:items-start max-lg:gap-8"
+            style={{ minHeight: barMinH }}
+          >
+            <ContactDetails
+              fontPx={contactFontPx}
+              variant="light"
+              showCompany
+              contentScale={contentScale}
+              compact
+            />
+
+            <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 max-lg:relative max-lg:left-auto max-lg:top-auto max-lg:mx-auto max-lg:translate-x-0 max-lg:translate-y-0">
+              <Image
+                src="/simply_rational_white_logo.svg"
+                alt="Simply Rational"
+                width={558}
+                height={210}
+                className="h-auto"
+                style={{ width: logoW }}
+              />
+            </div>
+          </div>
+
+          <div
+            className="border-t border-cream/35"
+            style={{
+              marginTop: copyrightGap,
+              paddingTop: copyrightPad,
+              paddingBottom: copyrightPad,
+            }}
+          >
+            <p
+              className="text-center font-bricolage text-cream/90"
+              style={{ fontSize: smallFontPx }}
+            >
+              © 2026 SIMPLY RATIONAL GmbH
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+export default function FooterSection() {
+  const isAnimPlayingRef = useRef(false);
+  const { viewportW, bodyFontPx, contentScale } =
+    useSectionContentScale(isAnimPlayingRef);
+  const [headlinePx, setHeadlinePx] = useState(TEAM_TITLE_PX_DESIGN);
+
+  useLayoutEffect(() => {
+    const serifFont =
+      getComputedStyle(document.documentElement)
+        .getPropertyValue("--font-noto-serif-jp")
+        .trim() || "serif";
+
+    setHeadlinePx(
+      fitTeamAndFooterHeadlineFontPx(viewportW, serifFont, bodyFontPx),
+    );
+  }, [viewportW, bodyFontPx]);
+
+  const contentW = sectionAvailableWidth(viewportW);
+  const formRadius = scalePx(FOOTER_FORM_RADIUS_BASE, contentScale, 16);
+  const formPad = scalePx(FOOTER_FORM_PAD_BASE, contentScale, 24);
+  const formGap = scalePx(FOOTER_FORM_GAP_BASE, contentScale, 12);
+  const textareaH = scalePx(FOOTER_FORM_TEXTAREA_H_BASE, contentScale, 140);
+  const contactFontPx = scalePx(FOOTER_CONTACT_PX_DESIGN, contentScale, 13);
+  const inputFontPx = Math.max(15, Math.round(bodyFontPx * 0.93));
+  const smallFontPx = Math.max(12, Math.round(bodyFontPx * 0.76));
+  const buttonFontPx = Math.max(16, Math.round(bodyFontPx * 1.05));
+  const inputPadY = scalePx(15, contentScale, 10);
+
+  return (
+    <section data-scroll-section="contact-footer" className="relative w-full">
+      <div
+        className="bg-cream px-[6vw] pt-[8vh]"
+        style={{ paddingBottom: `${FOOTER_CREAM_BOTTOM_VH}vh` }}
+      >
+        <h2
+          className="mx-auto w-fit max-w-full text-center font-serif font-extrabold tracking-tight"
+          style={{
+            fontSize: headlinePx,
+            lineHeight: TITLE_LINE_HEIGHT,
+          }}
+        >
+          <span className="block whitespace-nowrap text-ink">
+            {FOOTER_HEADLINE_LINES[0]}
+          </span>
+          <span className="block whitespace-nowrap">
+            <span className="text-ink">und transparente KI - </span>
+            <span className="text-purple">für weiterhin gute</span>
+          </span>
+          <span className="block whitespace-nowrap text-purple">
+            {FOOTER_HEADLINE_LINES[2]}
+          </span>
+        </h2>
+
+        <div
+          className="mx-auto mt-[clamp(2.5rem,6vh,4.5rem)] grid grid-cols-1 items-start gap-[clamp(2rem,4vw,3rem)] lg:grid-cols-2"
+          style={{ maxWidth: contentW }}
+        >
+          <div className="flex justify-start lg:pr-6">
+            <div className="border-l-[5px] border-purple pl-4 sm:pl-5 lg:max-w-[88%]">
+              <ContactDetails
+                fontPx={contactFontPx}
+                variant="dark"
+                showCompany={false}
+                contentScale={contentScale}
+              />
+            </div>
+          </div>
+
+          <div className="w-full min-w-0">
+            <form
+              className="flex w-full flex-col bg-purple shadow-[0_24px_48px_-12px_rgba(102,26,174,0.35)]"
+              style={{
+                borderRadius: formRadius,
+                padding: formPad,
+              }}
+              onSubmit={(event) => event.preventDefault()}
+            >
+            <input
+              type="text"
+              name="name"
+              placeholder="Name"
+              className="w-full rounded-2xl bg-cream px-4 font-bricolage text-ink outline-none placeholder:text-ink/45"
+              style={{ fontSize: inputFontPx, paddingBlock: inputPadY }}
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              className="w-full rounded-2xl bg-cream px-4 font-bricolage text-ink outline-none placeholder:text-ink/45"
+              style={{
+                fontSize: inputFontPx,
+                marginTop: formGap,
+                paddingBlock: inputPadY,
+              }}
+            />
+            <input
+              type="text"
+              name="subject"
+              placeholder="Betreff"
+              className="w-full rounded-2xl bg-cream px-4 font-bricolage text-ink outline-none placeholder:text-ink/45"
+              style={{
+                fontSize: inputFontPx,
+                marginTop: formGap,
+                paddingBlock: inputPadY,
+              }}
+            />
+
+            <textarea
+              name="message"
+              placeholder="Ihre Nachricht"
+              className="resize-none rounded-2xl bg-cream px-4 py-3 font-bricolage text-ink outline-none placeholder:text-ink/45"
+              style={{
+                fontSize: inputFontPx,
+                marginTop: formGap,
+                height: textareaH,
+              }}
+            />
+
+            <label
+              className="flex shrink-0 items-start gap-3 font-bricolage text-cream"
+              style={{ fontSize: smallFontPx, marginTop: formGap }}
+            >
+              <input
+                type="checkbox"
+                name="privacy"
+                className="mt-1 size-4 shrink-0 rounded border-cream bg-white accent-purple"
+              />
+              <span>
+                Mit dem Absenden dieses Formulars akzeptiere ich die Verarbeitung
+                meiner persönlichen Daten gemäß den Datenschutzbestimmungen.
+              </span>
+            </label>
+
+            <button
+              type="submit"
+              className="w-full shrink-0 rounded-2xl bg-white px-6 font-bricolage font-semibold text-purple transition hover:bg-cream"
+              style={{
+                fontSize: buttonFontPx,
+                marginTop: formGap,
+                paddingBlock: inputPadY + 2,
+              }}
+            >
+              Klarheit in Entscheidungen bringen
+            </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <PurpleFooterBar
+        contentW={contentW}
+        contentScale={contentScale}
+        viewportW={viewportW}
+        contactFontPx={contactFontPx}
+        smallFontPx={smallFontPx}
+      />
+    </section>
+  );
+}

@@ -68,6 +68,22 @@ const TEAM_TITLE_LINES = [
 const TEAM_FOOTER_TEXT =
   "Basierend auf jahrzehntelanger, wissenschaftlicher Arbeit." as const;
 
+const FOOTER_HEADLINE_LINES = [
+  "Menschliche Urteilskraft, klare Entscheidungslogik",
+  "und transparente KI - für weiterhin gute",
+  "Entscheidungen",
+] as const;
+
+const FOOTER_CONTACT = {
+  company: "SIMPLY RATIONAL GmbH",
+  address: "Alte Brauerei 14 | 10965 Berlin | Germany",
+  email: "GuteEntscheidung@simplyrational.de",
+  phones: [
+    { name: "Philipp", number: "+49 162 269 026 2" },
+    { name: "Susanne", number: "+49 176 400 566 76" },
+  ],
+} as const;
+
 const TEAM_MEMBERS = [
   {
     image: "/philip_leipold.svg",
@@ -326,6 +342,8 @@ export {
   PURPLE_TITLE_LINES,
   RISIKO_BODY_LINES,
   TEAM_FOOTER_TEXT,
+  FOOTER_CONTACT,
+  FOOTER_HEADLINE_LINES,
   TEAM_MEMBERS,
   TEAM_TITLE_LINES,
   UNGEWISSHEIT_BODY_LINES,

@@ -15,11 +15,11 @@ import {
   TEAM_TITLE_PAUSE,
   TEAM_TITLE_PHASE,
 } from "@/app/lib/anim";
-import { TEAM_FOOTER_TEXT, TEAM_MEMBERS } from "@/app/lib/fitText";
+import { TEAM_FOOTER_TEXT, TEAM_MEMBERS, TEAM_TITLE_LINES } from "@/app/lib/fitText";
 import {
+  fitTeamAndFooterHeadlineFontPx,
   fitTeamFooterLayout,
   fitTeamLayout,
-  fitTeamTitleSizes,
   useSectionContentScale,
 } from "@/app/lib/sectionTypography";
 import {
@@ -29,6 +29,7 @@ import {
   TEAM_FOOTER_RING_DASH_COUNT,
   TEAM_FOOTER_RING_SIZE_BASE,
   TEAM_MEMBER_FOOTER_GAP_BASE,
+  TEAM_TITLE_ENTER_PX_DESIGN,
   TEAM_TITLE_MEMBER_GAP_BASE,
   TEAM_TITLE_PX_DESIGN,
 } from "@/app/lib/scale";
@@ -36,6 +37,7 @@ import { preloadTeamMemberImages } from "@/app/lib/teamEntrance";
 
 const STATIC_TRANSITION = { duration: 0 };
 const FOOTER_TEXT_LINE_HEIGHT = 1.35;
+const TITLE_LINE_HEIGHT = 1.05;
 
 export default function TeamSection({
   heroIntroComplete,
@@ -52,7 +54,6 @@ export default function TeamSection({
   const [isAnimPlaying, setIsAnimPlaying] = useState(false);
   const [hasFinished, setHasFinished] = useState(false);
   const [titleRestPx, setTitleRestPx] = useState(TEAM_TITLE_PX_DESIGN);
-  const [titleLargePx, setTitleLargePx] = useState(TEAM_TITLE_PX_DESIGN * 1.5);
   const [footerRingHovered, setFooterRingHovered] = useState(false);
   const [stageMounted, setStageMounted] = useState(false);
   const [slideOffsetPx, setSlideOffsetPx] = useState(1200);
@@ -70,14 +71,16 @@ export default function TeamSection({
         .getPropertyValue("--font-noto-serif-jp")
         .trim() || "serif";
 
-    const { titleRestPx: restPx, titleLargePx: largePx } = fitTeamTitleSizes(
-      viewportW,
-      serifFont,
-      bodyFontPx,
+    setTitleRestPx(
+      fitTeamAndFooterHeadlineFontPx(viewportW, serifFont, bodyFontPx),
     );
-    setTitleRestPx(restPx);
-    setTitleLargePx(largePx);
   }, [viewportW, bodyFontPx]);
+
+  const titleLargePx = scalePx(
+    TEAM_TITLE_ENTER_PX_DESIGN,
+    contentScale,
+    40,
+  );
   const titleMemberGap = scalePx(TEAM_TITLE_MEMBER_GAP_BASE, contentScale, 4);
   const memberFooterGap = scalePx(
     TEAM_MEMBER_FOOTER_GAP_BASE,
@@ -113,7 +116,7 @@ export default function TeamSection({
   );
 
   const titleBlockH = Math.round(
-    Math.max(titleRestPx, titleLargePx) * 1.05 * 3,
+    Math.max(titleRestPx, titleLargePx) * TITLE_LINE_HEIGHT * 3,
   );
 
   useEffect(() => {
@@ -198,8 +201,8 @@ export default function TeamSection({
           <motion.h2
             className="w-fit text-center font-serif font-extrabold tracking-tight"
             style={{
-              fontSize: titleRestPx,
-              lineHeight: 1.05,
+              fontSize: titleLargePx,
+              lineHeight: TITLE_LINE_HEIGHT,
               transformOrigin: "center center",
               backfaceVisibility: "hidden",
               willChange: entranceActive ? "transform, opacity" : undefined,
