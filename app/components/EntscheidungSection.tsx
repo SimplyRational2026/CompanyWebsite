@@ -20,7 +20,7 @@ import {
   EASE,
   EASE_BRAIN_CLOSE,
 } from "@/app/lib/anim";
-import { ENTSCHEIDUNG_HEADLINE_LINES } from "@/app/lib/fitText";
+import { ENTSCHEIDBAR_TITLE_LINES, ENTSCHEIDUNG_HEADLINE_LINES } from "@/app/lib/fitText";
 import {
   fitSectionHeadlineFontPx,
   sectionAvailableWidth,
@@ -31,7 +31,7 @@ import {
   BRAIN_BALL_DROP_BASE,
   BRAIN_GAP_BASE,
   BRAIN_H_BASE,
-  BRAIN_HEADLINE_PX_DESIGN,
+  ENTSCHEIDBAR_TITLE_PX_DESIGN,
   BRAIN_VIDEO_BORDER_BASE,
   BRAIN_VIDEO_H_BASE,
   BRAIN_VIDEO_RADIUS_BASE,
@@ -41,7 +41,7 @@ import {
   scalePx,
 } from "@/app/lib/scale";
 
-const HEADLINE_LINE_HEIGHT = 1.25;
+const HEADLINE_LINE_HEIGHT = 1.05;
 const STATIC_TRANSITION = { duration: 0 };
 
 export default function EntscheidungSection({
@@ -59,7 +59,7 @@ export default function EntscheidungSection({
   const [hasFinished, setHasFinished] = useState(false);
   const [videoVisible, setVideoVisible] = useState(false);
   const [headlineVisible, setHeadlineVisible] = useState(false);
-  const [headlineFontPx, setHeadlineFontPx] = useState(BRAIN_HEADLINE_PX_DESIGN);
+  const [headlineFontPx, setHeadlineFontPx] = useState(ENTSCHEIDBAR_TITLE_PX_DESIGN);
 
   const { viewportW, bodyFontPx, contentScale } =
     useSectionContentScale(isAnimPlayingRef);
@@ -78,8 +78,8 @@ export default function EntscheidungSection({
       fitSectionHeadlineFontPx(
         viewportW,
         serifFont,
-        ENTSCHEIDUNG_HEADLINE_LINES,
-        BRAIN_HEADLINE_PX_DESIGN,
+        ENTSCHEIDBAR_TITLE_LINES,
+        ENTSCHEIDBAR_TITLE_PX_DESIGN,
         bodyFontPx,
       ),
     );
