@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import { useLayoutEffect, useRef, useState } from "react";
-import { FOOTER_CONTACT, FOOTER_HEADLINE_LINES } from "@/app/lib/fitText";
+import { ENTSCHEIDBAR_TITLE_LINES, FOOTER_CONTACT, FOOTER_HEADLINE_LINES } from "@/app/lib/fitText";
 import {
-  fitTeamAndFooterHeadlineFontPx,
+  fitSectionHeadlineFontPx,
   sectionAvailableWidth,
   useSectionContentScale,
 } from "@/app/lib/sectionTypography";
@@ -20,8 +20,13 @@ import {
   FOOTER_FORM_RADIUS_BASE,
   FOOTER_FORM_TEXTAREA_H_BASE,
   FOOTER_LOGO_W_BASE,
+  FOOTER_LOGO_OFFSET_Y_BASE,
   FOOTER_CREAM_BOTTOM_VH,
-  TEAM_TITLE_PX_DESIGN,
+  ENTSCHEIDBAR_TITLE_PX_DESIGN,
+  NAV_BUTTON_FONT,
+  NAV_BUTTON_PX_X,
+  NAV_BUTTON_PX_Y,
+  NAV_BUTTON_RADIUS,
   scalePx,
 } from "@/app/lib/scale";
 
@@ -110,6 +115,7 @@ function PurpleFooterBar({
   const barPadY = scalePx(FOOTER_BAR_PAD_Y_BASE, contentScale, 16);
   const barMinH = scalePx(FOOTER_BAR_H_BASE, contentScale, 88);
   const logoW = scalePx(FOOTER_LOGO_W_BASE, contentScale, 265);
+  const logoOffsetY = scalePx(FOOTER_LOGO_OFFSET_Y_BASE, contentScale, 32);
   const copyrightGap = scalePx(20, contentScale, 14);
   const copyrightPad = scalePx(14, contentScale, 10);
 
@@ -153,8 +159,8 @@ function PurpleFooterBar({
                 alt="Simply Rational"
                 width={558}
                 height={210}
-                className="h-auto"
-                style={{ width: logoW }}
+                className="h-auto max-lg:mt-0"
+                style={{ width: logoW, marginTop: -logoOffsetY }}
               />
             </div>
           </div>
@@ -184,7 +190,7 @@ export default function FooterSection() {
   const isAnimPlayingRef = useRef(false);
   const { viewportW, bodyFontPx, contentScale } =
     useSectionContentScale(isAnimPlayingRef);
-  const [headlinePx, setHeadlinePx] = useState(TEAM_TITLE_PX_DESIGN);
+  const [headlinePx, setHeadlinePx] = useState(ENTSCHEIDBAR_TITLE_PX_DESIGN);
 
   useLayoutEffect(() => {
     const serifFont =
@@ -193,7 +199,13 @@ export default function FooterSection() {
         .trim() || "serif";
 
     setHeadlinePx(
-      fitTeamAndFooterHeadlineFontPx(viewportW, serifFont, bodyFontPx),
+      fitSectionHeadlineFontPx(
+        viewportW,
+        serifFont,
+        ENTSCHEIDBAR_TITLE_LINES,
+        ENTSCHEIDBAR_TITLE_PX_DESIGN,
+        bodyFontPx,
+      ),
     );
   }, [viewportW, bodyFontPx]);
 
@@ -203,9 +215,11 @@ export default function FooterSection() {
   const formGap = scalePx(FOOTER_FORM_GAP_BASE, contentScale, 12);
   const textareaH = scalePx(FOOTER_FORM_TEXTAREA_H_BASE, contentScale, 140);
   const contactFontPx = scalePx(FOOTER_CONTACT_PX_DESIGN, contentScale, 13);
-  const inputFontPx = Math.max(15, Math.round(bodyFontPx * 0.93));
   const smallFontPx = Math.max(12, Math.round(bodyFontPx * 0.76));
-  const buttonFontPx = Math.max(16, Math.round(bodyFontPx * 1.05));
+  const buttonPaddingX = scalePx(NAV_BUTTON_PX_X, contentScale, 24);
+  const buttonPaddingY = scalePx(NAV_BUTTON_PX_Y, contentScale, 8);
+  const buttonFontPx = scalePx(NAV_BUTTON_FONT, contentScale, 11);
+  const buttonRadius = scalePx(NAV_BUTTON_RADIUS, contentScale, 10);
   const inputPadY = scalePx(15, contentScale, 10);
 
   return (
@@ -262,7 +276,7 @@ export default function FooterSection() {
               name="name"
               placeholder="Name"
               className="w-full rounded-2xl bg-cream px-4 font-bricolage text-ink outline-none placeholder:text-ink/45"
-              style={{ fontSize: inputFontPx, paddingBlock: inputPadY }}
+              style={{ fontSize: contactFontPx, paddingBlock: inputPadY }}
             />
             <input
               type="email"
@@ -270,7 +284,7 @@ export default function FooterSection() {
               placeholder="Email"
               className="w-full rounded-2xl bg-cream px-4 font-bricolage text-ink outline-none placeholder:text-ink/45"
               style={{
-                fontSize: inputFontPx,
+                fontSize: contactFontPx,
                 marginTop: formGap,
                 paddingBlock: inputPadY,
               }}
@@ -281,7 +295,7 @@ export default function FooterSection() {
               placeholder="Betreff"
               className="w-full rounded-2xl bg-cream px-4 font-bricolage text-ink outline-none placeholder:text-ink/45"
               style={{
-                fontSize: inputFontPx,
+                fontSize: contactFontPx,
                 marginTop: formGap,
                 paddingBlock: inputPadY,
               }}
@@ -292,7 +306,7 @@ export default function FooterSection() {
               placeholder="Ihre Nachricht"
               className="resize-none rounded-2xl bg-cream px-4 py-3 font-bricolage text-ink outline-none placeholder:text-ink/45"
               style={{
-                fontSize: inputFontPx,
+                fontSize: contactFontPx,
                 marginTop: formGap,
                 height: textareaH,
               }}
@@ -315,11 +329,13 @@ export default function FooterSection() {
 
             <button
               type="submit"
-              className="w-full shrink-0 rounded-2xl bg-white px-6 font-bricolage font-semibold text-purple transition hover:bg-cream"
+              className="w-full shrink-0 bg-white font-bricolage font-semibold tracking-wide text-purple transition hover:bg-cream"
               style={{
+                paddingInline: buttonPaddingX,
+                paddingBlock: buttonPaddingY,
                 fontSize: buttonFontPx,
+                borderRadius: buttonRadius,
                 marginTop: formGap,
-                paddingBlock: inputPadY + 2,
               }}
             >
               Klarheit in Entscheidungen bringen

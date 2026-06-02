@@ -102,6 +102,7 @@ export const FOOTER_CREAM_BOTTOM_VH = 22;
 export const FOOTER_BAR_H_BASE = 112;
 export const FOOTER_BAR_PAD_Y_BASE = 28;
 export const FOOTER_LOGO_W_BASE = 520;
+export const FOOTER_LOGO_OFFSET_Y_BASE = 64;
 
 export const RING_DASH_LENGTH_RATIO = 0.58;
 export const RING_DASH_GAP_RATIO = 0.42;

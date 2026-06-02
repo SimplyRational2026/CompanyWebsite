@@ -2,9 +2,7 @@ import { useEffect, useLayoutEffect, useState, type RefObject } from "react";
 import {
   fitDescriptionFontSize,
   fitHeadlineFontSize,
-  FOOTER_HEADLINE_LINES,
   RISIKO_BODY_LINES,
-  TEAM_TITLE_LINES,
   UNGEWISSHEIT_BODY_LINES,
 } from "@/app/lib/fitText";
 import {
@@ -16,7 +14,6 @@ import {
   QUESTION_W_BASE,
   SECTION_TITLE_ENTER_PX_DESIGN,
   SECTION_TITLE_PX_DESIGN,
-  TEAM_TITLE_PX_DESIGN,
   WAS_HUB_BULLET_MAX_W_BASE,
   WAS_HUB_COLUMN_GAP_BASE,
   WAS_HUB_RING_SIZE_BASE,
@@ -105,26 +102,6 @@ export function fitSectionHeadlineFontPx(
     lines,
     10,
     scaledPx,
-  );
-}
-
-const TEAM_AND_FOOTER_HEADLINE_LINES = [
-  ...TEAM_TITLE_LINES,
-  ...FOOTER_HEADLINE_LINES,
-] as const;
-
-/** Same rest size for Team + contact/footer headlines at every viewport. */
-export function fitTeamAndFooterHeadlineFontPx(
-  viewportW: number,
-  fontFamily: string,
-  bodyFontPx: number,
-): number {
-  return fitSectionHeadlineFontPx(
-    viewportW,
-    fontFamily,
-    TEAM_AND_FOOTER_HEADLINE_LINES,
-    TEAM_TITLE_PX_DESIGN,
-    bodyFontPx,
   );
 }
 

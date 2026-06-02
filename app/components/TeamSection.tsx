@@ -15,9 +15,13 @@ import {
   TEAM_TITLE_PAUSE,
   TEAM_TITLE_PHASE,
 } from "@/app/lib/anim";
-import { TEAM_FOOTER_TEXT, TEAM_MEMBERS, TEAM_TITLE_LINES } from "@/app/lib/fitText";
 import {
-  fitTeamAndFooterHeadlineFontPx,
+  ENTSCHEIDBAR_TITLE_LINES,
+  TEAM_FOOTER_TEXT,
+  TEAM_MEMBERS,
+} from "@/app/lib/fitText";
+import {
+  fitSectionHeadlineFontPx,
   fitTeamFooterLayout,
   fitTeamLayout,
   useSectionContentScale,
@@ -29,6 +33,7 @@ import {
   TEAM_FOOTER_RING_DASH_COUNT,
   TEAM_FOOTER_RING_SIZE_BASE,
   TEAM_MEMBER_FOOTER_GAP_BASE,
+  ENTSCHEIDBAR_TITLE_PX_DESIGN,
   TEAM_TITLE_ENTER_PX_DESIGN,
   TEAM_TITLE_MEMBER_GAP_BASE,
   TEAM_TITLE_PX_DESIGN,
@@ -72,7 +77,13 @@ export default function TeamSection({
         .trim() || "serif";
 
     setTitleRestPx(
-      fitTeamAndFooterHeadlineFontPx(viewportW, serifFont, bodyFontPx),
+      fitSectionHeadlineFontPx(
+        viewportW,
+        serifFont,
+        ENTSCHEIDBAR_TITLE_LINES,
+        ENTSCHEIDBAR_TITLE_PX_DESIGN,
+        bodyFontPx,
+      ),
     );
   }, [viewportW, bodyFontPx]);
 
