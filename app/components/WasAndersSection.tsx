@@ -6,6 +6,9 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   EASE,
   EASE_BOUNCE,
+  MOBILE_WAS_ANIM_END,
+  MOBILE_WAS_HUB_START,
+  MOBILE_WAS_VIDEO_START,
   WAS_ANIM_END,
   WAS_CIRCLE_ENTER,
   WAS_CIRCLE_START,
@@ -20,8 +23,9 @@ import {
   WAS_VIDEO_ENTER,
   WAS_VIDEO_START,
 } from "@/app/lib/anim";
-import { WAS_ANDERS_BULLETS, WAS_ANDERS_TITLE } from "@/app/lib/fitText";
+import { fitDescriptionFontSize, MOBILE_RISIKO_BODY_LINES, WAS_ANDERS_BULLETS, WAS_ANDERS_TITLE } from "@/app/lib/fitText";
 import {
+  fitMobileHeadlinePx,
   fitSectionHeadlineFontPx,
   fitWasHubLayout,
   sectionAvailableWidth,
@@ -33,6 +37,16 @@ import {
   BRAIN_VIDEO_RADIUS_BASE,
   BRAIN_VIDEO_W_BASE,
   LINE_WIDTH_BASE,
+  MOBILE_BRAIN_VIDEO_BORDER_BASE,
+  MOBILE_BRAIN_VIDEO_H_BASE,
+  MOBILE_BRAIN_VIDEO_RADIUS_BASE,
+  MOBILE_BRAIN_VIDEO_W_BASE,
+  MOBILE_DESC_PX_DESIGN,
+  MOBILE_DESIGN_WIDTH,
+  MOBILE_LINE_WIDTH_BASE,
+  MOBILE_WAS_BULLET_DOT_BASE,
+  MOBILE_WAS_HUB_DOT_SIZE_BASE,
+  MOBILE_WAS_RING_SIZE_BASE,
   scalePx,
   WAS_ANDERS_TITLE_ENTER_PX_DESIGN,
   WAS_ANDERS_TITLE_PX_DESIGN,
@@ -73,9 +87,15 @@ export default function WasAndersSection({
   const [ringRotation, setRingRotation] = useState(0);
   const [videoVisible, setVideoVisible] = useState(false);
   const [titleRestPx, setTitleRestPx] = useState(WAS_ANDERS_TITLE_PX_DESIGN);
+  const [mobileTitlePx, setMobileTitlePx] = useState(36);
+  const [mobileBodyFontPx, setMobileBodyFontPx] = useState(MOBILE_DESC_PX_DESIGN);
 
   const { viewportW, bodyFontPx, contentScale } =
     useSectionContentScale(isAnimPlayingRef);
+
+  const isMobile = viewportW < 1024;
+  const mobileScale = Math.min(1, viewportW / MOBILE_DESIGN_WIDTH);
+  const mobileDescCap = Math.round(MOBILE_DESC_PX_DESIGN * mobileScale);
 
   useLayoutEffect(() => {
     if (isAnimPlayingRef.current) {
@@ -87,16 +107,66 @@ export default function WasAndersSection({
         .getPropertyValue("--font-noto-serif-jp")
         .trim() || "serif";
 
-    setTitleRestPx(
-      fitSectionHeadlineFontPx(
-        viewportW,
-        serifFont,
-        [WAS_ANDERS_TITLE],
-        WAS_ANDERS_TITLE_PX_DESIGN,
-        bodyFontPx,
-      ),
-    );
-  }, [viewportW, bodyFontPx]);
+    if (isMobile) {
+      setMobileTitlePx(
+        fitMobileHeadlinePx(
+          ["Was anders wird mit", "uns"],
+          viewportW,
+          serifFont,
+          48,
+          20,
+        ),
+      );
+
+      const bricolageFont =
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--font-bricolage-grotesque")
+          .trim() || "sans-serif";
+
+      setMobileBodyFontPx(
+        fitDescriptionFontSize(
+          sectionAvailableWidth(viewportW),
+          mobileDescCap,
+          bricolageFont,
+          MOBILE_RISIKO_BODY_LINES,
+          12,
+          mobileDescCap,
+        ),
+      );
+    } else {
+      setTitleRestPx(
+        fitSectionHeadlineFontPx(
+          viewportW,
+          serifFont,
+          [WAS_ANDERS_TITLE],
+          WAS_ANDERS_TITLE_PX_DESIGN,
+          bodyFontPx,
+        ),
+      );
+    }
+  }, [viewportW, bodyFontPx, isMobile, mobileDescCap]);
+
+  // Mobile ring / dot / bullet sizes
+  const mobileRingSize = scalePx(MOBILE_WAS_RING_SIZE_BASE, mobileScale, 80);
+  const mobileRingStroke = scalePx(MOBILE_LINE_WIDTH_BASE, mobileScale, 1);
+  const mobileHubDotSize = scalePx(MOBILE_WAS_HUB_DOT_SIZE_BASE, mobileScale, 12);
+  const mobileBulletDotSize = scalePx(MOBILE_WAS_BULLET_DOT_BASE, mobileScale, 6);
+  const mobileRingRadius = Math.max(0, (mobileRingSize - mobileRingStroke) / 2);
+  const mobileRingCenter = mobileRingSize / 2;
+  const mobileRingCircumference = 2 * Math.PI * mobileRingRadius;
+  const mobileRingSegmentLength = mobileRingCircumference / WAS_HUB_RING_DASH_COUNT;
+  const mobileRingDashLength = mobileRingSegmentLength * 0.58;
+  const mobileRingDashGap = mobileRingSegmentLength * 0.42;
+  const mobileVideoW = Math.min(
+    scalePx(MOBILE_BRAIN_VIDEO_W_BASE, mobileScale, 120),
+    sectionAvailableWidth(viewportW),
+  );
+  const mobileVideoH = scalePx(MOBILE_BRAIN_VIDEO_H_BASE, mobileScale, 140);
+  const mobileVideoRadius = scalePx(MOBILE_BRAIN_VIDEO_RADIUS_BASE, mobileScale, 12);
+  const mobileVideoBorder = scalePx(MOBILE_BRAIN_VIDEO_BORDER_BASE, mobileScale, 3);
+  const mobileVideoGap = scalePx(WAS_VIDEO_GAP_BASE, mobileScale, 32);
+  const mobileBulletGap = scalePx(28, mobileScale, 14);
+  const mobileBulletLineGap = scalePx(WAS_HUB_TEXT_COLUMN_GAP_BASE, mobileScale, 20);
 
   const titleLargePx = scalePx(
     WAS_ANDERS_TITLE_ENTER_PX_DESIGN,
@@ -170,10 +240,14 @@ export default function WasAndersSection({
       return;
     }
 
+    const hubStart = isMobile ? MOBILE_WAS_HUB_START : WAS_HUB_START;
+    const videoStart = isMobile ? MOBILE_WAS_VIDEO_START : WAS_VIDEO_START;
+    const animEnd = isMobile ? MOBILE_WAS_ANIM_END : WAS_ANIM_END;
+
     const revealTimers: number[] = [];
 
     for (let i = 0; i < 4; i++) {
-      const revealAt = (WAS_HUB_START + i * WAS_TEXT_CYCLE) * 1000;
+      const revealAt = (hubStart + i * WAS_TEXT_CYCLE) * 1000;
 
       revealTimers.push(
         window.setTimeout(() => {
@@ -185,7 +259,7 @@ export default function WasAndersSection({
 
     const videoTimer = window.setTimeout(
       () => setVideoVisible(true),
-      WAS_VIDEO_START * 1000,
+      videoStart * 1000,
     );
 
     const endTimer = window.setTimeout(() => {
@@ -194,14 +268,14 @@ export default function WasAndersSection({
       setHasFinished(true);
       setVisibleBullets(4);
       setRingRotation(WAS_RING_SPIN_STEP * 4);
-    }, WAS_ANIM_END * 1000);
+    }, animEnd * 1000);
 
     return () => {
       revealTimers.forEach(window.clearTimeout);
       window.clearTimeout(videoTimer);
       window.clearTimeout(endTimer);
     };
-  }, [isAnimPlaying]);
+  }, [isAnimPlaying, isMobile]);
 
   const titleTimes = [
     0,
@@ -210,7 +284,7 @@ export default function WasAndersSection({
     1,
   ];
 
-  const showHub = isAnimPlaying || hasFinished;
+  const showHub = isAnimPlaying || hasFinished || isMobile;
   const showVideoFrame = videoVisible || hasFinished;
   const hubEnterY = scalePx(WAS_HUB_ENTER_DROP_BASE, contentScale, 120);
   const showTitle = isAnimPlaying || hasFinished;
@@ -221,117 +295,114 @@ export default function WasAndersSection({
     <section
       ref={sectionRef}
       data-scroll-section="was-anders"
-      className="relative w-full overflow-x-hidden bg-cream px-[6vw] pt-[6vh] pb-[8vh]"
+      className="relative w-full overflow-x-hidden bg-cream px-[6vw] pt-[6vh] pb-[8vh] lg:pb-[8vh]"
     >
-      <div
-        className="flex w-full justify-center"
-        style={{ minHeight: titleBlockH }}
-      >
-        {showTitle && (
-          <motion.h2
-            className="w-fit whitespace-nowrap text-center font-serif font-extrabold tracking-tight text-purple"
-            style={{
-              fontSize: titleRestPx,
-              lineHeight: 1.05,
-              transformOrigin: "center center",
-            }}
-            initial={
-              isAnimPlaying && !hasFinished
-                ? { x: "-120vw", opacity: 0, fontSize: titleLargePx }
-                : false
-            }
-            animate={
-              isAnimPlaying && !hasFinished
-                ? {
-                    x: ["-120vw", "0px", "0px", "0px"],
-                    opacity: [0, 1, 1, 1],
-                    fontSize: [
-                      titleLargePx,
-                      titleLargePx,
-                      titleLargePx,
-                      titleRestPx,
-                    ],
-                  }
-                : hasFinished
-                  ? { x: "0px", opacity: 1, fontSize: titleRestPx }
-                  : { x: "-120vw", opacity: 0, fontSize: titleLargePx }
-            }
-            transition={
-              isAnimPlaying && !hasFinished
-                ? {
-                    duration: WAS_TITLE_PHASE,
-                    times: titleTimes,
-                    ease: [EASE, EASE, EASE_BOUNCE, EASE],
-                  }
-                : STATIC_TRANSITION
-            }
-          >
-            {WAS_ANDERS_TITLE}
-          </motion.h2>
-        )}
-      </div>
+      {/* ── MOBILE LAYOUT ─────────────────────────────────────────── */}
+      <div className="flex w-full flex-col lg:hidden">
+        <motion.h2
+          className="w-full text-center font-serif font-extrabold tracking-tight text-purple"
+          style={{ fontSize: mobileTitlePx, lineHeight: 1.05 }}
+          initial={{ x: "-120vw", opacity: 0 }}
+          animate={
+            isAnimPlaying && !hasFinished
+              ? { x: ["-120vw", "0px", "0px"], opacity: [0, 1, 1] }
+              : hasFinished
+                ? { x: "0px", opacity: 1 }
+                : { x: "-120vw", opacity: 0 }
+          }
+          transition={
+            isAnimPlaying && !hasFinished
+              ? {
+                  duration: WAS_TITLE_PHASE,
+                  times: [0, WAS_TITLE_ENTER / WAS_TITLE_PHASE, 1],
+                  ease: [EASE, EASE],
+                }
+              : STATIC_TRANSITION
+          }
+        >
+          {WAS_ANDERS_TITLE}
+        </motion.h2>
 
-      <div className="relative mx-auto flex w-full max-w-[1200px] flex-col items-center">
-        {showHub && (
+        {/* Hub: break out of section's px-[6vw] padding so circle clips at true screen edge */}
+        <div
+          className="relative overflow-hidden"
+          style={{
+            marginTop: scalePx(WAS_HUB_GAP_BASE, mobileScale, 16),
+            marginLeft: -Math.round(viewportW * 0.06),
+            width: viewportW,
+          }}
+        >
+          {/* Bullets — always rendered to lock in height, invisible until revealed */}
           <div
-            className="relative overflow-visible"
+            className="flex flex-col"
             style={{
-              marginTop: titleHubGap,
-              width: hubGridW,
-              height: hubStageH,
+              gap: mobileBulletGap,
+              paddingLeft: Math.round(mobileRingSize / 2) + scalePx(16, mobileScale, 8),
+              paddingRight: Math.round(viewportW * 0.06),
             }}
           >
-            <motion.div
-              layout={false}
-              className="absolute left-1/2 z-10 -translate-x-1/2"
-              style={{
-                top: hubRestTop,
-                width: ringSize,
-                height: ringSize,
-              }}
-              initial={
-                !hubEnteredRef.current && isAnimPlaying && !hasFinished
-                  ? { y: hubEnterY, opacity: 0 }
-                  : false
-              }
-              animate={{ y: 0, opacity: 1 }}
-              transition={
-                !hubEnteredRef.current && isAnimPlaying && !hasFinished
-                  ? {
-                      delay: WAS_CIRCLE_START,
-                      duration: WAS_CIRCLE_ENTER,
-                      ease: EASE,
-                      onComplete: () => {
-                        hubEnteredRef.current = true;
-                      },
-                    }
-                  : STATIC_TRANSITION
-              }
+            {WAS_ANDERS_BULLETS.map((lines, i) => {
+              const revealed = visibleBullets > i || hasFinished;
+              return (
+                <motion.div
+                  key={i}
+                  className="flex items-start text-left"
+                  style={{
+                    gap: scalePx(12, mobileScale, 6),
+                    fontSize: mobileBodyFontPx,
+                    lineHeight: BULLET_LINE_HEIGHT,
+                  }}
+                  initial={{ x: "120vw", opacity: 0 }}
+                  animate={
+                    revealed
+                      ? { x: 0, opacity: 1 }
+                      : { x: "120vw", opacity: 0 }
+                  }
+                  transition={
+                    revealed && (isAnimPlaying || hasFinished)
+                      ? { duration: WAS_REVEAL_DUR, ease: EASE }
+                      : STATIC_TRANSITION
+                  }
+                >
+                  <span
+                    aria-hidden
+                    className="mt-[0.3em] shrink-0 rounded-full bg-purple"
+                    style={{ width: mobileBulletDotSize, height: mobileBulletDotSize }}
+                  />
+                  <p className="font-bricolage font-bold text-ink">
+                    {lines.join(" ")}
+                  </p>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Circle — absolute, vertically centred, half off-screen left; only ring rotates */}
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center">
+            <div
+              className="relative"
+              style={{ marginLeft: -Math.round(mobileRingSize / 2), width: mobileRingSize, height: mobileRingSize }}
             >
               <motion.div
                 aria-hidden
                 className="absolute inset-0"
                 animate={{ rotate: ringRotation }}
-                transition={
-                  isAnimPlaying && !hasFinished
-                    ? { duration: WAS_RING_SPIN_DUR, ease: EASE }
-                    : STATIC_TRANSITION
-                }
+                transition={{ duration: WAS_RING_SPIN_DUR, ease: EASE }}
               >
                 <svg
-                  width={ringSize}
-                  height={ringSize}
-                  viewBox={`0 0 ${ringSize} ${ringSize}`}
+                  width={mobileRingSize}
+                  height={mobileRingSize}
+                  viewBox={`0 0 ${mobileRingSize} ${mobileRingSize}`}
                   className="block"
                 >
                   <circle
-                    cx={ringCenter}
-                    cy={ringCenter}
-                    r={ringRadius}
+                    cx={mobileRingCenter}
+                    cy={mobileRingCenter}
+                    r={mobileRingRadius}
                     fill="none"
                     stroke="var(--purple)"
-                    strokeWidth={ringStroke}
-                    strokeDasharray={`${ringDashLength} ${ringDashGap}`}
+                    strokeWidth={mobileRingStroke}
+                    strokeDasharray={`${mobileRingDashLength} ${mobileRingDashGap}`}
                     strokeLinecap="butt"
                   />
                 </svg>
@@ -339,112 +410,39 @@ export default function WasAndersSection({
               <div
                 aria-hidden
                 className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-purple"
-                style={{ width: hubDotSize, height: hubDotSize }}
+                style={{ width: mobileHubDotSize, height: mobileHubDotSize }}
               />
-            </motion.div>
-
-            {BULLET_SLOTS.map((slot) => {
-              const sideStyle =
-                slot.side === "left"
-                  ? {
-                      right: `calc(50% + ${hubSideOffset}px)`,
-                      width: bulletMaxW,
-                    }
-                  : {
-                      left: `calc(50% + ${hubSideOffset}px)`,
-                      width: bulletMaxW,
-                    };
-
-              return (
-                <div
-                  key={slot.key}
-                  className="absolute flex"
-                  style={{
-                    ...sideStyle,
-                    top: bulletTops[slot.index],
-                    justifyContent: "flex-start",
-                  }}
-                >
-                  {(visibleBullets > slot.index || hasFinished) && (
-                    <motion.div
-                      className="flex items-center text-left"
-                      style={{
-                        gap: bulletGap,
-                        fontSize: bulletFontPx,
-                        lineHeight: BULLET_LINE_HEIGHT,
-                      }}
-                      initial={
-                        isAnimPlaying && !hasFinished
-                          ? {
-                              x: slot.from === "left" ? "-120vw" : "120vw",
-                              opacity: 0,
-                            }
-                          : false
-                      }
-                      animate={{ x: 0, opacity: 1 }}
-                      transition={
-                        isAnimPlaying && !hasFinished
-                          ? { duration: WAS_REVEAL_DUR, ease: EASE }
-                          : STATIC_TRANSITION
-                      }
-                    >
-                      <span
-                        aria-hidden
-                        className="shrink-0 rounded-full bg-purple"
-                        style={{
-                          width: bulletDotSize,
-                          height: bulletDotSize,
-                        }}
-                      />
-                      <p className="font-bricolage font-bold text-ink">
-                        {WAS_ANDERS_BULLETS[slot.index].map((line) => (
-                          <span key={line} className="block whitespace-nowrap">
-                            {line}
-                          </span>
-                        ))}
-                      </p>
-                    </motion.div>
-                  )}
-                </div>
-              );
-            })}
+            </div>
           </div>
-        )}
+        </div>
 
         {showVideoFrame && (
           <motion.div
             layout={false}
             className="overflow-hidden bg-purple-deep"
             style={{
-              marginTop: videoGap,
-              width: videoW,
-              height: videoH,
-              borderRadius: videoRadius,
-              padding: videoBorder,
+              marginTop: mobileVideoGap,
+              width: mobileVideoW,
+              height: mobileVideoH,
+              borderRadius: mobileVideoRadius,
+              padding: mobileVideoBorder,
+              alignSelf: "center",
             }}
-            initial={
-              !videoEnteredRef.current
-                ? { x: "-120vw" }
-                : false
-            }
+            initial={!videoEnteredRef.current ? { x: "-120vw" } : false}
             animate={{ x: 0 }}
             transition={
               !videoEnteredRef.current && isAnimPlaying
                 ? {
                     duration: WAS_VIDEO_ENTER,
                     ease: EASE,
-                    onComplete: () => {
-                      videoEnteredRef.current = true;
-                    },
+                    onComplete: () => { videoEnteredRef.current = true; },
                   }
                 : STATIC_TRANSITION
             }
           >
             <div
               className="relative h-full w-full overflow-hidden bg-cream"
-              style={{
-                borderRadius: Math.max(0, videoRadius - videoBorder),
-              }}
+              style={{ borderRadius: Math.max(0, mobileVideoRadius - mobileVideoBorder) }}
             >
               <Image
                 src="/simply-rational-logo.png"
@@ -462,10 +460,205 @@ export default function WasAndersSection({
             </div>
           </motion.div>
         )}
+      </div>
 
-        {videoReservedH > 0 && !showVideoFrame && (
-          <div aria-hidden style={{ height: videoReservedH }} />
-        )}
+      {/* ── DESKTOP LAYOUT ────────────────────────────────────────── */}
+      <div className="hidden w-full lg:block">
+        <div
+          className="flex w-full justify-center"
+          style={{ minHeight: titleBlockH }}
+        >
+          {showTitle && (
+            <motion.h2
+              className="w-fit whitespace-nowrap text-center font-serif font-extrabold tracking-tight text-purple"
+              style={{
+                fontSize: titleRestPx,
+                lineHeight: 1.05,
+                transformOrigin: "center center",
+              }}
+              initial={
+                isAnimPlaying && !hasFinished
+                  ? { x: "-120vw", opacity: 0, fontSize: titleLargePx }
+                  : false
+              }
+              animate={
+                isAnimPlaying && !hasFinished
+                  ? {
+                      x: ["-120vw", "0px", "0px", "0px"],
+                      opacity: [0, 1, 1, 1],
+                      fontSize: [titleLargePx, titleLargePx, titleLargePx, titleRestPx],
+                    }
+                  : hasFinished
+                    ? { x: "0px", opacity: 1, fontSize: titleRestPx }
+                    : { x: "-120vw", opacity: 0, fontSize: titleLargePx }
+              }
+              transition={
+                isAnimPlaying && !hasFinished
+                  ? {
+                      duration: WAS_TITLE_PHASE,
+                      times: titleTimes,
+                      ease: [EASE, EASE, EASE_BOUNCE, EASE],
+                    }
+                  : STATIC_TRANSITION
+              }
+            >
+              {WAS_ANDERS_TITLE}
+            </motion.h2>
+          )}
+        </div>
+
+        <div className="relative mx-auto flex w-full max-w-[1200px] flex-col items-center">
+          {showHub && (
+            <div
+              className="relative overflow-visible"
+              style={{ marginTop: titleHubGap, width: hubGridW, height: hubStageH }}
+            >
+              <motion.div
+                layout={false}
+                className="absolute left-1/2 z-10 -translate-x-1/2"
+                style={{ top: hubRestTop, width: ringSize, height: ringSize }}
+                initial={
+                  !hubEnteredRef.current && isAnimPlaying && !hasFinished
+                    ? { y: hubEnterY, opacity: 0 }
+                    : false
+                }
+                animate={{ y: 0, opacity: 1 }}
+                transition={
+                  !hubEnteredRef.current && isAnimPlaying && !hasFinished
+                    ? {
+                        delay: WAS_CIRCLE_START,
+                        duration: WAS_CIRCLE_ENTER,
+                        ease: EASE,
+                        onComplete: () => { hubEnteredRef.current = true; },
+                      }
+                    : STATIC_TRANSITION
+                }
+              >
+                <motion.div
+                  aria-hidden
+                  className="absolute inset-0"
+                  animate={{ rotate: ringRotation }}
+                  transition={
+                    isAnimPlaying && !hasFinished
+                      ? { duration: WAS_RING_SPIN_DUR, ease: EASE }
+                      : STATIC_TRANSITION
+                  }
+                >
+                  <svg
+                    width={ringSize}
+                    height={ringSize}
+                    viewBox={`0 0 ${ringSize} ${ringSize}`}
+                    className="block"
+                  >
+                    <circle
+                      cx={ringCenter}
+                      cy={ringCenter}
+                      r={ringRadius}
+                      fill="none"
+                      stroke="var(--purple)"
+                      strokeWidth={ringStroke}
+                      strokeDasharray={`${ringDashLength} ${ringDashGap}`}
+                      strokeLinecap="butt"
+                    />
+                  </svg>
+                </motion.div>
+                <div
+                  aria-hidden
+                  className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-purple"
+                  style={{ width: hubDotSize, height: hubDotSize }}
+                />
+              </motion.div>
+
+              {BULLET_SLOTS.map((slot) => {
+                const sideStyle =
+                  slot.side === "left"
+                    ? { right: `calc(50% + ${hubSideOffset}px)`, width: bulletMaxW }
+                    : { left: `calc(50% + ${hubSideOffset}px)`, width: bulletMaxW };
+
+                return (
+                  <div
+                    key={slot.key}
+                    className="absolute flex"
+                    style={{ ...sideStyle, top: bulletTops[slot.index], justifyContent: "flex-start" }}
+                  >
+                    {(visibleBullets > slot.index || hasFinished) && (
+                      <motion.div
+                        className="flex items-center text-left"
+                        style={{ gap: bulletGap, fontSize: bulletFontPx, lineHeight: BULLET_LINE_HEIGHT }}
+                        initial={
+                          isAnimPlaying && !hasFinished
+                            ? { x: slot.from === "left" ? "-120vw" : "120vw", opacity: 0 }
+                            : false
+                        }
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={
+                          isAnimPlaying && !hasFinished
+                            ? { duration: WAS_REVEAL_DUR, ease: EASE }
+                            : STATIC_TRANSITION
+                        }
+                      >
+                        <span
+                          aria-hidden
+                          className="shrink-0 rounded-full bg-purple"
+                          style={{ width: bulletDotSize, height: bulletDotSize }}
+                        />
+                        <p className="font-bricolage font-bold text-ink">
+                          {WAS_ANDERS_BULLETS[slot.index].map((line) => (
+                            <span key={line} className="block whitespace-nowrap">
+                              {line}
+                            </span>
+                          ))}
+                        </p>
+                      </motion.div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {showVideoFrame && (
+            <motion.div
+              layout={false}
+              className="overflow-hidden bg-purple-deep"
+              style={{ marginTop: videoGap, width: videoW, height: videoH, borderRadius: videoRadius, padding: videoBorder }}
+              initial={!videoEnteredRef.current ? { x: "-120vw" } : false}
+              animate={{ x: 0 }}
+              transition={
+                !videoEnteredRef.current && isAnimPlaying
+                  ? {
+                      duration: WAS_VIDEO_ENTER,
+                      ease: EASE,
+                      onComplete: () => { videoEnteredRef.current = true; },
+                    }
+                  : STATIC_TRANSITION
+              }
+            >
+              <div
+                className="relative h-full w-full overflow-hidden bg-cream"
+                style={{ borderRadius: Math.max(0, videoRadius - videoBorder) }}
+              >
+                <Image
+                  src="/simply-rational-logo.png"
+                  alt=""
+                  width={1024}
+                  height={512}
+                  className="h-full w-full object-cover opacity-30"
+                  aria-hidden
+                />
+                <div
+                  aria-hidden
+                  className="absolute inset-x-0 bottom-0 bg-linear-to-t from-purple/80 to-transparent"
+                  style={{ height: "45%" }}
+                />
+              </div>
+            </motion.div>
+          )}
+
+          {videoReservedH > 0 && !showVideoFrame && (
+            <div aria-hidden style={{ height: videoReservedH }} />
+          )}
+        </div>
       </div>
     </section>
   );

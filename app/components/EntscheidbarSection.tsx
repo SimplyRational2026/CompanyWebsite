@@ -28,9 +28,12 @@ import {
 } from "@/app/lib/fitText";
 import {
   fitEntscheidbarTreeLayout,
+  fitMobileHeadlinePx,
   fitSectionHeadlineFontPx,
+  sectionAvailableWidth,
   useSectionContentScale,
 } from "@/app/lib/sectionTypography";
+import { fitDescriptionFontSize, MOBILE_RISIKO_BODY_LINES } from "@/app/lib/fitText";
 import {
   ENTSCHEIDBAR_TITLE_ENTER_PX_DESIGN,
   ENTSCHEIDBAR_TITLE_PX_DESIGN,
@@ -42,6 +45,17 @@ import {
   ENT_TREE_FIRST_BRANCH_RATIO,
   ENT_TREE_SPINE_BOTTOM_BASE,
   ENT_TREE_TITLE_GAP_BASE,
+  MOBILE_DESC_PX_DESIGN,
+  MOBILE_DESIGN_WIDTH,
+  MOBILE_ENT_BALL_SIZE_BASE,
+  MOBILE_ENT_ICON_SIZE_BASE,
+  MOBILE_ENT_BRANCH_LINE_W_BASE,
+  MOBILE_ENT_BRANCH_GAP_BASE,
+  MOBILE_ENT_BRANCH_INNER_GAP_BASE,
+  MOBILE_ENT_BULLET_DOT_BASE,
+  MOBILE_ENT_SPINE_X_BASE,
+  MOBILE_ENT_SPINE_BOTTOM_BASE,
+  MOBILE_LINE_WIDTH_BASE,
   scalePx,
 } from "@/app/lib/scale";
 
@@ -67,11 +81,18 @@ export default function EntscheidbarSection({
   const [titleShrinking, setTitleShrinking] = useState(false);
   const [visibleBranches, setVisibleBranches] = useState(0);
   const [ballY, setBallY] = useState(0);
+  const [mobileBallY, setMobileBallY] = useState(0);
   const [ballCanMove, setBallCanMove] = useState(false);
   const [titleRestPx, setTitleRestPx] = useState(ENTSCHEIDBAR_TITLE_PX_DESIGN);
+  const [mobileTitlePx, setMobileTitlePx] = useState(36);
+  const [mobileBodyFontPx, setMobileBodyFontPx] = useState(MOBILE_DESC_PX_DESIGN);
 
   const { viewportW, bodyFontPx, contentScale } =
     useSectionContentScale(isAnimPlayingRef);
+
+  const isMobile = viewportW < 1024;
+  const mobileScale = Math.min(1, viewportW / MOBILE_DESIGN_WIDTH);
+  const mobileDescCap = Math.round(MOBILE_DESC_PX_DESIGN * mobileScale);
 
   useLayoutEffect(() => {
     if (isAnimPlayingRef.current) {
@@ -83,16 +104,44 @@ export default function EntscheidbarSection({
         .getPropertyValue("--font-noto-serif-jp")
         .trim() || "serif";
 
-    setTitleRestPx(
-      fitSectionHeadlineFontPx(
-        viewportW,
-        serifFont,
-        ENTSCHEIDBAR_TITLE_LINES,
-        ENTSCHEIDBAR_TITLE_PX_DESIGN,
-        bodyFontPx,
-      ),
-    );
-  }, [viewportW, bodyFontPx]);
+    if (isMobile) {
+      setMobileTitlePx(
+        fitMobileHeadlinePx(
+          ["Wir machen", "Entscheidungen", "entscheidbar"],
+          viewportW,
+          serifFont,
+          48,
+          20,
+        ),
+      );
+
+      const bricolageFont =
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--font-bricolage-grotesque")
+          .trim() || "sans-serif";
+
+      setMobileBodyFontPx(
+        fitDescriptionFontSize(
+          sectionAvailableWidth(viewportW),
+          mobileDescCap,
+          bricolageFont,
+          MOBILE_RISIKO_BODY_LINES,
+          12,
+          mobileDescCap,
+        ),
+      );
+    } else {
+      setTitleRestPx(
+        fitSectionHeadlineFontPx(
+          viewportW,
+          serifFont,
+          ENTSCHEIDBAR_TITLE_LINES,
+          ENTSCHEIDBAR_TITLE_PX_DESIGN,
+          bodyFontPx,
+        ),
+      );
+    }
+  }, [viewportW, bodyFontPx, isMobile, mobileDescCap]);
 
   const titleLargePx = scalePx(
     ENTSCHEIDBAR_TITLE_ENTER_PX_DESIGN,
@@ -138,6 +187,29 @@ export default function EntscheidbarSection({
   const spineBodyHeight = spineHeight - ballSize / 2;
   const treeStageH = spineHeight + ballSize;
   const horizLineLength = Math.ceil(viewportW * 0.58);
+
+  // Mobile tree layout
+  const mBallSize = scalePx(MOBILE_ENT_BALL_SIZE_BASE, mobileScale, 12);
+  const mLineW = scalePx(MOBILE_LINE_WIDTH_BASE, mobileScale, 1);
+  const mIconSize = scalePx(MOBILE_ENT_ICON_SIZE_BASE, mobileScale, 28);
+  const mBranchLineW = scalePx(MOBILE_ENT_BRANCH_LINE_W_BASE, mobileScale, 10);
+  const mBranchGap = scalePx(MOBILE_ENT_BRANCH_GAP_BASE, mobileScale, 64);
+  const mInnerGap = scalePx(MOBILE_ENT_BRANCH_INNER_GAP_BASE, mobileScale, 6);
+  const mBulletDot = scalePx(MOBILE_ENT_BULLET_DOT_BASE, mobileScale, 6);
+  const mSpineX = scalePx(MOBILE_ENT_SPINE_X_BASE, mobileScale, 14);
+  const mSpineBottom = scalePx(MOBILE_ENT_SPINE_BOTTOM_BASE, mobileScale, 52);
+  const mFirstBranchTop = Math.round(mBranchGap * ENT_TREE_FIRST_BRANCH_RATIO);
+  const mBranchTops = ENTSCHEIDBAR_BRANCHES.map((_, i) =>
+    i === 0 ? mFirstBranchTop : mFirstBranchTop + mBranchGap * i,
+  );
+  const mBallTargets = [
+    ...mBranchTops,
+    mBranchGap * ENTSCHEIDBAR_BRANCHES.length + mSpineBottom,
+  ];
+  const mSpineHeight = mBallTargets[mBallTargets.length - 1] + mBallSize / 2;
+  const mSpineBodyHeight = mSpineHeight - mBallSize / 2;
+  const mTreeStageH = mSpineHeight + mBallSize;
+  const mHorizLineLength = Math.ceil(viewportW * 0.55);
 
   const titleBlockH = Math.round(
     Math.max(titleRestPx, titleLargePx) * TITLE_LINE_HEIGHT * 2,
@@ -188,6 +260,7 @@ export default function EntscheidbarSection({
             setBallCanMove(true);
           }
           setBallY(ballTargets[i]);
+          setMobileBallY(mBallTargets[i]);
           setVisibleBranches(i + 1);
         }, moveAt),
       );
@@ -196,6 +269,7 @@ export default function EntscheidbarSection({
     timers.push(
       window.setTimeout(() => {
         setBallY(ballTargets[ballTargets.length - 1]);
+        setMobileBallY(mBallTargets[mBallTargets.length - 1]);
       }, ENT_BALL_DESCENT_START * 1000),
     );
 
@@ -206,6 +280,7 @@ export default function EntscheidbarSection({
         setHasFinished(true);
         setVisibleBranches(ENTSCHEIDBAR_BRANCHES.length);
         setBallY(ballTargets[ballTargets.length - 1]);
+        setMobileBallY(mBallTargets[mBallTargets.length - 1]);
         setBallCanMove(true);
         setHorizLineRetracted(true);
         setTitleShrinking(true);
@@ -228,6 +303,118 @@ export default function EntscheidbarSection({
       data-scroll-section="entscheidbar"
       className="relative w-full overflow-x-hidden bg-cream px-[6vw] pt-[6vh] pb-[8vh]"
     >
+      {/* ── MOBILE LAYOUT ─────────────────────────────────────────── */}
+      <div className="flex w-full flex-col lg:hidden">
+        {/* Title — wraps naturally */}
+        <motion.h2
+          className="w-full text-center font-serif font-extrabold tracking-tight"
+          style={{ fontSize: mobileTitlePx, lineHeight: TITLE_LINE_HEIGHT }}
+          initial={{ x: "-120vw", opacity: 0 }}
+          animate={
+            isAnimPlaying && !hasFinished
+              ? { x: 0, opacity: 1 }
+              : hasFinished
+                ? { x: 0, opacity: 1 }
+                : { x: "-120vw", opacity: 0 }
+          }
+          transition={
+            isAnimPlaying && !hasFinished
+              ? { duration: ENT_BALL_ENTER, ease: EASE }
+              : STATIC_TRANSITION
+          }
+        >
+          <span className="block text-ink">{ENTSCHEIDBAR_TITLE_LINES[0]}</span>
+          <span className="block text-purple">{ENTSCHEIDBAR_TITLE_LINES[1]}</span>
+        </motion.h2>
+
+        {/* Tree — spine left, all branches right */}
+        <div
+          className="relative w-full"
+          style={{ marginTop: scalePx(ENT_TREE_TITLE_GAP_BASE, mobileScale, 16), height: mTreeStageH }}
+        >
+          {/* Spine */}
+          {spineVisible && (
+            <motion.div
+              aria-hidden
+              className="absolute bg-purple"
+              style={{ left: mSpineX - mLineW / 2, top: mBallSize / 2, width: mLineW, transformOrigin: "top center" }}
+              initial={isAnimPlaying && !hasFinished ? { height: 0 } : false}
+              animate={{ height: mSpineBodyHeight }}
+              transition={isAnimPlaying && !hasFinished ? { duration: ENT_SPINE_GROW, ease: EASE } : STATIC_TRANSITION}
+            />
+          )}
+
+          {/* Ball — enters from right, then descends */}
+          <motion.div
+            aria-hidden
+            className="absolute z-20"
+            style={{ top: 0, left: mSpineX - mBallSize / 2, marginTop: -mBallSize / 2 }}
+            initial={isAnimPlaying && !hasFinished ? { x: "120vw", y: 0 } : false}
+            animate={{ x: 0, y: ballCanMove || hasFinished ? mobileBallY : 0 }}
+            transition={
+              isAnimPlaying && !hasFinished
+                ? {
+                    x: { duration: ENT_BALL_ENTER, ease: EASE },
+                    ...(ballCanMove ? { y: { duration: ENT_BALL_MOVE, ease: EASE } } : {}),
+                  }
+                : STATIC_TRANSITION
+            }
+          >
+            <div className="flex items-center">
+              <div className="shrink-0 rounded-full bg-purple" style={{ width: mBallSize, height: mBallSize }} />
+              {!showSpine && !hasFinished && (
+                <motion.div
+                  className="shrink-0 bg-purple"
+                  style={{ height: mLineW, width: mHorizLineLength, transformOrigin: "left center" }}
+                  initial={{ scaleX: 1 }}
+                  animate={{ scaleX: horizLineRetracted ? 0 : 1 }}
+                  transition={isAnimPlaying && horizLineRetracted ? { duration: ENT_LINE_RETRACT, ease: EASE } : STATIC_TRANSITION}
+                />
+              )}
+            </div>
+          </motion.div>
+
+          {/* Branches — all on right, all enter from right */}
+          {ENTSCHEIDBAR_BRANCHES.map((branch, index) => (
+            <div
+              key={branch.icon}
+              className="absolute flex items-center"
+              style={{ left: mSpineX, top: mBranchTops[index], transform: "translateY(-50%)" }}
+            >
+              {(visibleBranches > index || hasFinished) && (
+                <motion.div
+                  className="flex items-center"
+                  initial={isAnimPlaying && !hasFinished ? { x: "120vw", opacity: 0 } : false}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={isAnimPlaying && !hasFinished ? { duration: ENT_BRANCH_REVEAL, ease: EASE } : STATIC_TRANSITION}
+                >
+                  <div aria-hidden className="shrink-0 bg-purple" style={{ width: mBranchLineW + Math.round(mIconSize / 2), height: mLineW }} />
+                  <div className="relative shrink-0 overflow-visible" style={{ width: mIconSize, height: mIconSize, marginLeft: -Math.round(mIconSize / 2), transform: `translateY(${Math.round((0.5 - branch.lineAnchorY) * mIconSize)}px)` }}>
+                    <Image
+                      src={branch.icon}
+                      alt=""
+                      fill
+                      sizes={`${mIconSize}px`}
+                      className="object-contain"
+                      style={{ transform: `scale(${branch.iconVisualScale})`, transformOrigin: "center center" }}
+                      aria-hidden
+                    />
+                  </div>
+                  <div className="flex items-center" style={{ gap: mInnerGap, marginLeft: mInnerGap }}>
+                    <span aria-hidden className="shrink-0 rounded-full bg-purple" style={{ width: mBulletDot, height: mBulletDot }} />
+                    <p className="font-bricolage font-bold text-ink" style={{ fontSize: mobileBodyFontPx, lineHeight: BRANCH_TEXT_LINE_HEIGHT }}>
+                      {branch.text}
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── DESKTOP LAYOUT ────────────────────────────────────────── */}
+      <div className="hidden w-full lg:block">
       <div
         className="flex w-full justify-center"
         style={{ minHeight: titleBlockH }}
@@ -481,6 +668,7 @@ export default function EntscheidbarSection({
           }}
         />
       )}
+      </div>{/* end desktop wrapper */}
     </section>
   );
 }

@@ -8,9 +8,11 @@ import {
   DASHED_DUR,
   EASE,
   EASE_BOUNCE,
+  INTRO_END,
   LINE_PHASE_DROP,
   LINE_PHASE_TO_NAV,
-  INTRO_END,
+  MOBILE_INTRO_END,
+  MOBILE_STEPS,
   STEPS,
 } from "@/app/lib/anim";
 import {
@@ -19,6 +21,8 @@ import {
   fitDescriptionFontSize,
   fitTitleFontSize,
   measureDescriptionHeight,
+  MOBILE_DESCRIPTION_LINES,
+  MOBILE_PURPLE_TITLE_LINES,
   PURPLE_TITLE_LINES,
 } from "@/app/lib/fitText";
 import {
@@ -32,6 +36,16 @@ import {
   DESIGN_WIDTH,
   INTRO_LOGO_W_BASE,
   LINE_WIDTH_BASE,
+  MOBILE_DASH_GAP_BASE,
+  MOBILE_DASH_LENGTH_BASE,
+  MOBILE_BALL_SIZE_BASE,
+  MOBILE_DESC_BALL_GAP_BASE,
+  MOBILE_DESC_LINE_HEIGHT,
+  MOBILE_DESC_PX_DESIGN,
+  MOBILE_FINAL_LINE_W_BASE,
+  MOBILE_LINE_WIDTH_BASE,
+  MOBILE_DESIGN_WIDTH,
+  MOBILE_TITLE_PX_DESIGN,
   NAV_HEIGHT_BASE,
   scalePx,
   TITLE_DIVERGE_BLACK_BASE,
@@ -40,6 +54,7 @@ import {
 } from "@/app/lib/scale";
 import { useIntroScrollLock } from "@/app/lib/scrollLock";
 import Nav from "./Nav";
+import HeroMobile from "./HeroMobile";
 
 const STATIC_TRANSITION = { duration: 0 };
 
@@ -69,13 +84,18 @@ export default function Hero({ onIntroComplete }: HeroProps) {
       return;
     }
 
+    const mobile = window.innerWidth < DESIGN_WIDTH;
+    const navRevealDelay = mobile
+      ? MOBILE_STEPS.navReveal.delay
+      : STEPS.navReveal.delay;
+
     const t1 = window.setTimeout(
       () => setLogoInNav(true),
       STEPS.logoToNav.delay * 1000,
     );
     const t2 = window.setTimeout(
       () => setShowNavExtras(true),
-      STEPS.navReveal.delay * 1000,
+      navRevealDelay * 1000,
     );
 
     const updateSize = () => {
@@ -99,33 +119,49 @@ export default function Hero({ onIntroComplete }: HeroProps) {
       return;
     }
 
+    const mobile = window.innerWidth < DESIGN_WIDTH;
+    const introEnd = mobile ? MOBILE_INTRO_END : INTRO_END;
+
     const t = window.setTimeout(() => {
       isIntroPlayingRef.current = false;
       setIsIntroPlaying(false);
       setLogoInNav(true);
       setShowNavExtras(true);
       onIntroComplete?.();
-    }, INTRO_END * 1000);
+    }, introEnd * 1000);
 
     return () => window.clearTimeout(t);
   }, [isLayoutReady, onIntroComplete]);
 
   const preScale = Math.min(1, viewportW / DESIGN_WIDTH);
   const preBallColW = scalePx(BALL_COL_W_BASE, preScale, 40);
+  const isMobile = viewportW < DESIGN_WIDTH;
+  const mobileScale = Math.min(1, viewportW / MOBILE_DESIGN_WIDTH);
 
   const horizontalPad = viewportW * 0.06;
   const gapBetweenCols = viewportW * 0.02 * 2;
-  const titleMaxW = Math.max(
-    80,
-    Math.floor((viewportW - horizontalPad - preBallColW - gapBetweenCols) / 2),
-  );
+  const titleMaxW = isMobile
+    ? Math.max(80, Math.floor(viewportW - horizontalPad * 2))
+    : Math.max(
+        80,
+        Math.floor(
+          (viewportW - horizontalPad - preBallColW - gapBetweenCols) / 2,
+        ),
+      );
 
   const viewportTitleCap = Math.round(
-    viewportW * (TITLE_PX_DESIGN / DESIGN_WIDTH),
+    (isMobile ? MOBILE_TITLE_PX_DESIGN : TITLE_PX_DESIGN) *
+      (isMobile ? mobileScale : Math.min(1, viewportW / DESIGN_WIDTH)),
   );
-  const viewportDescCap = Math.round(
-    viewportW * (DESC_PX_DESIGN / DESIGN_WIDTH),
-  );
+  const viewportDescCap = isMobile
+    ? Math.round(MOBILE_DESC_PX_DESIGN * mobileScale)
+    : Math.round(
+        viewportW *
+          (DESC_PX_DESIGN / DESIGN_WIDTH) *
+          Math.min(1, viewportW / DESIGN_WIDTH),
+      );
+  const titleDesignPx = isMobile ? MOBILE_TITLE_PX_DESIGN : TITLE_PX_DESIGN;
+  const descDesignPx = isMobile ? MOBILE_DESC_PX_DESIGN : DESC_PX_DESIGN;
   const [titleFontPx, setTitleFontPx] = useState(() =>
     Math.max(10, Math.min(TITLE_PX_DESIGN, viewportTitleCap)),
   );
@@ -140,34 +176,73 @@ export default function Hero({ onIntroComplete }: HeroProps) {
         .trim() || "serif";
 
     setTitleFontPx(
-      fitTitleFontSize(titleMaxW, viewportTitleCap, fontFamily, 10, TITLE_PX_DESIGN),
+      fitTitleFontSize(
+        titleMaxW,
+        viewportTitleCap,
+        fontFamily,
+        isMobile ? 30 : 10,
+        titleDesignPx,
+      ),
     );
 
     const bricolageFont =
       getComputedStyle(document.documentElement)
         .getPropertyValue("--font-bricolage-grotesque")
         .trim() || "sans-serif";
-    const descContentWidth = Math.max(40, titleMaxW);
+    const descContentWidth = isMobile
+      ? Math.max(
+          40,
+          viewportW -
+            scalePx(MOBILE_FINAL_LINE_W_BASE, mobileScale, 36) -
+            scalePx(MOBILE_BALL_SIZE_BASE, mobileScale, 24) -
+            scalePx(MOBILE_DESC_BALL_GAP_BASE, mobileScale, 8) -
+            viewportW * 0.05,
+        )
+      : Math.max(40, titleMaxW);
 
-    setDescFontPx(
-      fitDescriptionFontSize(
-        descContentWidth,
-        viewportDescCap,
-        bricolageFont,
-        DESCRIPTION_LINES,
-        10,
-        DESC_PX_DESIGN,
-      ),
-    );
-  }, [titleMaxW, viewportTitleCap, viewportDescCap]);
+    if (isMobile) {
+      setDescFontPx(
+        fitDescriptionFontSize(
+          descContentWidth,
+          viewportDescCap,
+          bricolageFont,
+          MOBILE_DESCRIPTION_LINES,
+          12,
+          viewportDescCap,
+        ),
+      );
+    } else {
+      setDescFontPx(
+        fitDescriptionFontSize(
+          descContentWidth,
+          viewportDescCap,
+          bricolageFont,
+          DESCRIPTION_LINES,
+          10,
+          descDesignPx,
+        ),
+      );
+    }
+  }, [titleMaxW, viewportTitleCap, viewportDescCap, isMobile, titleDesignPx, descDesignPx, viewportW, mobileScale]);
 
-  const contentScale = titleFontPx / TITLE_PX_DESIGN;
-
-  const navHeight = scalePx(NAV_HEIGHT_BASE, contentScale, 56);
-  const ballSize = scalePx(BALL_SIZE_BASE, contentScale, 24);
-  const lineWidth = scalePx(LINE_WIDTH_BASE, contentScale, 2);
-  const dashLength = scalePx(DASH_LENGTH_BASE, contentScale, 16);
-  const dashGap = scalePx(DASH_GAP_BASE, contentScale, 16);
+  const contentScale = titleFontPx / titleDesignPx;
+  // Nav uses preScale on mobile so the nav elements stay proportional
+  // to the viewport rather than scaling up with the larger mobile text.
+  const navContentScale = isMobile ? Math.max(preScale, 0.48) : contentScale;
+  const navHeight = scalePx(NAV_HEIGHT_BASE, navContentScale, isMobile ? 64 : 56);
+  const mobileViewportScale = Math.min(1, viewportW / MOBILE_DESIGN_WIDTH);
+  const ballSize = isMobile
+    ? scalePx(MOBILE_BALL_SIZE_BASE, mobileViewportScale, 24)
+    : scalePx(BALL_SIZE_BASE, contentScale, 24);
+  const lineWidth = isMobile
+    ? scalePx(MOBILE_LINE_WIDTH_BASE, mobileViewportScale, 3)
+    : scalePx(LINE_WIDTH_BASE, contentScale, 2);
+  const dashLength = isMobile
+    ? scalePx(MOBILE_DASH_LENGTH_BASE, mobileViewportScale, 14)
+    : scalePx(DASH_LENGTH_BASE, contentScale, 16);
+  const dashGap = isMobile
+    ? scalePx(MOBILE_DASH_GAP_BASE, mobileViewportScale, 13)
+    : scalePx(DASH_GAP_BASE, contentScale, 16);
   const dashPeriod = dashLength + dashGap;
   const ballColW = Math.max(ballSize + 12, scalePx(BALL_COL_W_BASE, contentScale, 40));
   const centerLineDrop = Math.min(
@@ -179,12 +254,14 @@ export default function Hero({ onIntroComplete }: HeroProps) {
   const descriptionGap = scalePx(DESCRIPTION_GAP_BASE, contentScale, 12);
   const columnHeight = Math.min(440, Math.round(viewportH * 0.55));
   const introLogoW = Math.min(
-    Math.round(viewportW * 0.9),
-    scalePx(INTRO_LOGO_W_BASE, contentScale, 180),
+    Math.round(viewportW * (isMobile ? 0.92 : 0.9)),
+    scalePx(INTRO_LOGO_W_BASE, contentScale, isMobile ? 220 : 180),
   );
 
-  const descLineHeightRatio = 1.35;
-  const descContentWidth = Math.max(40, titleMaxW);
+  const descLineHeightRatio = isMobile ? MOBILE_DESC_LINE_HEIGHT : 1.35;
+  const descContentWidth = isMobile
+    ? Math.max(40, titleMaxW - ballSize - descriptionGap)
+    : Math.max(40, titleMaxW);
   const descHeight = measureDescriptionHeight(
     DESCRIPTION_LINES.length,
     descFontPx,
@@ -271,7 +348,7 @@ export default function Hero({ onIntroComplete }: HeroProps) {
         <Nav
           logoInNav={logoInNav}
           showExtras={showNavExtras}
-          contentScale={contentScale}
+          contentScale={navContentScale}
           staticExtras={!isIntroPlaying}
         />
       </div>
@@ -301,7 +378,7 @@ export default function Hero({ onIntroComplete }: HeroProps) {
         </div>
       )}
 
-      {isLayoutReady && (
+      {isLayoutReady && !isMobile && (
         <motion.div
           aria-hidden
           className="absolute left-1/2 z-10 -translate-x-1/2 bg-purple"
@@ -347,7 +424,7 @@ export default function Hero({ onIntroComplete }: HeroProps) {
         />
       )}
 
-      {isLayoutReady && isIntroPlaying && (
+      {isLayoutReady && isIntroPlaying && !isMobile && (
         <motion.div
           aria-hidden
           className="absolute z-5"
@@ -377,7 +454,7 @@ export default function Hero({ onIntroComplete }: HeroProps) {
         />
       )}
 
-      <main className="relative flex min-h-screen items-center">
+      <main className="relative hidden min-h-screen items-center lg:flex">
         <div className="grid w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-[2vw] px-[3vw]">
           <motion.h1
             className="relative z-30 mx-auto text-center font-serif font-extrabold tracking-tight text-ink"
@@ -564,6 +641,23 @@ export default function Hero({ onIntroComplete }: HeroProps) {
           </div>
         </div>
       </main>
+
+      <HeroMobile
+        isIntroPlaying={isIntroPlaying}
+        isLayoutReady={isLayoutReady}
+        titleFontPx={titleFontPx}
+        titleLineH={titleLineH}
+        descFontPx={descFontPx}
+        descLineHeightRatio={descLineHeightRatio}
+        ballSize={ballSize}
+        lineWidth={lineWidth}
+        dashLength={dashLength}
+        dashPeriod={dashPeriod}
+        navHeight={navHeight}
+        contentScale={contentScale}
+        viewportW={viewportW}
+        viewportH={viewportH}
+      />
     </div>
   );
 }

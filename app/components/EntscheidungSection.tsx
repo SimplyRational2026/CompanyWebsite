@@ -20,8 +20,9 @@ import {
   EASE,
   EASE_BRAIN_CLOSE,
 } from "@/app/lib/anim";
-import { ENTSCHEIDBAR_TITLE_LINES, ENTSCHEIDUNG_HEADLINE_LINES } from "@/app/lib/fitText";
+import { ENTSCHEIDBAR_TITLE_LINES, ENTSCHEIDUNG_HEADLINE_LINES, ENTSCHEIDUNG_MOBILE_HEADLINE_FIT_LINES } from "@/app/lib/fitText";
 import {
+  fitMobileHeadlinePx,
   fitSectionHeadlineFontPx,
   sectionAvailableWidth,
   useSectionContentScale,
@@ -38,6 +39,17 @@ import {
   BRAIN_VIDEO_W_BASE,
   BRAIN_W_BASE,
   LINE_WIDTH_BASE,
+  MOBILE_BRAIN_BALL_DROP_BASE,
+  MOBILE_BRAIN_BALL_SIZE_BASE,
+  MOBILE_BRAIN_GAP_BASE,
+  MOBILE_BRAIN_H_BASE,
+  MOBILE_BRAIN_W_BASE,
+  MOBILE_BRAIN_VIDEO_W_BASE,
+  MOBILE_BRAIN_VIDEO_H_BASE,
+  MOBILE_BRAIN_VIDEO_RADIUS_BASE,
+  MOBILE_BRAIN_VIDEO_BORDER_BASE,
+  MOBILE_LINE_WIDTH_BASE,
+  MOBILE_DESIGN_WIDTH,
   scalePx,
 } from "@/app/lib/scale";
 
@@ -60,9 +72,13 @@ export default function EntscheidungSection({
   const [videoVisible, setVideoVisible] = useState(false);
   const [headlineVisible, setHeadlineVisible] = useState(false);
   const [headlineFontPx, setHeadlineFontPx] = useState(ENTSCHEIDBAR_TITLE_PX_DESIGN);
+  const [mobileHeadlinePx, setMobileHeadlinePx] = useState(32);
 
   const { viewportW, bodyFontPx, contentScale } =
     useSectionContentScale(isAnimPlayingRef);
+
+  const isMobile = viewportW < 1024;
+  const mobileScale = Math.min(1, viewportW / MOBILE_DESIGN_WIDTH);
 
   useLayoutEffect(() => {
     if (isAnimPlayingRef.current) {
@@ -74,39 +90,71 @@ export default function EntscheidungSection({
         .getPropertyValue("--font-noto-serif-jp")
         .trim() || "serif";
 
-    setHeadlineFontPx(
-      fitSectionHeadlineFontPx(
-        viewportW,
-        serifFont,
-        ENTSCHEIDBAR_TITLE_LINES,
-        ENTSCHEIDBAR_TITLE_PX_DESIGN,
-        bodyFontPx,
-      ),
-    );
-  }, [viewportW, bodyFontPx]);
+    if (isMobile) {
+      setMobileHeadlinePx(
+        fitMobileHeadlinePx(
+          ENTSCHEIDUNG_MOBILE_HEADLINE_FIT_LINES,
+          viewportW,
+          serifFont,
+          48,
+          18,
+        ),
+      );
+    } else {
+      setHeadlineFontPx(
+        fitSectionHeadlineFontPx(
+          viewportW,
+          serifFont,
+          ENTSCHEIDBAR_TITLE_LINES,
+          ENTSCHEIDBAR_TITLE_PX_DESIGN,
+          bodyFontPx,
+        ),
+      );
+    }
+  }, [viewportW, bodyFontPx, isMobile]);
 
-  const brainW = scalePx(BRAIN_W_BASE, contentScale, 48);
-  const brainH = scalePx(BRAIN_H_BASE, contentScale, 100);
-  const brainGap = scalePx(BRAIN_GAP_BASE, contentScale, 10);
-  const ballSize = scalePx(BRAIN_BALL_SIZE_BASE, contentScale, 16);
-  const lineWidth = scalePx(LINE_WIDTH_BASE, contentScale, 2);
-  const headlineGap = scalePx(48, contentScale, 20);
+  const mediaScale = isMobile ? mobileScale : contentScale;
+  const brainW = isMobile
+    ? scalePx(MOBILE_BRAIN_W_BASE, mobileScale, 48)
+    : scalePx(BRAIN_W_BASE, contentScale, 48);
+  const brainH = isMobile
+    ? scalePx(MOBILE_BRAIN_H_BASE, mobileScale, 100)
+    : scalePx(BRAIN_H_BASE, contentScale, 100);
+  const brainGap = isMobile
+    ? scalePx(MOBILE_BRAIN_GAP_BASE, mobileScale, 8)
+    : scalePx(BRAIN_GAP_BASE, contentScale, 10);
+  const ballSize = isMobile
+    ? scalePx(MOBILE_BRAIN_BALL_SIZE_BASE, mobileScale, 8)
+    : scalePx(BRAIN_BALL_SIZE_BASE, contentScale, 16);
+  const lineWidth = isMobile
+    ? scalePx(MOBILE_LINE_WIDTH_BASE, mobileScale, 1)
+    : scalePx(LINE_WIDTH_BASE, contentScale, 2);
+  const headlineGap = scalePx(48, isMobile ? mobileScale : contentScale, 20);
+  const activeFontPx = isMobile ? mobileHeadlinePx : headlineFontPx;
+  const headlineLineCount = isMobile ? 4 : ENTSCHEIDUNG_HEADLINE_LINES.length;
   const headlineBlockH = Math.round(
-    headlineFontPx * HEADLINE_LINE_HEIGHT * ENTSCHEIDUNG_HEADLINE_LINES.length,
+    activeFontPx * HEADLINE_LINE_HEIGHT * headlineLineCount,
   );
   const brainShiftToCenter =
-    headlineBlockH + headlineGap + scalePx(56, contentScale, 24);
+    headlineBlockH + headlineGap + scalePx(56, mediaScale, 24);
   const ballRiseEnd = -Math.round(ballSize * 1.2);
-  const ballStartTop = brainH + scalePx(BRAIN_BALL_DROP_BASE, contentScale, 120);
+  const ballStartTop = brainH + (isMobile
+    ? scalePx(MOBILE_BRAIN_BALL_DROP_BASE, mobileScale, 60)
+    : scalePx(BRAIN_BALL_DROP_BASE, contentScale, 120));
   const lineRiseHeight = ballStartTop - ballRiseEnd;
   const availableW = sectionAvailableWidth(viewportW);
-  const videoW = Math.min(
-    scalePx(BRAIN_VIDEO_W_BASE, contentScale, 120),
-    availableW,
-  );
-  const videoH = scalePx(BRAIN_VIDEO_H_BASE, contentScale, 140);
-  const videoRadius = scalePx(BRAIN_VIDEO_RADIUS_BASE, contentScale, 12);
-  const videoBorder = scalePx(BRAIN_VIDEO_BORDER_BASE, contentScale, 3);
+  const videoW = isMobile
+    ? Math.min(scalePx(MOBILE_BRAIN_VIDEO_W_BASE, mobileScale, 120), availableW)
+    : Math.min(scalePx(BRAIN_VIDEO_W_BASE, contentScale, 120), availableW);
+  const videoH = isMobile
+    ? scalePx(MOBILE_BRAIN_VIDEO_H_BASE, mobileScale, 140)
+    : scalePx(BRAIN_VIDEO_H_BASE, contentScale, 140);
+  const videoRadius = isMobile
+    ? scalePx(MOBILE_BRAIN_VIDEO_RADIUS_BASE, mobileScale, 12)
+    : scalePx(BRAIN_VIDEO_RADIUS_BASE, contentScale, 12);
+  const videoBorder = isMobile
+    ? scalePx(MOBILE_BRAIN_VIDEO_BORDER_BASE, mobileScale, 3)
+    : scalePx(BRAIN_VIDEO_BORDER_BASE, contentScale, 3);
   const brainRestTop = brainShiftToCenter;
   const brainCenterY = brainRestTop + brainH / 2;
   const videoRestTop = Math.round(brainCenterY - videoH / 2);
@@ -163,11 +211,13 @@ export default function EntscheidungSection({
       <div className="relative mx-auto flex w-full max-w-[1200px] flex-col items-center">
         {(headlineVisible || hasFinished) && (
           <motion.h2
-            className="absolute left-1/2 z-20 w-fit max-w-full -translate-x-1/2 text-center font-serif font-extrabold tracking-tight"
+            className="absolute left-1/2 z-20 -translate-x-1/2 text-center font-serif font-extrabold tracking-tight"
             style={{
-              fontSize: headlineFontPx,
+              fontSize: activeFontPx,
               lineHeight: HEADLINE_LINE_HEIGHT,
               top: 0,
+              width: isMobile ? "100%" : "fit-content",
+              maxWidth: "100%",
             }}
             initial={
               isAnimPlaying && !hasFinished ? { x: "-120vw", opacity: 0 } : false
@@ -179,12 +229,21 @@ export default function EntscheidungSection({
                 : STATIC_TRANSITION
             }
           >
-            <span className="block whitespace-nowrap text-ink">
-              {ENTSCHEIDUNG_HEADLINE_LINES[0]}
-            </span>
-            <span className="block whitespace-nowrap text-purple">
-              {ENTSCHEIDUNG_HEADLINE_LINES[1]}
-            </span>
+            {isMobile ? (
+              <>
+                <span className="text-ink">{ENTSCHEIDUNG_HEADLINE_LINES[0]}</span>
+                <span className="text-purple">{" "}{ENTSCHEIDUNG_HEADLINE_LINES[1]}</span>
+              </>
+            ) : (
+              <>
+                <span className="block whitespace-nowrap text-ink">
+                  {ENTSCHEIDUNG_HEADLINE_LINES[0]}
+                </span>
+                <span className="block whitespace-nowrap text-purple">
+                  {ENTSCHEIDUNG_HEADLINE_LINES[1]}
+                </span>
+              </>
+            )}
           </motion.h2>
         )}
 

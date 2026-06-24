@@ -11,25 +11,41 @@ import {
   SECTION_BODY_START,
   SECTION_MARK_ENTER,
   SECTION_MARK_START,
+  MOBILE_RISIKO_ANIM_END,
+  MOBILE_RISIKO_BODY_START,
+  MOBILE_RISIKO_MARK_START,
+  MOBILE_RISIKO_TITLE_PHASE,
   SECTION_TITLE_ENTER,
   SECTION_TITLE_PAUSE,
   SECTION_TITLE_PHASE,
 } from "@/app/lib/anim";
 import {
+  fitMobileSectionTitlePx,
   fitSectionBodyFontPx,
+  sectionAvailableWidth,
   sectionContentScale,
   sectionTitleLargePx,
   sectionTitleRestPx,
   sectionViewportDescCap,
 } from "@/app/lib/sectionTypography";
-import { RISIKO_BODY_LINES } from "@/app/lib/fitText";
+import {
+  fitDescriptionFontSize,
+  MOBILE_RISIKO_BODY_LINES,
+  RISIKO_BODY_LINES,
+} from "@/app/lib/fitText";
 import {
   DESC_PX_DESIGN,
+  DESIGN_WIDTH,
   EXCLAMATION_DOT_X_RATIO,
   EXCLAMATION_DOT_Y_RATIO,
   EXCLAMATION_H_BASE,
   EXCLAMATION_W_BASE,
   LINE_WIDTH_BASE,
+  MOBILE_DESC_LINE_HEIGHT,
+  MOBILE_DESC_PX_DESIGN,
+  MOBILE_DESIGN_WIDTH,
+  MOBILE_EXCLAMATION_MARK_H_BASE,
+  MOBILE_EXCLAMATION_MARK_W_BASE,
   QUESTION_H_BASE,
   RISIKO_DASH_GAP_BASE,
   RISIKO_DASH_LENGTH_BASE,
@@ -81,11 +97,15 @@ export default function RisikoSection({
   const [lineExtendWidth, setLineExtendWidth] = useState(0);
   const [markTopOffset, setMarkTopOffset] = useState(0);
 
+  const isMobile = viewportW < DESIGN_WIDTH;
+  const mobileScale = Math.min(1, viewportW / MOBILE_DESIGN_WIDTH);
+  const mobileDescCap = Math.round(MOBILE_DESC_PX_DESIGN * mobileScale);
   const viewportDescCap = sectionViewportDescCap(viewportW);
 
   const [bodyFontPx, setBodyFontPx] = useState(() =>
     Math.max(10, Math.min(DESC_PX_DESIGN, viewportDescCap)),
   );
+  const [mobileTitlePx, setMobileTitlePx] = useState(88);
 
   useLayoutEffect(() => {
     setViewportW(window.innerWidth);
@@ -101,32 +121,62 @@ export default function RisikoSection({
         .getPropertyValue("--font-bricolage-grotesque")
         .trim() || "sans-serif";
 
-    setBodyFontPx(fitSectionBodyFontPx(viewportW, bricolageFont));
-  }, [viewportW]);
+    const serifFont =
+      getComputedStyle(document.documentElement)
+        .getPropertyValue("--font-noto-serif-jp")
+        .trim() || "serif";
 
-  const contentScale = sectionContentScale(bodyFontPx);
-  const titleRestPx = sectionTitleRestPx(contentScale);
+    setBodyFontPx(
+      isMobile
+        ? fitDescriptionFontSize(
+            sectionAvailableWidth(viewportW),
+            mobileDescCap,
+            bricolageFont,
+            MOBILE_RISIKO_BODY_LINES,
+            12,
+            mobileDescCap,
+          )
+        : fitSectionBodyFontPx(viewportW, bricolageFont),
+    );
+
+    if (isMobile) {
+      setMobileTitlePx(fitMobileSectionTitlePx("Risiko", viewportW, serifFont));
+    }
+  }, [viewportW, isMobile, mobileDescCap]);
+
+  const contentScale = isMobile
+    ? bodyFontPx / MOBILE_DESC_PX_DESIGN
+    : sectionContentScale(bodyFontPx);
+  const bodyLineHeight = isMobile ? MOBILE_DESC_LINE_HEIGHT : BODY_LINE_HEIGHT;
+  const titleRestPx = isMobile ? mobileTitlePx : sectionTitleRestPx(contentScale);
   const titleLargePx = sectionTitleLargePx(contentScale);
   const lineWidth = scalePx(LINE_WIDTH_BASE, contentScale, 2);
   const dashLength = scalePx(RISIKO_DASH_LENGTH_BASE, contentScale, 8);
   const dashGap = scalePx(RISIKO_DASH_GAP_BASE, contentScale, 6);
   const dashPeriod = dashLength + dashGap;
-  const markW = scalePx(EXCLAMATION_MARK_W_BASE, contentScale, 24);
-  const markH = scalePx(QUESTION_H_BASE, contentScale, 72);
+  const markW = isMobile
+    ? scalePx(MOBILE_EXCLAMATION_MARK_W_BASE, mobileScale, 18)
+    : scalePx(EXCLAMATION_MARK_W_BASE, contentScale, 24);
+  const markH = isMobile
+    ? scalePx(MOBILE_EXCLAMATION_MARK_H_BASE, mobileScale, 50)
+    : scalePx(QUESTION_H_BASE, contentScale, 72);
   const dotX = markW * EXCLAMATION_DOT_X_RATIO;
   const dotY = markH * EXCLAMATION_DOT_Y_RATIO;
   const bodyGap = scalePx(40, contentScale, 16);
   const bulletGap = scalePx(32, contentScale, 12);
+  const markGapMobile = scalePx(28, contentScale, 14);
+  const bodyGapMobile = scalePx(36, contentScale, 18);
   const titleLineH = titleRestPx * 1.05;
+  const bodyLines = isMobile ? MOBILE_RISIKO_BODY_LINES : RISIKO_BODY_LINES;
 
   useLayoutEffect(() => {
-    if (!bodyRef.current) {
+    if (isMobile || !bodyRef.current) {
       return;
     }
 
     const bodyH = bodyRef.current.offsetHeight;
     setMarkTopOffset(Math.round(titleLineH + bodyGap + bodyH - markH));
-  }, [titleLineH, bodyGap, markH, bodyFontPx, contentScale]);
+  }, [isMobile, titleLineH, bodyGap, markH, bodyFontPx, contentScale]);
 
   useEffect(() => {
     if (!heroIntroComplete || !isInView || hasPlayedRef.current) {
@@ -160,10 +210,10 @@ export default function RisikoSection({
         };
         setLineExtendWidth(width);
       }
-    }, SECTION_ANIM_END * 1000);
+    }, (isMobile ? MOBILE_RISIKO_ANIM_END : SECTION_ANIM_END) * 1000);
 
     return () => window.clearTimeout(t);
-  }, [isAnimPlaying, markW, contentScale]);
+  }, [isAnimPlaying, markW, contentScale, isMobile]);
 
   useLayoutEffect(() => {
     if (
@@ -209,105 +259,81 @@ export default function RisikoSection({
     1,
   ];
 
+  const mobileTitleDur = MOBILE_RISIKO_TITLE_PHASE;
+  const mobileTitleTimes = [
+    0,
+    SECTION_TITLE_ENTER / mobileTitleDur,
+    1,
+  ];
+  const markDelay = isMobile ? MOBILE_RISIKO_MARK_START : SECTION_MARK_START;
+  const bodyDelay = isMobile ? MOBILE_RISIKO_BODY_START : SECTION_BODY_START;
+
   return (
     <section
       ref={sectionRef}
       data-scroll-section="risiko"
       className="relative -mt-[3vh] w-full overflow-hidden bg-cream px-[6vw] pt-[5vh] pb-[10vh]"
     >
-      <div className="flex w-full flex-row flex-nowrap items-start gap-x-[4vw] pt-[2vh]">
-        <div className="relative z-10 w-fit max-w-full shrink-0">
-          <motion.h2
-            className="w-fit font-serif font-extrabold tracking-tight text-purple"
-            style={{
-              fontSize: titleRestPx,
-              lineHeight: 1.05,
-              transformOrigin: "center center",
-            }}
-            initial={
-              isAnimPlaying
-                ? { x: "-120vw", opacity: 0, fontSize: titleLargePx }
-                : false
-            }
-            animate={
-              isAnimPlaying
+      <div className="flex w-full flex-col items-center pt-[2vh] lg:grid lg:grid-cols-[min-content_8vw_min-content] lg:items-start lg:gap-x-[4vw]">
+        <motion.h2
+          className="z-10 w-full text-center font-serif font-extrabold tracking-tight text-purple lg:col-start-1 lg:row-start-1 lg:w-fit lg:self-start lg:text-left"
+          style={{
+            fontSize: titleRestPx,
+            lineHeight: 1.05,
+            transformOrigin: "center center",
+          }}
+          initial={
+            isAnimPlaying
+              ? isMobile
+                ? { x: "-110vw", opacity: 0 }
+                : { x: "-120vw", opacity: 0, fontSize: titleLargePx }
+              : false
+          }
+          animate={
+            isAnimPlaying
+              ? isMobile
                 ? {
+                    x: ["-110vw", "0vw", "0vw"],
+                    opacity: [0, 1, 1],
+                  }
+                : {
                     x: ["-120vw", "32vw", "32vw", "0vw"],
                     opacity: [0, 1, 1, 1],
                     fontSize: [titleLargePx, titleLargePx, titleLargePx, titleRestPx],
                   }
-                : hasFinished
-                  ? { x: "0vw", opacity: 1, fontSize: titleRestPx }
+              : hasFinished
+                ? { x: "0vw", opacity: 1, ...(isMobile ? {} : { fontSize: titleRestPx }) }
+                : isMobile
+                  ? { x: "-110vw", opacity: 0 }
                   : { x: "-120vw", opacity: 0, fontSize: titleLargePx }
-            }
-            transition={
-              isAnimPlaying
+          }
+          transition={
+            isAnimPlaying
+              ? isMobile
                 ? {
+                    duration: mobileTitleDur,
+                    times: mobileTitleTimes,
+                    ease: [EASE_BOUNCE, EASE],
+                  }
+                : {
                     duration: SECTION_TITLE_PHASE,
                     times: titleTimes,
                     ease: [EASE, EASE, EASE_BOUNCE, EASE],
                   }
-                : STATIC_TRANSITION
-            }
-          >
-            Risiko
-          </motion.h2>
-
-          <motion.div
-            ref={bodyRef}
-            className="w-fit max-w-full"
-            style={{
-              marginTop: bodyGap,
-              fontSize: bodyFontPx,
-              lineHeight: BODY_LINE_HEIGHT,
-            }}
-            initial={isAnimPlaying ? { x: "-100vw", opacity: 0 } : false}
-            animate={
-              isAnimPlaying
-                ? { x: ["-100vw", "0vw"], opacity: [0, 1] }
-                : hasFinished
-                  ? { x: "0vw", opacity: 1 }
-                  : { x: "-100vw", opacity: 0 }
-            }
-            transition={
-              isAnimPlaying
-                ? {
-                    duration: SECTION_BODY_ENTER,
-                    delay: SECTION_BODY_START,
-                    ease: EASE,
-                  }
-                : STATIC_TRANSITION
-            }
-          >
-            <p className="font-bricolage font-medium text-ink">
-              {RISIKO_BODY_LINES.map((line) => (
-                <span key={line} className="block whitespace-nowrap">
-                  {line}
-                </span>
-              ))}
-            </p>
-            <ul
-              className="font-bricolage space-y-3 font-bold text-ink"
-              style={{ marginTop: bulletGap }}
-            >
-              {RISIKO_BULLETS.map((item) => (
-                <li key={item} className="flex gap-3">
-                  <span aria-hidden className="text-purple">
-                    •
-                  </span>
-                  <span className="whitespace-nowrap">{item}</span>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-        </div>
-
-        <div aria-hidden className="w-[8vw] shrink-0 min-w-4" />
+              : STATIC_TRANSITION
+          }
+        >
+          Risiko
+        </motion.h2>
 
         <div
           ref={markHostRef}
-          className="relative shrink-0 self-start mr-[2vw]"
-          style={{ width: markW, height: markH, marginTop: markTopOffset }}
+          className="relative shrink-0 lg:col-start-3 lg:row-start-1 lg:row-span-2 lg:mr-[2vw] lg:self-start"
+          style={{
+            width: markW,
+            height: markH,
+            marginTop: isMobile ? markGapMobile : markTopOffset,
+          }}
         >
           <motion.div
             className="absolute top-0 left-0 z-10 overflow-visible"
@@ -324,7 +350,7 @@ export default function RisikoSection({
               isAnimPlaying
                 ? {
                     duration: SECTION_MARK_ENTER,
-                    delay: SECTION_MARK_START,
+                    delay: markDelay,
                     ease: EASE,
                   }
                 : STATIC_TRANSITION
@@ -354,6 +380,56 @@ export default function RisikoSection({
             />
           </motion.div>
         </div>
+
+        <motion.div
+          ref={bodyRef}
+          className="z-10 w-full max-w-full text-left lg:col-start-1 lg:row-start-2 lg:w-fit"
+          style={{
+            marginTop: isMobile ? bodyGapMobile : bodyGap,
+            fontSize: bodyFontPx,
+            lineHeight: bodyLineHeight,
+          }}
+          initial={isAnimPlaying ? { x: "-100vw", opacity: 0 } : false}
+          animate={
+            isAnimPlaying
+              ? { x: ["-100vw", "0vw"], opacity: [0, 1] }
+              : hasFinished
+                ? { x: "0vw", opacity: 1 }
+                : { x: "-100vw", opacity: 0 }
+          }
+          transition={
+            isAnimPlaying
+              ? {
+                  duration: SECTION_BODY_ENTER,
+                  delay: bodyDelay,
+                  ease: EASE,
+                }
+              : STATIC_TRANSITION
+          }
+        >
+          <p className="font-bricolage font-medium text-ink">
+            {isMobile
+              ? "Wenn Wahrscheinlichkeiten bekannt sind, entscheiden Daten. Wir machen komplexe Informationen verständlich, nachvollziehbar und regulatorisch belastbar – damit datenbasierte Entscheidungen wirklich tragfähig sind."
+              : bodyLines.map((line) => (
+                  <span key={line} className="block whitespace-nowrap">
+                    {line}
+                  </span>
+                ))}
+          </p>
+          <ul
+            className="font-bricolage space-y-3 font-bold text-ink"
+            style={{ marginTop: bulletGap }}
+          >
+            {RISIKO_BULLETS.map((item) => (
+              <li key={item} className="flex gap-3">
+                <span aria-hidden className="text-purple">
+                  •
+                </span>
+                <span className="whitespace-nowrap">{item}</span>
+              </li>
+            ))}
+          </ul>
+        </motion.div>
       </div>
     </section>
   );

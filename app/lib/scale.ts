@@ -5,6 +5,8 @@ export const BALL_SIZE_BASE = 68;
 export const LINE_WIDTH_BASE = 6;
 export const DASH_LENGTH_BASE = 36;
 export const DASH_GAP_BASE = 40;
+export const MOBILE_DASH_LENGTH_BASE = 26;
+export const MOBILE_DASH_GAP_BASE = 24;
 export const RISIKO_DASH_LENGTH_BASE = 30;
 export const RISIKO_DASH_GAP_BASE = 26;
 export const CENTER_LINE_DROP_BASE = 220;
@@ -13,6 +15,15 @@ export const TITLE_DIVERGE_PURPLE_BASE = 160;
 export const DESCRIPTION_GAP_BASE = 32;
 export const TITLE_PX_DESIGN = 60;
 export const DESC_PX_DESIGN = 26;
+export const MOBILE_DESIGN_WIDTH = 390;
+export const MOBILE_TITLE_PX_DESIGN = 50;
+export const MOBILE_DESC_PX_DESIGN = 18;
+export const MOBILE_BALL_SIZE_BASE = 32;
+export const MOBILE_LINE_WIDTH_BASE = 4;
+export const MOBILE_FINAL_LINE_W_BASE = 52;
+export const MOBILE_DESC_BALL_GAP_BASE = 12;
+export const MOBILE_FINAL_ROW_INSET_BASE = 20;
+export const MOBILE_DESC_LINE_HEIGHT = 1.3;
 export const BALL_COL_W_BASE = 80;
 export const INTRO_LOGO_W_BASE = 640;
 export const NAV_LOGO_W_BASE = 170;
@@ -31,6 +42,14 @@ export const EXCLAMATION_DOT_X_RATIO = 34.5 / 189;
 export const EXCLAMATION_DOT_Y_RATIO = 533.5 / 568;
 export const QUESTION_W_BASE = 349;
 export const QUESTION_H_BASE = 459;
+export const MOBILE_EXCLAMATION_MARK_H_BASE = Math.round(QUESTION_H_BASE * 0.72);
+export const MOBILE_EXCLAMATION_MARK_W_BASE = Math.round(
+  EXCLAMATION_W_BASE * (MOBILE_EXCLAMATION_MARK_H_BASE / EXCLAMATION_H_BASE),
+);
+export const MOBILE_QUESTION_MARK_H_BASE = MOBILE_EXCLAMATION_MARK_H_BASE;
+export const MOBILE_QUESTION_MARK_W_BASE = Math.round(
+  QUESTION_W_BASE * (MOBILE_QUESTION_MARK_H_BASE / QUESTION_H_BASE),
+);
 export const QUESTION_DOT_X_RATIO = 119.5 / 349;
 export const QUESTION_DOT_Y_RATIO = 424.5 / 459;
 export const BRAIN_W_BASE = 232;
@@ -43,7 +62,22 @@ export const BRAIN_VIDEO_H_BASE = 580;
 export const BRAIN_VIDEO_RADIUS_BASE = 28;
 export const BRAIN_VIDEO_BORDER_BASE = 5;
 export const BRAIN_BALL_DROP_BASE = 440;
+// Mobile-specific brain sizing (fits within ~390px viewport)
+export const MOBILE_BRAIN_W_BASE = 86;
+export const MOBILE_BRAIN_H_BASE = 192;
+export const MOBILE_BRAIN_GAP_BASE = 22;
+export const MOBILE_BRAIN_BALL_SIZE_BASE = 13;
+export const MOBILE_BRAIN_BALL_DROP_BASE = 155;
+// Mobile-specific video frame sizing
+export const MOBILE_BRAIN_VIDEO_W_BASE = 300;
+export const MOBILE_BRAIN_VIDEO_H_BASE = 360;
+export const MOBILE_BRAIN_VIDEO_RADIUS_BASE = 18;
+export const MOBILE_BRAIN_VIDEO_BORDER_BASE = 3;
 export const WAS_HUB_ENTER_DROP_BASE = 440;
+// Mobile-specific "Was anders" sizing
+export const MOBILE_WAS_RING_SIZE_BASE = 160;
+export const MOBILE_WAS_HUB_DOT_SIZE_BASE = 24;
+export const MOBILE_WAS_BULLET_DOT_BASE = 10;
 
 export const WAS_ANDERS_TITLE_PX_DESIGN = 72;
 export const WAS_ANDERS_TITLE_ENTER_PX_DESIGN = 132;
@@ -62,6 +96,15 @@ export const WAS_HUB_TEXT_COLUMN_GAP_BASE = 80;
 export const ENTSCHEIDBAR_TITLE_PX_DESIGN = 72;
 export const ENTSCHEIDBAR_TITLE_ENTER_PX_DESIGN = 104;
 export const ENT_TREE_BALL_SIZE_BASE = 68;
+// Mobile-specific Entscheidbar tree sizing
+export const MOBILE_ENT_BALL_SIZE_BASE = 20;
+export const MOBILE_ENT_ICON_SIZE_BASE = 44;
+export const MOBILE_ENT_BRANCH_LINE_W_BASE = 18;
+export const MOBILE_ENT_BRANCH_GAP_BASE = 108;
+export const MOBILE_ENT_BRANCH_INNER_GAP_BASE = 8;
+export const MOBILE_ENT_BULLET_DOT_BASE = 8;
+export const MOBILE_ENT_SPINE_X_BASE = 28;
+export const MOBILE_ENT_SPINE_BOTTOM_BASE = 88;
 export const ENT_TREE_LINE_W_BASE = 6;
 export const ENT_TREE_TITLE_GAP_BASE = 48;
 export const ENT_TREE_H_BRANCH_W_BASE = 280;

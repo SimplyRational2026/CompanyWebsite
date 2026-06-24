@@ -13,10 +13,25 @@ const PURPLE_TITLE_LINES = [
   "Nachvollziehbarkeit.",
 ] as const;
 
+const MOBILE_PURPLE_TITLE_LINES = [
+  "Sondern an fehlender",
+  "Klarheit, Struktur",
+  "und",
+  "Nachvollziehbarkeit.",
+] as const;
+
 const DESCRIPTION_LINES = [
   "Wir ermöglichen Entscheidungen unter Risiko und",
   "Ungewissheit – damit Teams auch dann sicher",
   "entscheiden, wenn es keine eindeutige Antwort gibt.",
+] as const;
+
+const MOBILE_DESCRIPTION_LINES = [
+  "Wir ermöglichen Entscheidungen",
+  "unter Risiko und Ungewissheit –",
+  "damit Teams auch dann sicher",
+  "entscheiden, wenn es keine",
+  "eindeutige Antwort gibt.",
 ] as const;
 
 const RISIKO_BODY_LINES = [
@@ -26,9 +41,26 @@ const RISIKO_BODY_LINES = [
   "Entscheidungen wirklich tragfähig sind.",
 ] as const;
 
+const MOBILE_RISIKO_BODY_LINES = [
+  "Wenn Wahrscheinlichkeiten bekannt sind,",
+  "entscheiden Daten. Wir machen komplexe",
+  "Informationen verständlich, nachvollziehbar",
+  "und regulatorisch belastbar – damit",
+  "datenbasierte Entscheidungen wirklich",
+  "tragfähig sind.",
+] as const;
+
 const ENTSCHEIDUNG_HEADLINE_LINES = [
   "Das Problem ist nicht fehlendes Wissen,",
   "sondern die Qualität der Entscheidung.",
+] as const;
+
+// Mobile-specific sub-lines matching the natural wrap at ~32 px
+const ENTSCHEIDUNG_MOBILE_HEADLINE_FIT_LINES = [
+  "Das Problem ist nicht",
+  "fehlendes Wissen,",
+  "sondern die Qualität",
+  "der Entscheidung.",
 ] as const;
 
 const WAS_ANDERS_TITLE = "Was anders wird mit uns" as const;
@@ -336,10 +368,14 @@ export function measureDescriptionHeight(
 export {
   BLACK_TITLE_LINES,
   DESCRIPTION_LINES,
+  MOBILE_DESCRIPTION_LINES,
+  MOBILE_PURPLE_TITLE_LINES,
   ENTSCHEIDBAR_BRANCHES,
   ENTSCHEIDBAR_TITLE_LINES,
   ENTSCHEIDUNG_HEADLINE_LINES,
+  ENTSCHEIDUNG_MOBILE_HEADLINE_FIT_LINES,
   PURPLE_TITLE_LINES,
+  MOBILE_RISIKO_BODY_LINES,
   RISIKO_BODY_LINES,
   TEAM_FOOTER_TEXT,
   FOOTER_CONTACT,

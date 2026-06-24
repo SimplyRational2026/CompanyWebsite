@@ -33,6 +33,24 @@ export const STEPS = {
 export const INTRO_END =
   STEPS.subtextFade.delay + STEPS.subtextFade.duration;
 
+export const D1200 = 1.2;
+
+export const MOBILE_STEPS = {
+  logoIntro:      { delay: 0.0,  duration: D1000  },
+  logoToNav:      { delay: 1.0,  duration: D800   },
+  navReveal:      { delay: 2.0,  duration: D800   },
+  blackEnter:     { delay: 3.2,  duration: D1000  }, // black text slides in from left
+  blackShiftUp:   { delay: 4.5,  duration: D800   }, // black text shifts up
+  ballCrossEnter: { delay: 5.6,  duration: D1200  }, // ball + trailing line from right → center
+  purpleEnter:    { delay: 5.6,  duration: D1200  }, // purple text from left (with ball)
+  ballCrossExit:  { delay: 7.6,  duration: D1200  }, // ball exits left; dashed line stays
+  finalReveal:    { delay: 9.0,  duration: D1000  }, // desc from right + final ball from left
+  chevronFade:    { delay: 10.2, duration: D800   },
+} as const;
+
+export const MOBILE_INTRO_END =
+  MOBILE_STEPS.chevronFade.delay + MOBILE_STEPS.chevronFade.duration; // 11.0s
+
 export const SECTION_TITLE_ENTER = D1000;
 export const SECTION_TITLE_PAUSE = D800;
 export const SECTION_TITLE_SHIFT = D800;
@@ -44,6 +62,14 @@ export const SECTION_TITLE_PHASE =
 export const SECTION_BODY_START = SECTION_TITLE_PHASE;
 export const SECTION_MARK_START = SECTION_BODY_START + SECTION_BODY_ENTER;
 export const SECTION_ANIM_END = SECTION_MARK_START + SECTION_MARK_ENTER;
+
+export const MOBILE_RISIKO_TITLE_PHASE =
+  SECTION_TITLE_ENTER + SECTION_TITLE_PAUSE;
+export const MOBILE_RISIKO_MARK_START = MOBILE_RISIKO_TITLE_PHASE;
+export const MOBILE_RISIKO_BODY_START =
+  MOBILE_RISIKO_MARK_START + SECTION_MARK_ENTER;
+export const MOBILE_RISIKO_ANIM_END =
+  MOBILE_RISIKO_BODY_START + SECTION_BODY_ENTER;
 
 export const BRAIN_CLOSE_DELAY = D600;
 export const BRAIN_CLOSE_DUR = D1000 * 1.75;
@@ -84,9 +110,14 @@ export const WAS_TEXT_CYCLE = WAS_REVEAL_DUR + WAS_TEXT_GAP;
 export const WAS_HUB_START = WAS_CIRCLE_START + WAS_CIRCLE_ENTER;
 export const WAS_HUB_PHASE = WAS_TEXT_CYCLE * 4;
 
+// Mobile: circle is always visible, so bullets start right after the title enters
+export const MOBILE_WAS_HUB_START = WAS_TITLE_ENTER + WAS_CIRCLE_GAP;
+
 export const WAS_VIDEO_ENTER = D1000 * 1.2;
 export const WAS_VIDEO_START = WAS_HUB_START + WAS_HUB_PHASE;
+export const MOBILE_WAS_VIDEO_START = MOBILE_WAS_HUB_START + WAS_HUB_PHASE;
 export const WAS_ANIM_END = WAS_VIDEO_START + WAS_VIDEO_ENTER;
+export const MOBILE_WAS_ANIM_END = MOBILE_WAS_VIDEO_START + WAS_VIDEO_ENTER;
 
 export const ENT_BALL_ENTER = D1000 * 1.2;
 export const ENT_ENTER_PAUSE = D400;

@@ -80,6 +80,30 @@ export function sectionTitleRestPx(contentScale: number): number {
   return scalePx(SECTION_TITLE_PX_DESIGN, contentScale, 28);
 }
 
+export function fitMobileSectionTitlePx(
+  title: string,
+  viewportW: number,
+  fontFamily: string,
+  maxPx = SECTION_TITLE_PX_DESIGN,
+  minPx = 20,
+): number {
+  const hPad = viewportW * 0.12; // 6vw each side
+  const maxW = Math.max(60, viewportW - hPad);
+  return fitHeadlineFontSize(maxW, maxPx, fontFamily, [title] as const, minPx, maxPx);
+}
+
+export function fitMobileHeadlinePx(
+  lines: readonly string[],
+  viewportW: number,
+  fontFamily: string,
+  maxPx: number,
+  minPx = 18,
+): number {
+  const hPad = viewportW * 0.12;
+  const maxW = Math.max(60, viewportW - hPad);
+  return fitHeadlineFontSize(maxW, maxPx, fontFamily, lines, minPx, maxPx);
+}
+
 export function sectionTitleLargePx(contentScale: number): number {
   return scalePx(SECTION_TITLE_ENTER_PX_DESIGN, contentScale, 40);
 }

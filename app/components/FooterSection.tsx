@@ -2,8 +2,15 @@
 
 import Image from "next/image";
 import { useLayoutEffect, useRef, useState } from "react";
-import { ENTSCHEIDBAR_TITLE_LINES, FOOTER_CONTACT, FOOTER_HEADLINE_LINES } from "@/app/lib/fitText";
 import {
+  ENTSCHEIDBAR_TITLE_LINES,
+  fitDescriptionFontSize,
+  FOOTER_CONTACT,
+  FOOTER_HEADLINE_LINES,
+  MOBILE_RISIKO_BODY_LINES,
+} from "@/app/lib/fitText";
+import {
+  fitMobileHeadlinePx,
   fitSectionHeadlineFontPx,
   sectionAvailableWidth,
   useSectionContentScale,
@@ -23,6 +30,8 @@ import {
   FOOTER_LOGO_OFFSET_Y_BASE,
   FOOTER_CREAM_BOTTOM_VH,
   ENTSCHEIDBAR_TITLE_PX_DESIGN,
+  MOBILE_DESC_PX_DESIGN,
+  MOBILE_DESIGN_WIDTH,
   NAV_BUTTON_FONT,
   NAV_BUTTON_PX_X,
   NAV_BUTTON_PX_Y,
@@ -97,27 +106,39 @@ function PurpleFooterBar({
   viewportW,
   contactFontPx,
   smallFontPx,
+  isMobile,
+  mobileBodyFontPx,
+  mobileScale,
 }: {
   contentW: number;
   contentScale: number;
   viewportW: number;
   contactFontPx: number;
   smallFontPx: number;
+  isMobile: boolean;
+  mobileBodyFontPx: number;
+  mobileScale: number;
 }) {
   const archR = Math.min(
-    scalePx(FOOTER_ARCH_R_BASE, contentScale, 340),
-    Math.round(viewportW * 0.55),
+    scalePx(FOOTER_ARCH_R_BASE, isMobile ? mobileScale : contentScale, 340),
+    Math.round(viewportW * (isMobile ? 0.75 : 0.55)),
   );
   const archD = archR * 2;
   const archVisibleH = Math.round(archR * FOOTER_ARCH_VISIBLE_RATIO);
-  const archCutDrop = scalePx(FOOTER_ARCH_CUT_DROP_BASE, contentScale, 96);
+  // On mobile FOOTER_ARCH_CUT_DROP_BASE (270) >> archVisibleH, so use a much smaller mobile value
+  const archCutDrop = isMobile
+    ? scalePx(80, mobileScale, 50)
+    : scalePx(FOOTER_ARCH_CUT_DROP_BASE, contentScale, 96);
   const archClipTop = -archVisibleH + archCutDrop;
   const barPadY = scalePx(FOOTER_BAR_PAD_Y_BASE, contentScale, 16);
   const barMinH = scalePx(FOOTER_BAR_H_BASE, contentScale, 88);
-  const logoW = scalePx(FOOTER_LOGO_W_BASE, contentScale, 265);
+  const logoW = isMobile
+    ? Math.round(viewportW * 0.62)
+    : scalePx(FOOTER_LOGO_W_BASE, contentScale, 265);
   const logoOffsetY = scalePx(FOOTER_LOGO_OFFSET_Y_BASE, contentScale, 32);
-  const copyrightGap = scalePx(20, contentScale, 14);
-  const copyrightPad = scalePx(14, contentScale, 10);
+  const copyrightGap = scalePx(20, isMobile ? mobileScale : contentScale, 14);
+  const copyrightPad = scalePx(14, isMobile ? mobileScale : contentScale, 10);
+  const mobileItemGap = scalePx(20, mobileScale, 12);
 
   return (
     <footer className="relative overflow-visible text-cream">
@@ -133,54 +154,115 @@ function PurpleFooterBar({
       </div>
 
       <div className="relative z-10 bg-purple px-[6vw]">
-        <div
-          className="mx-auto"
-          style={{
-            maxWidth: contentW,
-            paddingTop: barPadY,
-            paddingBottom: barPadY,
-          }}
-        >
+        {/* ── MOBILE footer body ─────────────────────────────── */}
+        {isMobile && (
           <div
-            className="relative flex items-center max-lg:flex-col max-lg:items-start max-lg:gap-8"
-            style={{ minHeight: barMinH }}
-          >
-            <ContactDetails
-              fontPx={contactFontPx}
-              variant="light"
-              showCompany
-              contentScale={contentScale}
-              compact
-            />
-
-            <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 max-lg:relative max-lg:left-auto max-lg:top-auto max-lg:mx-auto max-lg:translate-x-0 max-lg:translate-y-0">
-              <Image
-                src="/simply_rational_white_logo.svg"
-                alt="Simply Rational"
-                width={558}
-                height={210}
-                className="h-auto max-lg:mt-0"
-                style={{ width: logoW, marginTop: -logoOffsetY }}
-              />
-            </div>
-          </div>
-
-          <div
-            className="border-t border-cream/35"
+            className="mx-auto flex flex-col items-center text-center font-bricolage text-cream"
             style={{
-              marginTop: copyrightGap,
-              paddingTop: copyrightPad,
-              paddingBottom: copyrightPad,
+              maxWidth: contentW,
+              paddingTop: scalePx(6, mobileScale, 4),
+              paddingBottom: scalePx(32, mobileScale, 20),
+              fontSize: mobileBodyFontPx,
+              lineHeight: 1.5,
+              gap: mobileItemGap,
             }}
           >
-            <p
-              className="text-center font-bricolage text-cream/90"
-              style={{ fontSize: smallFontPx }}
-            >
-              © 2026 SIMPLY RATIONAL GmbH
+            {/* Logo */}
+            <Image
+              src="/simply_rational_white_logo.svg"
+              alt="Simply Rational"
+              width={558}
+              height={210}
+              className="h-auto"
+              style={{ width: logoW }}
+            />
+
+            {/* Company name */}
+            <p className="font-bold">{FOOTER_CONTACT.company}</p>
+
+            {/* Address */}
+            <p>{FOOTER_CONTACT.address}</p>
+
+            {/* Email */}
+            <p>
+              <a href={`mailto:${FOOTER_CONTACT.email}`} className="underline underline-offset-2 text-cream">
+                {FOOTER_CONTACT.email}
+              </a>
             </p>
+
+            {/* Phones */}
+            {FOOTER_CONTACT.phones.map((phone) => (
+              <div key={phone.name} className="flex flex-col items-center" style={{ gap: Math.round(mobileItemGap * 0.25) }}>
+                <p>{phone.name}</p>
+                <a
+                  href={`tel:${phone.number.replace(/\s/g, "")}`}
+                  className="underline underline-offset-2 font-bold text-cream"
+                >
+                  {phone.number}
+                </a>
+              </div>
+            ))}
+
+            {/* Legal links */}
+            <a href="/impressum" className="underline underline-offset-2 font-medium text-cream">
+              Impressum
+            </a>
+            <a href="/datenschutz" className="underline underline-offset-2 font-medium text-cream">
+              Datenschutzerklärung
+            </a>
+
+            {/* Copyright */}
+            <div
+              className="w-full border-t border-cream/35"
+              style={{ paddingTop: copyrightPad, paddingBottom: copyrightPad }}
+            >
+              <p className="text-center font-bricolage text-cream/90" style={{ fontSize: smallFontPx }}>
+                © 2026 SIMPLY RATIONAL GmbH
+              </p>
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* ── DESKTOP footer body ─────────────────────────────── */}
+        {!isMobile && (
+          <div
+            className="mx-auto"
+            style={{ maxWidth: contentW, paddingTop: barPadY, paddingBottom: barPadY }}
+          >
+            <div
+              className="relative flex items-center"
+              style={{ minHeight: barMinH }}
+            >
+              <ContactDetails
+                fontPx={contactFontPx}
+                variant="light"
+                showCompany
+                contentScale={contentScale}
+                compact
+              />
+
+              <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
+                <Image
+                  src="/simply_rational_white_logo.svg"
+                  alt="Simply Rational"
+                  width={558}
+                  height={210}
+                  className="h-auto"
+                  style={{ width: logoW, marginTop: -logoOffsetY }}
+                />
+              </div>
+            </div>
+
+            <div
+              className="border-t border-cream/35"
+              style={{ marginTop: copyrightGap, paddingTop: copyrightPad, paddingBottom: copyrightPad }}
+            >
+              <p className="text-center font-bricolage text-cream/90" style={{ fontSize: smallFontPx }}>
+                © 2026 SIMPLY RATIONAL GmbH
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </footer>
   );
@@ -191,6 +273,12 @@ export default function FooterSection() {
   const { viewportW, bodyFontPx, contentScale } =
     useSectionContentScale(isAnimPlayingRef);
   const [headlinePx, setHeadlinePx] = useState(ENTSCHEIDBAR_TITLE_PX_DESIGN);
+  const [mobileTitlePx, setMobileTitlePx] = useState(36);
+  const [mobileBodyFontPx, setMobileBodyFontPx] = useState(MOBILE_DESC_PX_DESIGN);
+
+  const isMobile = viewportW < 1024;
+  const mobileScale = Math.min(1, viewportW / MOBILE_DESIGN_WIDTH);
+  const mobileDescCap = Math.round(MOBILE_DESC_PX_DESIGN * mobileScale);
 
   useLayoutEffect(() => {
     const serifFont =
@@ -198,29 +286,65 @@ export default function FooterSection() {
         .getPropertyValue("--font-noto-serif-jp")
         .trim() || "serif";
 
-    setHeadlinePx(
-      fitSectionHeadlineFontPx(
-        viewportW,
-        serifFont,
-        ENTSCHEIDBAR_TITLE_LINES,
-        ENTSCHEIDBAR_TITLE_PX_DESIGN,
-        bodyFontPx,
-      ),
-    );
-  }, [viewportW, bodyFontPx]);
+    if (isMobile) {
+      setMobileTitlePx(
+        fitMobileHeadlinePx(
+          ["Entscheidungslogik", "und transparente KI -"],
+          viewportW,
+          serifFont,
+          48,
+          20,
+        ),
+      );
+
+      const bricolageFont =
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--font-bricolage-grotesque")
+          .trim() || "sans-serif";
+
+      setMobileBodyFontPx(
+        fitDescriptionFontSize(
+          sectionAvailableWidth(viewportW),
+          mobileDescCap,
+          bricolageFont,
+          MOBILE_RISIKO_BODY_LINES,
+          12,
+          mobileDescCap,
+        ),
+      );
+    } else {
+      setHeadlinePx(
+        fitSectionHeadlineFontPx(
+          viewportW,
+          serifFont,
+          ENTSCHEIDBAR_TITLE_LINES,
+          ENTSCHEIDBAR_TITLE_PX_DESIGN,
+          bodyFontPx,
+        ),
+      );
+    }
+  }, [viewportW, bodyFontPx, isMobile, mobileDescCap]);
 
   const contentW = sectionAvailableWidth(viewportW);
-  const formRadius = scalePx(FOOTER_FORM_RADIUS_BASE, contentScale, 16);
-  const formPad = scalePx(FOOTER_FORM_PAD_BASE, contentScale, 24);
-  const formGap = scalePx(FOOTER_FORM_GAP_BASE, contentScale, 12);
-  const textareaH = scalePx(FOOTER_FORM_TEXTAREA_H_BASE, contentScale, 140);
-  const contactFontPx = scalePx(FOOTER_CONTACT_PX_DESIGN, contentScale, 13);
-  const smallFontPx = Math.max(12, Math.round(bodyFontPx * 0.76));
-  const buttonPaddingX = scalePx(NAV_BUTTON_PX_X, contentScale, 24);
-  const buttonPaddingY = scalePx(NAV_BUTTON_PX_Y, contentScale, 8);
-  const buttonFontPx = scalePx(NAV_BUTTON_FONT, contentScale, 11);
-  const buttonRadius = scalePx(NAV_BUTTON_RADIUS, contentScale, 10);
-  const inputPadY = scalePx(15, contentScale, 10);
+
+  // Use mobile-specific scale for geometry on mobile
+  const activeScale = isMobile ? mobileScale : contentScale;
+  const activeContactFontPx = isMobile ? mobileBodyFontPx : scalePx(FOOTER_CONTACT_PX_DESIGN, contentScale, 13);
+  const activeSmallFontPx = isMobile
+    ? Math.max(11, Math.round(mobileBodyFontPx * 0.82))
+    : Math.max(12, Math.round(bodyFontPx * 0.76));
+
+  const formRadius = scalePx(FOOTER_FORM_RADIUS_BASE, activeScale, 16);
+  const formPad = isMobile ? scalePx(18, mobileScale, 14) : scalePx(FOOTER_FORM_PAD_BASE, contentScale, 20);
+  const formGap = scalePx(FOOTER_FORM_GAP_BASE, activeScale, 10);
+  const textareaH = scalePx(FOOTER_FORM_TEXTAREA_H_BASE, activeScale, 120);
+  const contactFontPx = activeContactFontPx;
+  const smallFontPx = activeSmallFontPx;
+  const buttonPaddingX = isMobile ? scalePx(16, mobileScale, 12) : scalePx(NAV_BUTTON_PX_X, contentScale, 20);
+  const buttonPaddingY = isMobile ? scalePx(14, mobileScale, 10) : scalePx(NAV_BUTTON_PX_Y, contentScale, 10);
+  const buttonFontPx = isMobile ? mobileBodyFontPx : scalePx(NAV_BUTTON_FONT, contentScale, 11);
+  const buttonRadius = scalePx(NAV_BUTTON_RADIUS, activeScale, 10);
+  const inputPadY = scalePx(15, activeScale, 10);
 
   return (
     <section data-scroll-section="contact-footer" className="relative w-full">
@@ -228,12 +352,19 @@ export default function FooterSection() {
         className="bg-cream px-[6vw] pt-[8vh]"
         style={{ paddingBottom: `${FOOTER_CREAM_BOTTOM_VH}vh` }}
       >
+        {/* Mobile headline — wraps naturally */}
         <h2
-          className="mx-auto w-fit max-w-full text-center font-serif font-extrabold tracking-tight"
-          style={{
-            fontSize: headlinePx,
-            lineHeight: TITLE_LINE_HEIGHT,
-          }}
+          className="mx-auto w-full text-center font-serif font-extrabold tracking-tight lg:hidden"
+          style={{ fontSize: mobileTitlePx, lineHeight: TITLE_LINE_HEIGHT }}
+        >
+          <span className="text-ink">Menschliche Urteilskraft, klare Entscheidungslogik und transparente KI - </span>
+          <span className="text-purple">für weiterhin gute Entscheidungen</span>
+        </h2>
+
+        {/* Desktop headline — nowrap, fitted */}
+        <h2
+          className="mx-auto hidden w-fit max-w-full text-center font-serif font-extrabold tracking-tight lg:block"
+          style={{ fontSize: headlinePx, lineHeight: TITLE_LINE_HEIGHT }}
         >
           <span className="block whitespace-nowrap text-ink">
             {FOOTER_HEADLINE_LINES[0]}
@@ -351,6 +482,9 @@ export default function FooterSection() {
         viewportW={viewportW}
         contactFontPx={contactFontPx}
         smallFontPx={smallFontPx}
+        isMobile={isMobile}
+        mobileBodyFontPx={mobileBodyFontPx}
+        mobileScale={mobileScale}
       />
     </section>
   );
