@@ -20,6 +20,7 @@ interface NavProps {
   showExtras: boolean;
   contentScale: number;
   staticExtras?: boolean;
+  onContactClick?: () => void;
 }
 
 export default function Nav({
@@ -27,6 +28,7 @@ export default function Nav({
   showExtras,
   contentScale,
   staticExtras = false,
+  onContactClick,
 }: NavProps) {
   const navHeight = scalePx(NAV_HEIGHT_BASE, contentScale, 56);
   const logoWidth = scalePx(NAV_LOGO_W_BASE, contentScale, 72);
@@ -82,6 +84,7 @@ export default function Nav({
             (staticExtras ? (
               <button
                 type="button"
+                onClick={onContactClick}
                 className="font-bricolage cursor-pointer whitespace-nowrap bg-purple font-semibold tracking-wide text-cream shadow-[0_10px_28px_-10px_rgba(102,26,174,0.55)] transition hover:bg-purple-deep focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple"
                 style={{
                   paddingInline: buttonPaddingX,
@@ -95,6 +98,7 @@ export default function Nav({
             ) : (
               <motion.button
                 type="button"
+                onClick={onContactClick}
                 className="font-bricolage cursor-pointer whitespace-nowrap bg-purple font-semibold tracking-wide text-cream shadow-[0_10px_28px_-10px_rgba(102,26,174,0.55)] transition hover:bg-purple-deep focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple"
                 style={{
                   paddingInline: buttonPaddingX,

@@ -60,9 +60,10 @@ const STATIC_TRANSITION = { duration: 0 };
 
 interface HeroProps {
   onIntroComplete?: () => void;
+  onNavigateToContact?: () => void;
 }
 
-export default function Hero({ onIntroComplete }: HeroProps) {
+export default function Hero({ onIntroComplete, onNavigateToContact }: HeroProps) {
   const isIntroPlayingRef = useRef(true);
   const [isIntroPlaying, setIsIntroPlaying] = useState(true);
   const [logoInNav, setLogoInNav] = useState(false);
@@ -72,6 +73,15 @@ export default function Hero({ onIntroComplete }: HeroProps) {
   const [isLayoutReady, setIsLayoutReady] = useState(false);
 
   useIntroScrollLock(isIntroPlaying);
+
+  const handleNavigateToContact = () => {
+    isIntroPlayingRef.current = false;
+    setIsIntroPlaying(false);
+    setLogoInNav(true);
+    setShowNavExtras(true);
+    onIntroComplete?.();
+    onNavigateToContact?.();
+  };
 
   useLayoutEffect(() => {
     setViewportH(window.innerHeight);
@@ -350,6 +360,7 @@ export default function Hero({ onIntroComplete }: HeroProps) {
           showExtras={showNavExtras}
           contentScale={navContentScale}
           staticExtras={!isIntroPlaying}
+          onContactClick={handleNavigateToContact}
         />
       </div>
 

@@ -54,8 +54,10 @@ const TITLE_LINE_HEIGHT = 1.05;
 
 export default function TeamSection({
   heroIntroComplete,
+  mountImmediately = false,
 }: {
   heroIntroComplete: boolean;
+  mountImmediately?: boolean;
 }) {
   const sectionRef = useRef<HTMLElement>(null);
   const isAnimPlayingRef = useRef(false);
@@ -173,13 +175,13 @@ export default function TeamSection({
   );
 
   useEffect(() => {
-    if (!heroIntroComplete || !isInView || stageMounted) {
+    if (!heroIntroComplete || (!mountImmediately && !isInView) || stageMounted) {
       return;
     }
 
     setStageMounted(true);
     void preloadTeamMemberImages();
-  }, [heroIntroComplete, isInView, stageMounted]);
+  }, [heroIntroComplete, isInView, stageMounted, mountImmediately]);
 
   useEffect(() => {
     if (!stageMounted || hasPlayedRef.current) {

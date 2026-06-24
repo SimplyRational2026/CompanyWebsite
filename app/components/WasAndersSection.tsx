@@ -71,8 +71,10 @@ const BULLET_SLOTS = [
 
 export default function WasAndersSection({
   heroIntroComplete,
+  mountImmediately = false,
 }: {
   heroIntroComplete: boolean;
+  mountImmediately?: boolean;
 }) {
   const sectionRef = useRef<HTMLElement>(null);
   const isAnimPlayingRef = useRef(false);
@@ -226,14 +228,14 @@ export default function WasAndersSection({
   );
 
   useEffect(() => {
-    if (!heroIntroComplete || !isInView || hasPlayedRef.current) {
+    if (!heroIntroComplete || (!mountImmediately && !isInView) || hasPlayedRef.current) {
       return;
     }
 
     hasPlayedRef.current = true;
     isAnimPlayingRef.current = true;
     setIsAnimPlaying(true);
-  }, [heroIntroComplete, isInView]);
+  }, [heroIntroComplete, isInView, mountImmediately]);
 
   useEffect(() => {
     if (!isAnimPlaying) {

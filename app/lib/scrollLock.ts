@@ -14,6 +14,38 @@ export function ScrollToTopOnLoad() {
   return null;
 }
 
+export function unlockPageScroll() {
+  document.documentElement.style.overflow = "";
+  document.body.style.overflow = "";
+}
+
+export function scrollToContactForm() {
+  unlockPageScroll();
+
+  const scroll = () => {
+    const form = document.getElementById("contact-form");
+    if (!form) {
+      return false;
+    }
+
+    const offset = 24;
+    const top = form.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+    return true;
+  };
+
+  // Sections expand after heroIntroComplete — retry until layout settles.
+  requestAnimationFrame(() => {
+    requestAnimationFrame(scroll);
+  });
+  window.setTimeout(scroll, 120);
+  window.setTimeout(scroll, 400);
+  window.setTimeout(scroll, 900);
+  window.setTimeout(scroll, 1500);
+
+  return scroll();
+}
+
 export function useIntroScrollLock(locked: boolean) {
   useEffect(() => {
     if (!locked) {

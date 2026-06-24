@@ -69,8 +69,10 @@ function measureLineExtendWidthLeft(
 
 export default function UngewissheitSection({
   heroIntroComplete,
+  mountImmediately = false,
 }: {
   heroIntroComplete: boolean;
+  mountImmediately?: boolean;
 }) {
   const sectionRef = useRef<HTMLElement>(null);
   const markHostRef = useRef<HTMLDivElement>(null);
@@ -198,14 +200,14 @@ export default function UngewissheitSection({
   }, [isMobile, titleLineH, bodyGap, markH, bodyFontPx, contentScale]);
 
   useEffect(() => {
-    if (!heroIntroComplete || !isInView || hasPlayedRef.current) {
+    if (!heroIntroComplete || (!mountImmediately && !isInView) || hasPlayedRef.current) {
       return;
     }
 
     hasPlayedRef.current = true;
     isAnimPlayingRef.current = true;
     setIsAnimPlaying(true);
-  }, [heroIntroComplete, isInView]);
+  }, [heroIntroComplete, isInView, mountImmediately]);
 
   useEffect(() => {
     if (!isAnimPlaying) {

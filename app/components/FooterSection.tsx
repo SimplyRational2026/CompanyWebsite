@@ -395,7 +395,8 @@ export default function FooterSection() {
 
           <div className="w-full min-w-0">
             <form
-              className="flex w-full flex-col bg-purple shadow-[0_24px_48px_-12px_rgba(102,26,174,0.35)]"
+              id="contact-form"
+              className="flex w-full scroll-mt-6 flex-col bg-purple shadow-[0_24px_48px_-12px_rgba(102,26,174,0.35)] lg:scroll-mt-10"
               style={{
                 borderRadius: formRadius,
                 padding: formPad,

@@ -65,8 +65,10 @@ const STATIC_TRANSITION = { duration: 0 };
 
 export default function EntscheidbarSection({
   heroIntroComplete,
+  mountImmediately = false,
 }: {
   heroIntroComplete: boolean;
+  mountImmediately?: boolean;
 }) {
   const sectionRef = useRef<HTMLElement>(null);
   const isAnimPlayingRef = useRef(false);
@@ -216,7 +218,7 @@ export default function EntscheidbarSection({
   );
 
   useEffect(() => {
-    if (!heroIntroComplete || !isInView || hasPlayedRef.current) {
+    if (!heroIntroComplete || (!mountImmediately && !isInView) || hasPlayedRef.current) {
       return;
     }
 
@@ -224,7 +226,7 @@ export default function EntscheidbarSection({
     isAnimPlayingRef.current = true;
     setIsAnimPlaying(true);
     setShowTree(true);
-  }, [heroIntroComplete, isInView]);
+  }, [heroIntroComplete, isInView, mountImmediately]);
 
   useEffect(() => {
     if (!isAnimPlaying) {
