@@ -211,13 +211,11 @@ export default function EntscheidungSection({
       <div className="relative mx-auto flex w-full max-w-[1200px] flex-col items-center">
         {(headlineVisible || hasFinished) && (
           <motion.h2
-            className="absolute left-1/2 z-20 -translate-x-1/2 text-center font-serif font-extrabold tracking-tight"
+            className="absolute left-0 z-20 w-full text-center font-serif font-extrabold tracking-tight"
             style={{
               fontSize: activeFontPx,
               lineHeight: HEADLINE_LINE_HEIGHT,
               top: 0,
-              width: isMobile ? "100%" : "fit-content",
-              maxWidth: "100%",
             }}
             initial={
               isAnimPlaying && !hasFinished ? { x: "-120vw", opacity: 0 } : false
