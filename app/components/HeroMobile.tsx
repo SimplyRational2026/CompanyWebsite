@@ -8,6 +8,7 @@ import {
   MOBILE_PURPLE_TITLE_LINES,
 } from "@/app/lib/fitText";
 import { scalePx, MOBILE_DESIGN_WIDTH, MOBILE_DESC_BALL_GAP_BASE, MOBILE_FINAL_LINE_W_BASE, MOBILE_FINAL_ROW_INSET_BASE } from "@/app/lib/scale";
+import ScrollHintArrow from "@/app/components/ScrollHintArrow";
 
 const STATIC_TRANSITION = { duration: 0 };
 
@@ -26,6 +27,7 @@ interface HeroMobileProps {
   contentScale: number;
   viewportW: number;
   viewportH: number;
+  showScrollHint?: boolean;
 }
 
 export default function HeroMobile({
@@ -43,16 +45,17 @@ export default function HeroMobile({
   contentScale,
   viewportW,
   viewportH,
+  showScrollHint = false,
 }: HeroMobileProps) {
   const mobileScale = Math.min(1, viewportW / MOBILE_DESIGN_WIDTH);
   const navGap = scalePx(32, contentScale, 20);
   const blackTitleH = BLACK_TITLE_LINES.length * titleLineH;
-  // Pause slightly above true viewport center before shifting up to final nav position
   const blackCenterTop = Math.round(
     viewportH / 2 - blackTitleH / 2 - scalePx(24, contentScale, 16),
   );
   const blackFinalTop = navHeight + navGap;
-  const dividerMargin = scalePx(36, contentScale, 22);
+  const dividerMarginTop = scalePx(36, contentScale, 20);
+  const dividerMarginBottom = scalePx(12, contentScale, 8);
   const descMarginTop = scalePx(56, contentScale, 32);
   const descBallGap = scalePx(MOBILE_DESC_BALL_GAP_BASE, mobileScale, 8);
   const finalRowInset = scalePx(MOBILE_FINAL_ROW_INSET_BASE, mobileScale, 12);
@@ -60,13 +63,12 @@ export default function HeroMobile({
   const dashGapInGroup = scalePx(8, mobileScale, 4);
   const trailingLineW = Math.round(viewportW * 0.44);
   const finalLineW = scalePx(MOBILE_FINAL_LINE_W_BASE, mobileScale, 36);
-  const centerBallSlotH = Math.max(ballSize + 24, scalePx(100, contentScale, 60));
+  const centerBallSlotH = Math.max(ballSize + 8, scalePx(40, contentScale, 30));
   const descRowBallOffset = Math.max(
     0,
     Math.round((descFontPx * descLineHeightRatio * 2 - ballSize) / 2),
   );
 
-  // Ball is anchored at horizontal center; use a generous overshoot so it's truly off-screen
   const offR = Math.round(viewportW);
   const offL = -offR;
 
@@ -100,7 +102,6 @@ export default function HeroMobile({
 
   return (
     <main className="relative min-h-screen lg:hidden">
-      {/* Black headline — enters from left to viewport center, then moves up */}
       <motion.h1
         className="absolute inset-x-0 z-30 px-[5vw] text-center font-serif font-extrabold tracking-tight text-ink"
         style={{ fontSize: titleFontPx, lineHeight: `${titleLineH}px` }}
@@ -144,13 +145,13 @@ export default function HeroMobile({
         }}
       >
         <div className="flex w-full flex-col items-center">
-          {/* 2. Divider zone — one ball + one dashed line, grouped */}
           <div
             className="relative w-screen max-w-none -translate-x-1/2 overflow-hidden"
             style={{
               left: "50%",
               height: centerBallSlotH,
-              marginBlock: dividerMargin,
+              marginTop: dividerMarginTop,
+              marginBottom: dividerMarginBottom,
             }}
           >
             <motion.div
@@ -174,7 +175,6 @@ export default function HeroMobile({
                   : STATIC_TRANSITION
               }
             >
-              {/* Ball leads — line is rigidly attached to its right edge until exit */}
               <motion.div
                 className="shrink-0 rounded-full bg-purple"
                 style={{
@@ -234,7 +234,6 @@ export default function HeroMobile({
             </motion.div>
           </div>
 
-          {/* 3. Purple headline */}
           <motion.h2
             className="w-full text-center font-serif font-extrabold tracking-tight text-purple"
             style={{ fontSize: titleFontPx, lineHeight: `${titleLineH}px` }}
@@ -261,7 +260,6 @@ export default function HeroMobile({
             ))}
           </motion.h2>
 
-          {/* 4. Final row — dash from screen left into ball, description on the right */}
           <div
             className="relative left-1/2 w-screen -translate-x-1/2"
             style={{ marginTop: descMarginTop }}
@@ -326,7 +324,7 @@ export default function HeroMobile({
                 }
               >
                 {MOBILE_DESCRIPTION_LINES.map((line) => (
-                  <span key={line} className="block whitespace-nowrap">
+                  <span key={line} className="block">
                     {line}
                   </span>
                 ))}
@@ -336,37 +334,7 @@ export default function HeroMobile({
         </div>
       </div>
 
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-[3vh] flex justify-center text-purple"
-        initial={isIntroPlaying ? { opacity: 0 } : false}
-        animate={{ opacity: 1 }}
-        transition={
-          isIntroPlaying
-            ? {
-                duration: MOBILE_STEPS.chevronFade.duration,
-                delay: MOBILE_STEPS.chevronFade.delay,
-                ease: EASE,
-              }
-            : STATIC_TRANSITION
-        }
-      >
-        <svg
-          width={scalePx(36, contentScale, 28)}
-          height={scalePx(36, contentScale, 28)}
-          viewBox="0 0 24 24"
-          fill="none"
-          aria-hidden
-        >
-          <path
-            d="M6 9l6 6 6-6"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </motion.div>
+      <ScrollHintArrow visible={showScrollHint} />
     </main>
   );
 }

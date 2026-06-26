@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
 import { D800, EASE, EASE_BOUNCE, STEPS } from "@/app/lib/anim";
+import { useContactModal } from "@/app/components/ContactModalProvider";
 import {
   NAV_BUTTON_FONT,
   NAV_BUTTON_PX_X,
@@ -20,7 +22,6 @@ interface NavProps {
   showExtras: boolean;
   contentScale: number;
   staticExtras?: boolean;
-  onContactClick?: () => void;
 }
 
 export default function Nav({
@@ -28,8 +29,10 @@ export default function Nav({
   showExtras,
   contentScale,
   staticExtras = false,
-  onContactClick,
 }: NavProps) {
+  const { openContactModal } = useContactModal();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   const navHeight = scalePx(NAV_HEIGHT_BASE, contentScale, 56);
   const logoWidth = scalePx(NAV_LOGO_W_BASE, contentScale, 72);
   const logoSlotHeight = scalePx(NAV_LOGO_H_BASE, contentScale, 32);
@@ -47,74 +50,197 @@ export default function Nav({
         delay: D800 * 0.2,
       };
 
+  const pdfLinkClass =
+    "font-bricolage cursor-pointer whitespace-nowrap font-semibold tracking-wide text-ink transition-opacity hover:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple";
+  const ctaClass =
+    "font-bricolage cursor-pointer whitespace-nowrap bg-purple font-semibold tracking-wide text-cream shadow-[0_10px_28px_-10px_rgba(102,26,174,0.55)] transition hover:bg-purple-deep focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple";
+
   return (
     <header className="pointer-events-none relative z-40 w-full">
       <div
         className="pointer-events-auto flex items-center justify-between"
         style={{ height: navHeight, paddingInline: navPaddingX }}
       >
-        <div
-          className="flex items-center"
-          style={{ height: logoSlotHeight, width: logoWidth }}
-        >
-          {logoInNav && (
-            <motion.div
-              layoutId="srLogo"
-              className="block"
-              style={{ width: logoWidth }}
-              transition={{
-                duration: STEPS.logoToNav.duration,
-                ease: EASE_BOUNCE,
-              }}
-            >
-              <Image
-                src="/simply-rational-logo.png"
-                alt="Simply Rational"
-                width={1024}
-                height={512}
-                priority
-                className="block h-auto w-full"
-              />
-            </motion.div>
-          )}
-        </div>
-
-        <AnimatePresence>
-          {showExtras &&
-            (staticExtras ? (
-              <button
-                type="button"
-                onClick={onContactClick}
-                className="font-bricolage cursor-pointer whitespace-nowrap bg-purple font-semibold tracking-wide text-cream shadow-[0_10px_28px_-10px_rgba(102,26,174,0.55)] transition hover:bg-purple-deep focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple"
-                style={{
-                  paddingInline: buttonPaddingX,
-                  paddingBlock: buttonPaddingY,
-                  fontSize: buttonFontSize,
-                  borderRadius: buttonRadius,
+        <div className="flex items-center gap-8">
+          <div
+            className="flex items-center"
+            style={{ height: logoSlotHeight, width: logoWidth }}
+          >
+            {logoInNav && (
+              <motion.div
+                layoutId="srLogo"
+                className="block"
+                style={{ width: logoWidth }}
+                transition={{
+                  duration: STEPS.logoToNav.duration,
+                  ease: EASE_BOUNCE,
                 }}
               >
-                Gute Entscheidung
-              </button>
-            ) : (
+                <Image
+                  src="/simply-rational-logo.png"
+                  alt="Simply Rational"
+                  width={1024}
+                  height={512}
+                  priority
+                  className="block h-auto w-full"
+                />
+              </motion.div>
+            )}
+          </div>
+
+          <AnimatePresence>
+            {showExtras &&
+              (staticExtras ? (
+                <div className="hidden items-center gap-6 lg:flex">
+                  <a
+                    href="/20260608SR_FourPager_EntscheidungsbarometerWirtschaft_final.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={pdfLinkClass}
+                    style={{ fontSize: buttonFontSize }}
+                  >
+                    Entscheidungsbarometer
+                  </a>
+                  <a
+                    href="/20260618_FourPager_.Insurance_Entscheidungsintelligenz.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={pdfLinkClass}
+                    style={{ fontSize: buttonFontSize }}
+                  >
+                    Versicherungen
+                  </a>
+                </div>
+              ) : (
+                <motion.div
+                  className="hidden items-center gap-6 lg:flex"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={navExtraTransition}
+                >
+                  <a
+                    href="/20260608SR_FourPager_EntscheidungsbarometerWirtschaft_final.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={pdfLinkClass}
+                    style={{ fontSize: buttonFontSize }}
+                  >
+                    Entscheidungsbarometer
+                  </a>
+                  <a
+                    href="/20260618_FourPager_.Insurance_Entscheidungsintelligenz.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={pdfLinkClass}
+                    style={{ fontSize: buttonFontSize }}
+                  >
+                    Versicherungen
+                  </a>
+                </motion.div>
+              ))}
+          </AnimatePresence>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <AnimatePresence>
+            {showExtras &&
+              (staticExtras ? (
+                <button
+                  type="button"
+                  onClick={openContactModal}
+                  className={`hidden lg:block ${ctaClass}`}
+                  style={{
+                    paddingInline: buttonPaddingX,
+                    paddingBlock: buttonPaddingY,
+                    fontSize: buttonFontSize,
+                    borderRadius: buttonRadius,
+                  }}
+                >
+                  Gute Entscheidung
+                </button>
+              ) : (
+                <motion.button
+                  type="button"
+                  onClick={openContactModal}
+                  className={`hidden lg:block ${ctaClass}`}
+                  style={{
+                    paddingInline: buttonPaddingX,
+                    paddingBlock: buttonPaddingY,
+                    fontSize: buttonFontSize,
+                    borderRadius: buttonRadius,
+                  }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={navExtraTransition}
+                >
+                  Gute Entscheidung
+                </motion.button>
+              ))}
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {showExtras && (
               <motion.button
                 type="button"
-                onClick={onContactClick}
-                className="font-bricolage cursor-pointer whitespace-nowrap bg-purple font-semibold tracking-wide text-cream shadow-[0_10px_28px_-10px_rgba(102,26,174,0.55)] transition hover:bg-purple-deep focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple"
-                style={{
-                  paddingInline: buttonPaddingX,
-                  paddingBlock: buttonPaddingY,
-                  fontSize: buttonFontSize,
-                  borderRadius: buttonRadius,
-                }}
+                aria-label={mobileMenuOpen ? "Menü schließen" : "Menü öffnen"}
+                aria-expanded={mobileMenuOpen}
+                onClick={() => setMobileMenuOpen((o) => !o)}
+                className="pointer-events-auto flex h-10 w-10 flex-col items-end justify-center gap-[6px] lg:hidden"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={navExtraTransition}
               >
-                Gute Entscheidung
+                <AnimatePresence mode="wait" initial={false}>
+                  {mobileMenuOpen ? (
+                    <motion.svg
+                      key="close"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="28"
+                      height="28"
+                      viewBox="0 0 28 28"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      className="text-ink"
+                      initial={{ opacity: 0, rotate: -45 }}
+                      animate={{ opacity: 1, rotate: 0 }}
+                      exit={{ opacity: 0, rotate: 45 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <line x1="5" y1="5" x2="23" y2="23" />
+                      <line x1="23" y1="5" x2="5" y2="23" />
+                    </motion.svg>
+                  ) : (
+                    <motion.svg
+                      key="burger"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="28"
+                      height="28"
+                      viewBox="0 0 28 28"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      className="text-ink"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <line x1="4" y1="8" x2="24" y2="8" />
+                      <line x1="9" y1="14" x2="24" y2="14" />
+                      <line x1="4" y1="20" x2="24" y2="20" />
+                    </motion.svg>
+                  )}
+                </AnimatePresence>
               </motion.button>
-            ))}
-        </AnimatePresence>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
       <AnimatePresence>
@@ -131,6 +257,48 @@ export default function Nav({
               transition={navExtraTransition}
             />
           ))}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            key="mobile-menu"
+            className="pointer-events-auto absolute left-0 right-0 top-full z-50 flex flex-col items-center gap-6 bg-cream px-6 py-8 shadow-[0_16px_48px_-4px_rgba(0,0,0,0.28)] lg:hidden" style={{ borderRadius: "0 0 28px 28px" }}
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+          >
+            <a
+              href="/20260608SR_FourPager_EntscheidungsbarometerWirtschaft_final.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setMobileMenuOpen(false)}
+              className="font-bricolage text-base font-semibold tracking-wide text-ink transition-opacity hover:opacity-60"
+            >
+              Entscheidungsbarometer
+            </a>
+            <a
+              href="/20260618_FourPager_.Insurance_Entscheidungsintelligenz.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setMobileMenuOpen(false)}
+              className="font-bricolage text-base font-semibold tracking-wide text-ink transition-opacity hover:opacity-60"
+            >
+              Versicherungen
+            </a>
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                openContactModal();
+              }}
+              className="font-bricolage mt-2 cursor-pointer rounded-xl bg-purple px-8 py-3 text-base font-semibold tracking-wide text-cream shadow-[0_10px_28px_-10px_rgba(102,26,174,0.55)] transition hover:bg-purple-deep"
+            >
+              Gute Entscheidung
+            </button>
+          </motion.div>
+        )}
       </AnimatePresence>
     </header>
   );

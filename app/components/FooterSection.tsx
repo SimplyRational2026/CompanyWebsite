@@ -4,10 +4,8 @@ import Image from "next/image";
 import { useLayoutEffect, useRef, useState } from "react";
 import {
   ENTSCHEIDBAR_TITLE_LINES,
-  fitDescriptionFontSize,
   FOOTER_CONTACT,
   FOOTER_HEADLINE_LINES,
-  MOBILE_RISIKO_BODY_LINES,
 } from "@/app/lib/fitText";
 import {
   fitMobileHeadlinePx,
@@ -125,7 +123,6 @@ function PurpleFooterBar({
   );
   const archD = archR * 2;
   const archVisibleH = Math.round(archR * FOOTER_ARCH_VISIBLE_RATIO);
-  // On mobile FOOTER_ARCH_CUT_DROP_BASE (270) >> archVisibleH, so use a much smaller mobile value
   const archCutDrop = isMobile
     ? scalePx(80, mobileScale, 50)
     : scalePx(FOOTER_ARCH_CUT_DROP_BASE, contentScale, 96);
@@ -154,10 +151,9 @@ function PurpleFooterBar({
       </div>
 
       <div className="relative z-10 bg-purple px-[6vw]">
-        {/* ── MOBILE footer body ─────────────────────────────── */}
         {isMobile && (
           <div
-            className="mx-auto flex flex-col items-center text-center font-bricolage text-cream"
+            className="mx-auto flex flex-col font-bricolage text-cream"
             style={{
               maxWidth: contentW,
               paddingTop: scalePx(6, mobileScale, 4),
@@ -167,63 +163,59 @@ function PurpleFooterBar({
               gap: mobileItemGap,
             }}
           >
-            {/* Logo */}
-            <Image
-              src="/simply_rational_white_logo.svg"
-              alt="Simply Rational"
-              width={558}
-              height={210}
-              className="h-auto"
-              style={{ width: logoW }}
-            />
+            <div className="flex flex-col items-center text-center" style={{ gap: mobileItemGap }}>
+              <Image
+                src="/simply_rational_white_logo.svg"
+                alt="Simply Rational"
+                width={558}
+                height={210}
+                className="h-auto"
+                style={{ width: logoW }}
+              />
 
-            {/* Company name */}
-            <p className="font-bold">{FOOTER_CONTACT.company}</p>
+              <p className="font-bold">{FOOTER_CONTACT.company}</p>
 
-            {/* Address */}
-            <p>{FOOTER_CONTACT.address}</p>
+              <p>{FOOTER_CONTACT.address}</p>
 
-            {/* Email */}
-            <p>
-              <a href={`mailto:${FOOTER_CONTACT.email}`} className="underline underline-offset-2 text-cream">
-                {FOOTER_CONTACT.email}
-              </a>
-            </p>
-
-            {/* Phones */}
-            {FOOTER_CONTACT.phones.map((phone) => (
-              <div key={phone.name} className="flex flex-col items-center" style={{ gap: Math.round(mobileItemGap * 0.25) }}>
-                <p>{phone.name}</p>
-                <a
-                  href={`tel:${phone.number.replace(/\s/g, "")}`}
-                  className="underline underline-offset-2 font-bold text-cream"
-                >
-                  {phone.number}
+              <p>
+                <a href={`mailto:${FOOTER_CONTACT.email}`} className="underline underline-offset-2 text-cream">
+                  {FOOTER_CONTACT.email}
                 </a>
-              </div>
-            ))}
-
-            {/* Legal links */}
-            <a href="/impressum" className="underline underline-offset-2 font-medium text-cream">
-              Impressum
-            </a>
-            <a href="/datenschutz" className="underline underline-offset-2 font-medium text-cream">
-              Datenschutzerklärung
-            </a>
-
-            {/* Copyright */}
-            <div
-              className="w-full border-t border-cream/35"
-              style={{ paddingTop: copyrightPad, paddingBottom: copyrightPad }}
-            >
-              <p className="text-center font-bricolage text-cream/90" style={{ fontSize: smallFontPx }}>
-                © 2026 SIMPLY RATIONAL GmbH
               </p>
+            </div>
+
+            <div className="flex flex-col items-center text-center" style={{ gap: mobileItemGap }}>
+              {FOOTER_CONTACT.phones.map((phone) => (
+                <div key={phone.name} className="flex flex-col items-center" style={{ gap: Math.round(mobileItemGap * 0.25) }}>
+                  <p>{phone.name}</p>
+                  <a
+                    href={`tel:${phone.number.replace(/\s/g, "")}`}
+                    className="underline underline-offset-2 font-bold text-cream"
+                  >
+                    {phone.number}
+                  </a>
+                </div>
+              ))}
+
+              <a href="/impressum" className="underline underline-offset-2 font-medium text-cream">
+                Impressum
+              </a>
+              <a href="/datenschutz" className="underline underline-offset-2 font-medium text-cream">
+                Datenschutzerklärung
+              </a>
+
+              <div
+                className="w-full border-t border-cream/35"
+                style={{ paddingTop: copyrightPad, paddingBottom: copyrightPad }}
+              >
+                <p className="text-center font-bricolage text-cream/90" style={{ fontSize: smallFontPx }}>
+                  © 2026 SIMPLY RATIONAL GmbH
+                </p>
+              </div>
             </div>
           </div>
         )}
 
-        {/* ── DESKTOP footer body ─────────────────────────────── */}
         {!isMobile && (
           <div
             className="mx-auto"
@@ -287,31 +279,8 @@ export default function FooterSection() {
         .trim() || "serif";
 
     if (isMobile) {
-      setMobileTitlePx(
-        fitMobileHeadlinePx(
-          ["Entscheidungslogik", "und transparente KI -"],
-          viewportW,
-          serifFont,
-          48,
-          20,
-        ),
-      );
-
-      const bricolageFont =
-        getComputedStyle(document.documentElement)
-          .getPropertyValue("--font-bricolage-grotesque")
-          .trim() || "sans-serif";
-
-      setMobileBodyFontPx(
-        fitDescriptionFontSize(
-          sectionAvailableWidth(viewportW),
-          mobileDescCap,
-          bricolageFont,
-          MOBILE_RISIKO_BODY_LINES,
-          12,
-          mobileDescCap,
-        ),
-      );
+      setMobileTitlePx(fitMobileHeadlinePx());
+      setMobileBodyFontPx(MOBILE_DESC_PX_DESIGN);
     } else {
       setHeadlinePx(
         fitSectionHeadlineFontPx(
@@ -327,7 +296,6 @@ export default function FooterSection() {
 
   const contentW = sectionAvailableWidth(viewportW);
 
-  // Use mobile-specific scale for geometry on mobile
   const activeScale = isMobile ? mobileScale : contentScale;
   const activeContactFontPx = isMobile ? mobileBodyFontPx : scalePx(FOOTER_CONTACT_PX_DESIGN, contentScale, 13);
   const activeSmallFontPx = isMobile
@@ -349,10 +317,9 @@ export default function FooterSection() {
   return (
     <section data-scroll-section="contact-footer" className="relative w-full">
       <div
-        className="bg-cream px-[6vw] pt-[8vh]"
+        className="bg-cream px-[6vw] pt-[3vh] lg:pt-[8vh]"
         style={{ paddingBottom: `${FOOTER_CREAM_BOTTOM_VH}vh` }}
       >
-        {/* Mobile headline — wraps naturally */}
         <h2
           className="mx-auto w-full text-center font-serif font-extrabold tracking-tight lg:hidden"
           style={{ fontSize: mobileTitlePx, lineHeight: TITLE_LINE_HEIGHT }}
@@ -361,7 +328,6 @@ export default function FooterSection() {
           <span className="text-purple">für weiterhin gute Entscheidungen</span>
         </h2>
 
-        {/* Desktop headline — nowrap, fitted */}
         <h2
           className="mx-auto hidden w-fit max-w-full text-center font-serif font-extrabold tracking-tight lg:block"
           style={{ fontSize: headlinePx, lineHeight: TITLE_LINE_HEIGHT }}
@@ -382,7 +348,7 @@ export default function FooterSection() {
           className="mx-auto mt-[clamp(2.5rem,6vh,4.5rem)] grid grid-cols-1 items-start gap-[clamp(2rem,4vw,3rem)] lg:grid-cols-2"
           style={{ maxWidth: contentW }}
         >
-          <div className="flex justify-start lg:pr-6">
+          <div className="order-2 flex justify-start lg:order-1 lg:pr-6">
             <div className="border-l-[5px] border-purple pl-4 sm:pl-5 lg:max-w-[88%]">
               <ContactDetails
                 fontPx={contactFontPx}
@@ -393,7 +359,7 @@ export default function FooterSection() {
             </div>
           </div>
 
-          <div className="w-full min-w-0">
+          <div className="order-1 w-full min-w-0 lg:order-2">
             <form
               id="contact-form"
               className="flex w-full scroll-mt-6 flex-col bg-purple shadow-[0_24px_48px_-12px_rgba(102,26,174,0.35)] lg:scroll-mt-10"

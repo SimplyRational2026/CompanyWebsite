@@ -39,17 +39,17 @@ export const MOBILE_STEPS = {
   logoIntro:      { delay: 0.0,  duration: D1000  },
   logoToNav:      { delay: 1.0,  duration: D800   },
   navReveal:      { delay: 2.0,  duration: D800   },
-  blackEnter:     { delay: 3.2,  duration: D1000  }, // black text slides in from left
-  blackShiftUp:   { delay: 4.5,  duration: D800   }, // black text shifts up
-  ballCrossEnter: { delay: 5.6,  duration: D1200  }, // ball + trailing line from right → center
-  purpleEnter:    { delay: 5.6,  duration: D1200  }, // purple text from left (with ball)
-  ballCrossExit:  { delay: 7.6,  duration: D1200  }, // ball exits left; dashed line stays
-  finalReveal:    { delay: 9.0,  duration: D1000  }, // desc from right + final ball from left
+  blackEnter:     { delay: 3.2,  duration: D1000  },
+  blackShiftUp:   { delay: 4.5,  duration: D800   },
+  ballCrossEnter: { delay: 5.6,  duration: D1200  },
+  purpleEnter:    { delay: 5.6,  duration: D1200  },
+  ballCrossExit:  { delay: 7.6,  duration: D1200  },
+  finalReveal:    { delay: 9.0,  duration: D1000  },
   chevronFade:    { delay: 10.2, duration: D800   },
 } as const;
 
 export const MOBILE_INTRO_END =
-  MOBILE_STEPS.chevronFade.delay + MOBILE_STEPS.chevronFade.duration; // 11.0s
+  MOBILE_STEPS.chevronFade.delay + MOBILE_STEPS.chevronFade.duration;
 
 export const SECTION_TITLE_ENTER = D1000;
 export const SECTION_TITLE_PAUSE = D800;
@@ -99,8 +99,6 @@ export const WAS_CIRCLE_ENTER = D1000 * 1.2;
 export const WAS_CIRCLE_GAP = D600;
 export const WAS_CIRCLE_START = WAS_TITLE_PHASE + WAS_CIRCLE_GAP;
 
-export const WAS_SPIN_DUR = D1000;
-export const WAS_TEXT_SLIDE_DUR = D1000;
 export const WAS_REVEAL_DUR = D1000 * 1.6;
 export const WAS_RING_SPIN_STEP = 90;
 export const WAS_RING_SPIN_DUR = D1000 * 2.2;
@@ -110,7 +108,6 @@ export const WAS_TEXT_CYCLE = WAS_REVEAL_DUR + WAS_TEXT_GAP;
 export const WAS_HUB_START = WAS_CIRCLE_START + WAS_CIRCLE_ENTER;
 export const WAS_HUB_PHASE = WAS_TEXT_CYCLE * 4;
 
-// Mobile: circle is always visible, so bullets start right after the title enters
 export const MOBILE_WAS_HUB_START = WAS_TITLE_ENTER + WAS_CIRCLE_GAP;
 
 export const WAS_VIDEO_ENTER = D1000 * 1.2;
@@ -152,8 +149,6 @@ export const TEAM_TITLE_PHASE =
 export const TEAM_PROFILES_ENTER = D1000 * 1.2;
 export const TEAM_PROFILES_START = TEAM_TITLE_ENTER + TEAM_TITLE_PAUSE;
 
-export const TEAM_FOOTER_ENTER = TEAM_PROFILES_ENTER;
-export const TEAM_FOOTER_START = TEAM_PROFILES_START;
 export const TEAM_FOOTER_RING_SPIN_DUR = D1000 * 1.5;
 export const TEAM_FOOTER_RING_RESET_DUR = D800;
 export const TEAM_ANIM_END = TEAM_PROFILES_START + TEAM_PROFILES_ENTER;

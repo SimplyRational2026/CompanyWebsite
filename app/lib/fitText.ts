@@ -55,7 +55,6 @@ const ENTSCHEIDUNG_HEADLINE_LINES = [
   "sondern die Qualität der Entscheidung.",
 ] as const;
 
-// Mobile-specific sub-lines matching the natural wrap at ~32 px
 const ENTSCHEIDUNG_MOBILE_HEADLINE_FIT_LINES = [
   "Das Problem ist nicht",
   "fehlendes Wissen,",
@@ -118,18 +117,11 @@ const FOOTER_CONTACT = {
 
 const TEAM_MEMBERS = [
   {
-    image: "/philip_leipold.svg",
-    width: 412,
+    image: "/gerd_gigerenzer.svg",
+    width: 400,
     height: 345,
-    role: "Dipl. Psychologe",
-    name: "Philipp Leipold",
-  },
-  {
-    image: "/susanne_jung.svg",
-    width: 411,
-    height: 345,
-    role: "Dipl. Andragogin, M.A.",
-    name: "Susanne Jung",
+    role: "Prof. Dr.",
+    name: "Gerd Gigerenzer",
   },
   {
     image: "/florian_artinger.svg",
@@ -139,11 +131,18 @@ const TEAM_MEMBERS = [
     name: "Florian Artinger",
   },
   {
-    image: "/gerd_gigerenzer.svg",
-    width: 400,
+    image: "/susanne_jung.svg",
+    width: 411,
     height: 345,
-    role: "Prof. Dr.",
-    name: "Gerd Gigerenzer",
+    role: "Dipl. Andragogin, M.A.",
+    name: "Susanne Jung",
+  },
+  {
+    image: "/philip_leipold.svg",
+    width: 412,
+    height: 345,
+    role: "Dipl. Psychologe",
+    name: "Philipp Leipold",
   },
 ] as const;
 

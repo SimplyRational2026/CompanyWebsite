@@ -21,8 +21,6 @@ import {
   fitDescriptionFontSize,
   fitTitleFontSize,
   measureDescriptionHeight,
-  MOBILE_DESCRIPTION_LINES,
-  MOBILE_PURPLE_TITLE_LINES,
   PURPLE_TITLE_LINES,
 } from "@/app/lib/fitText";
 import {
@@ -55,15 +53,19 @@ import {
 import { useIntroScrollLock } from "@/app/lib/scrollLock";
 import Nav from "./Nav";
 import HeroMobile from "./HeroMobile";
+import ScrollHintArrow from "./ScrollHintArrow";
 
 const STATIC_TRANSITION = { duration: 0 };
 
 interface HeroProps {
   onIntroComplete?: () => void;
-  onNavigateToContact?: () => void;
+  showScrollHint?: boolean;
 }
 
-export default function Hero({ onIntroComplete, onNavigateToContact }: HeroProps) {
+export default function Hero({
+  onIntroComplete,
+  showScrollHint = false,
+}: HeroProps) {
   const isIntroPlayingRef = useRef(true);
   const [isIntroPlaying, setIsIntroPlaying] = useState(true);
   const [logoInNav, setLogoInNav] = useState(false);
@@ -73,15 +75,6 @@ export default function Hero({ onIntroComplete, onNavigateToContact }: HeroProps
   const [isLayoutReady, setIsLayoutReady] = useState(false);
 
   useIntroScrollLock(isIntroPlaying);
-
-  const handleNavigateToContact = () => {
-    isIntroPlayingRef.current = false;
-    setIsIntroPlaying(false);
-    setLogoInNav(true);
-    setShowNavExtras(true);
-    onIntroComplete?.();
-    onNavigateToContact?.();
-  };
 
   useLayoutEffect(() => {
     setViewportH(window.innerHeight);
@@ -186,13 +179,15 @@ export default function Hero({ onIntroComplete, onNavigateToContact }: HeroProps
         .trim() || "serif";
 
     setTitleFontPx(
-      fitTitleFontSize(
-        titleMaxW,
-        viewportTitleCap,
-        fontFamily,
-        isMobile ? 30 : 10,
-        titleDesignPx,
-      ),
+      isMobile
+        ? MOBILE_TITLE_PX_DESIGN
+        : fitTitleFontSize(
+            titleMaxW,
+            viewportTitleCap,
+            fontFamily,
+            10,
+            titleDesignPx,
+          ),
     );
 
     const bricolageFont =
@@ -211,16 +206,7 @@ export default function Hero({ onIntroComplete, onNavigateToContact }: HeroProps
       : Math.max(40, titleMaxW);
 
     if (isMobile) {
-      setDescFontPx(
-        fitDescriptionFontSize(
-          descContentWidth,
-          viewportDescCap,
-          bricolageFont,
-          MOBILE_DESCRIPTION_LINES,
-          12,
-          viewportDescCap,
-        ),
-      );
+      setDescFontPx(MOBILE_DESC_PX_DESIGN);
     } else {
       setDescFontPx(
         fitDescriptionFontSize(
@@ -236,8 +222,6 @@ export default function Hero({ onIntroComplete, onNavigateToContact }: HeroProps
   }, [titleMaxW, viewportTitleCap, viewportDescCap, isMobile, titleDesignPx, descDesignPx, viewportW, mobileScale]);
 
   const contentScale = titleFontPx / titleDesignPx;
-  // Nav uses preScale on mobile so the nav elements stay proportional
-  // to the viewport rather than scaling up with the larger mobile text.
   const navContentScale = isMobile ? Math.max(preScale, 0.48) : contentScale;
   const navHeight = scalePx(NAV_HEIGHT_BASE, navContentScale, isMobile ? 64 : 56);
   const mobileViewportScale = Math.min(1, viewportW / MOBILE_DESIGN_WIDTH);
@@ -360,7 +344,6 @@ export default function Hero({ onIntroComplete, onNavigateToContact }: HeroProps
           showExtras={showNavExtras}
           contentScale={navContentScale}
           staticExtras={!isIntroPlaying}
-          onContactClick={handleNavigateToContact}
         />
       </div>
 
@@ -653,9 +636,14 @@ export default function Hero({ onIntroComplete, onNavigateToContact }: HeroProps
         </div>
       </main>
 
+      <div className="hidden lg:block">
+        <ScrollHintArrow visible={showScrollHint} />
+      </div>
+
       <HeroMobile
         isIntroPlaying={isIntroPlaying}
         isLayoutReady={isLayoutReady}
+        showScrollHint={showScrollHint}
         titleFontPx={titleFontPx}
         titleLineH={titleLineH}
         descFontPx={descFontPx}

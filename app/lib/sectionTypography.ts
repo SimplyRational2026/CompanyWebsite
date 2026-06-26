@@ -25,13 +25,13 @@ import {
   TEAM_FOOTER_TEXT_GAP_BASE,
   TEAM_MEMBER_GAP_BASE,
   scalePx,
+  MOBILE_TITLE_PX_DESIGN,
 } from "@/app/lib/scale";
 
 const EXCLAMATION_MARK_W_BASE = Math.round(
   EXCLAMATION_W_BASE * (QUESTION_H_BASE / EXCLAMATION_H_BASE),
 );
 
-/** Shared mark reservation so Risiko + Ungewissheit get identical text column width. */
 export const SECTION_MARK_W_BASE = Math.max(
   EXCLAMATION_MARK_W_BASE,
   QUESTION_W_BASE,
@@ -80,28 +80,8 @@ export function sectionTitleRestPx(contentScale: number): number {
   return scalePx(SECTION_TITLE_PX_DESIGN, contentScale, 28);
 }
 
-export function fitMobileSectionTitlePx(
-  title: string,
-  viewportW: number,
-  fontFamily: string,
-  maxPx = SECTION_TITLE_PX_DESIGN,
-  minPx = 20,
-): number {
-  const hPad = viewportW * 0.12; // 6vw each side
-  const maxW = Math.max(60, viewportW - hPad);
-  return fitHeadlineFontSize(maxW, maxPx, fontFamily, [title] as const, minPx, maxPx);
-}
-
-export function fitMobileHeadlinePx(
-  lines: readonly string[],
-  viewportW: number,
-  fontFamily: string,
-  maxPx: number,
-  minPx = 18,
-): number {
-  const hPad = viewportW * 0.12;
-  const maxW = Math.max(60, viewportW - hPad);
-  return fitHeadlineFontSize(maxW, maxPx, fontFamily, lines, minPx, maxPx);
+export function fitMobileHeadlinePx(): number {
+  return MOBILE_TITLE_PX_DESIGN;
 }
 
 export function sectionTitleLargePx(contentScale: number): number {

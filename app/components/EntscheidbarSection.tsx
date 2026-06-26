@@ -13,15 +13,14 @@ import {
   ENT_BRANCH_CYCLE,
   ENT_BRANCH_REVEAL,
   ENT_BRANCH_START,
-  ENT_ENTER_PAUSE,
   ENT_LINE_RETRACT,
-  ENT_LINE_RETRACT_END,
   ENT_LINE_RETRACT_START,
   ENT_PRE_TREE,
   ENT_SPINE_GROW,
   ENT_TITLE_SHRINK,
   ENT_TITLE_SHRINK_START,
 } from "@/app/lib/anim";
+import ScrollHintArrow from "@/app/components/ScrollHintArrow";
 import {
   ENTSCHEIDBAR_BRANCHES,
   ENTSCHEIDBAR_TITLE_LINES,
@@ -30,16 +29,13 @@ import {
   fitEntscheidbarTreeLayout,
   fitMobileHeadlinePx,
   fitSectionHeadlineFontPx,
-  sectionAvailableWidth,
   useSectionContentScale,
 } from "@/app/lib/sectionTypography";
-import { fitDescriptionFontSize, MOBILE_RISIKO_BODY_LINES } from "@/app/lib/fitText";
 import {
   ENTSCHEIDBAR_TITLE_ENTER_PX_DESIGN,
   ENTSCHEIDBAR_TITLE_PX_DESIGN,
   ENT_TREE_BALL_SIZE_BASE,
   ENT_TREE_BULLET_DOT_BASE,
-  ENT_TREE_ICON_SIZE_BASE,
   ENT_TREE_LINE_W_BASE,
   ENT_TREE_ICON_LINE_NUDGE,
   ENT_TREE_FIRST_BRANCH_RATIO,
@@ -63,12 +59,20 @@ const TITLE_LINE_HEIGHT = 1.05;
 const BRANCH_TEXT_LINE_HEIGHT = 1.3;
 const STATIC_TRANSITION = { duration: 0 };
 
+const MOBILE_ICON_SCALE = [1, 1.4, 1, 1, 1];
+
 export default function EntscheidbarSection({
   heroIntroComplete,
   mountImmediately = false,
+  onFinished,
+  onStarted,
+  showScrollHint = false,
 }: {
   heroIntroComplete: boolean;
   mountImmediately?: boolean;
+  onFinished?: () => void;
+  onStarted?: () => void;
+  showScrollHint?: boolean;
 }) {
   const sectionRef = useRef<HTMLElement>(null);
   const isAnimPlayingRef = useRef(false);
@@ -77,6 +81,19 @@ export default function EntscheidbarSection({
   const isInView = useInView(sectionRef, { amount: 0.35 });
   const [isAnimPlaying, setIsAnimPlaying] = useState(false);
   const [hasFinished, setHasFinished] = useState(false);
+
+  useEffect(() => {
+    if (hasFinished) {
+      onFinished?.();
+    }
+  }, [hasFinished, onFinished]);
+
+  useEffect(() => {
+    if (isAnimPlaying) {
+      onStarted?.();
+    }
+  }, [isAnimPlaying, onStarted]);
+
   const [showTree, setShowTree] = useState(false);
   const [showSpine, setShowSpine] = useState(false);
   const [horizLineRetracted, setHorizLineRetracted] = useState(false);
@@ -107,31 +124,8 @@ export default function EntscheidbarSection({
         .trim() || "serif";
 
     if (isMobile) {
-      setMobileTitlePx(
-        fitMobileHeadlinePx(
-          ["Wir machen", "Entscheidungen", "entscheidbar"],
-          viewportW,
-          serifFont,
-          48,
-          20,
-        ),
-      );
-
-      const bricolageFont =
-        getComputedStyle(document.documentElement)
-          .getPropertyValue("--font-bricolage-grotesque")
-          .trim() || "sans-serif";
-
-      setMobileBodyFontPx(
-        fitDescriptionFontSize(
-          sectionAvailableWidth(viewportW),
-          mobileDescCap,
-          bricolageFont,
-          MOBILE_RISIKO_BODY_LINES,
-          12,
-          mobileDescCap,
-        ),
-      );
+      setMobileTitlePx(fitMobileHeadlinePx());
+      setMobileBodyFontPx(MOBILE_DESC_PX_DESIGN);
     } else {
       setTitleRestPx(
         fitSectionHeadlineFontPx(
@@ -190,7 +184,6 @@ export default function EntscheidbarSection({
   const treeStageH = spineHeight + ballSize;
   const horizLineLength = Math.ceil(viewportW * 0.58);
 
-  // Mobile tree layout
   const mBallSize = scalePx(MOBILE_ENT_BALL_SIZE_BASE, mobileScale, 12);
   const mLineW = scalePx(MOBILE_LINE_WIDTH_BASE, mobileScale, 1);
   const mIconSize = scalePx(MOBILE_ENT_ICON_SIZE_BASE, mobileScale, 28);
@@ -303,11 +296,9 @@ export default function EntscheidbarSection({
     <section
       ref={sectionRef}
       data-scroll-section="entscheidbar"
-      className="relative w-full overflow-x-hidden bg-cream px-[6vw] pt-[6vh] pb-[8vh]"
+      className="relative w-full overflow-x-hidden bg-cream px-[6vw] pt-[3vh] pb-[8vh] lg:pt-[6vh] lg:pb-[8vh]"
     >
-      {/* ── MOBILE LAYOUT ─────────────────────────────────────────── */}
       <div className="flex w-full flex-col lg:hidden">
-        {/* Title — wraps naturally */}
         <motion.h2
           className="w-full text-center font-serif font-extrabold tracking-tight"
           style={{ fontSize: mobileTitlePx, lineHeight: TITLE_LINE_HEIGHT }}
@@ -329,12 +320,10 @@ export default function EntscheidbarSection({
           <span className="block text-purple">{ENTSCHEIDBAR_TITLE_LINES[1]}</span>
         </motion.h2>
 
-        {/* Tree — spine left, all branches right */}
         <div
           className="relative w-full"
           style={{ marginTop: scalePx(ENT_TREE_TITLE_GAP_BASE, mobileScale, 16), height: mTreeStageH }}
         >
-          {/* Spine */}
           {spineVisible && (
             <motion.div
               aria-hidden
@@ -346,37 +335,37 @@ export default function EntscheidbarSection({
             />
           )}
 
-          {/* Ball — enters from right, then descends */}
-          <motion.div
-            aria-hidden
-            className="absolute z-20"
-            style={{ top: 0, left: mSpineX - mBallSize / 2, marginTop: -mBallSize / 2 }}
-            initial={isAnimPlaying && !hasFinished ? { x: "120vw", y: 0 } : false}
-            animate={{ x: 0, y: ballCanMove || hasFinished ? mobileBallY : 0 }}
-            transition={
-              isAnimPlaying && !hasFinished
-                ? {
-                    x: { duration: ENT_BALL_ENTER, ease: EASE },
-                    ...(ballCanMove ? { y: { duration: ENT_BALL_MOVE, ease: EASE } } : {}),
-                  }
-                : STATIC_TRANSITION
-            }
-          >
-            <div className="flex items-center">
-              <div className="shrink-0 rounded-full bg-purple" style={{ width: mBallSize, height: mBallSize }} />
-              {!showSpine && !hasFinished && (
-                <motion.div
-                  className="shrink-0 bg-purple"
-                  style={{ height: mLineW, width: mHorizLineLength, transformOrigin: "left center" }}
-                  initial={{ scaleX: 1 }}
-                  animate={{ scaleX: horizLineRetracted ? 0 : 1 }}
-                  transition={isAnimPlaying && horizLineRetracted ? { duration: ENT_LINE_RETRACT, ease: EASE } : STATIC_TRANSITION}
-                />
-              )}
-            </div>
-          </motion.div>
+          {showTreeStage && (
+            <motion.div
+              aria-hidden
+              className="absolute z-20"
+              style={{ top: 0, left: mSpineX - mBallSize / 2, marginTop: -mBallSize / 2 }}
+              initial={isAnimPlaying && !hasFinished ? { x: "120vw", y: 0 } : false}
+              animate={{ x: 0, y: ballCanMove || hasFinished ? mobileBallY : 0 }}
+              transition={
+                isAnimPlaying && !hasFinished
+                  ? {
+                      x: { duration: ENT_BALL_ENTER, ease: EASE },
+                      ...(ballCanMove ? { y: { duration: ENT_BALL_MOVE, ease: EASE } } : {}),
+                    }
+                  : STATIC_TRANSITION
+              }
+            >
+              <div className="flex items-center">
+                <div className="shrink-0 rounded-full bg-purple" style={{ width: mBallSize, height: mBallSize }} />
+                {!showSpine && !hasFinished && (
+                  <motion.div
+                    className="shrink-0 bg-purple"
+                    style={{ height: mLineW, width: mHorizLineLength, transformOrigin: "left center" }}
+                    initial={{ scaleX: 1 }}
+                    animate={{ scaleX: horizLineRetracted ? 0 : 1 }}
+                    transition={isAnimPlaying && horizLineRetracted ? { duration: ENT_LINE_RETRACT, ease: EASE } : STATIC_TRANSITION}
+                  />
+                )}
+              </div>
+            </motion.div>
+          )}
 
-          {/* Branches — all on right, all enter from right */}
           {ENTSCHEIDBAR_BRANCHES.map((branch, index) => (
             <div
               key={branch.icon}
@@ -391,17 +380,34 @@ export default function EntscheidbarSection({
                   transition={isAnimPlaying && !hasFinished ? { duration: ENT_BRANCH_REVEAL, ease: EASE } : STATIC_TRANSITION}
                 >
                   <div aria-hidden className="shrink-0 bg-purple" style={{ width: mBranchLineW + Math.round(mIconSize / 2), height: mLineW }} />
-                  <div className="relative shrink-0 overflow-visible" style={{ width: mIconSize, height: mIconSize, marginLeft: -Math.round(mIconSize / 2), transform: `translateY(${Math.round((0.5 - branch.lineAnchorY) * mIconSize)}px)` }}>
-                    <Image
-                      src={branch.icon}
-                      alt=""
-                      fill
-                      sizes={`${mIconSize}px`}
-                      className="object-contain"
-                      style={{ transform: `scale(${branch.iconVisualScale})`, transformOrigin: "center center" }}
-                      aria-hidden
-                    />
-                  </div>
+                  {(() => {
+                    const iconScale = MOBILE_ICON_SCALE[index] ?? 1;
+                    return (
+                      <div
+                        className="relative shrink-0 overflow-visible"
+                        style={{
+                          width: mIconSize,
+                          height: mIconSize,
+                          marginLeft: -Math.round(mIconSize / 2),
+                          transform: `translateY(${Math.round(iconScale * (0.5 - branch.lineAnchorY) * mIconSize)}px)`,
+                        }}
+                      >
+                        <Image
+                          src={branch.icon}
+                          alt=""
+                          fill
+                          sizes={`${mIconSize}px`}
+                          className="object-contain"
+                          style={
+                            iconScale !== 1
+                              ? { transform: `scale(${iconScale})`, transformOrigin: "center center" }
+                              : undefined
+                          }
+                          aria-hidden
+                        />
+                      </div>
+                    );
+                  })()}
                   <div className="flex items-center" style={{ gap: mInnerGap, marginLeft: mInnerGap }}>
                     <span aria-hidden className="shrink-0 rounded-full bg-purple" style={{ width: mBulletDot, height: mBulletDot }} />
                     <p className="font-bricolage font-bold text-ink" style={{ fontSize: mobileBodyFontPx, lineHeight: BRANCH_TEXT_LINE_HEIGHT }}>
@@ -415,7 +421,6 @@ export default function EntscheidbarSection({
         </div>
       </div>
 
-      {/* ── DESKTOP LAYOUT ────────────────────────────────────────── */}
       <div className="hidden w-full lg:block">
       <div
         className="flex w-full justify-center"
@@ -670,7 +675,8 @@ export default function EntscheidbarSection({
           }}
         />
       )}
-      </div>{/* end desktop wrapper */}
+      </div>
+      <ScrollHintArrow visible={showScrollHint} />
     </section>
   );
 }

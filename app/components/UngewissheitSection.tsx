@@ -19,16 +19,15 @@ import {
   SECTION_TITLE_PAUSE,
   SECTION_TITLE_PHASE,
 } from "@/app/lib/anim";
+import ScrollHintArrow from "@/app/components/ScrollHintArrow";
 import {
-  fitMobileSectionTitlePx,
   fitSectionBodyFontPx,
-  sectionAvailableWidth,
   sectionContentScale,
   sectionTitleLargePx,
   sectionTitleRestPx,
   sectionViewportDescCap,
 } from "@/app/lib/sectionTypography";
-import { fitDescriptionFontSize, MOBILE_RISIKO_BODY_LINES, UNGEWISSHEIT_BODY_LINES } from "@/app/lib/fitText";
+import { UNGEWISSHEIT_BODY_LINES } from "@/app/lib/fitText";
 import {
   DESC_PX_DESIGN,
   DESIGN_WIDTH,
@@ -36,6 +35,7 @@ import {
   MOBILE_DESC_LINE_HEIGHT,
   MOBILE_DESC_PX_DESIGN,
   MOBILE_DESIGN_WIDTH,
+  MOBILE_SINGLE_TITLE_PX_DESIGN,
   MOBILE_QUESTION_MARK_H_BASE,
   MOBILE_QUESTION_MARK_W_BASE,
   QUESTION_DOT_X_RATIO,
@@ -70,9 +70,15 @@ function measureLineExtendWidthLeft(
 export default function UngewissheitSection({
   heroIntroComplete,
   mountImmediately = false,
+  onFinished,
+  onStarted,
+  showScrollHint = false,
 }: {
   heroIntroComplete: boolean;
   mountImmediately?: boolean;
+  onFinished?: () => void;
+  onStarted?: () => void;
+  showScrollHint?: boolean;
 }) {
   const sectionRef = useRef<HTMLElement>(null);
   const markHostRef = useRef<HTMLDivElement>(null);
@@ -87,6 +93,19 @@ export default function UngewissheitSection({
   const isInView = useInView(sectionRef, { amount: 0.35 });
   const [isAnimPlaying, setIsAnimPlaying] = useState(false);
   const [hasFinished, setHasFinished] = useState(false);
+
+  useEffect(() => {
+    if (hasFinished) {
+      onFinished?.();
+    }
+  }, [hasFinished, onFinished]);
+
+  useEffect(() => {
+    if (isAnimPlaying) {
+      onStarted?.();
+    }
+  }, [isAnimPlaying, onStarted]);
+
   const [viewportW, setViewportW] = useState(1024);
   const [lineExtendWidth, setLineExtendWidth] = useState(0);
   const [markTopOffset, setMarkTopOffset] = useState(0);
@@ -120,26 +139,14 @@ export default function UngewissheitSection({
         .getPropertyValue("--font-bricolage-grotesque")
         .trim() || "sans-serif";
 
-    const serifFont =
-      getComputedStyle(document.documentElement)
-        .getPropertyValue("--font-noto-serif-jp")
-        .trim() || "serif";
-
     setBodyFontPx(
       isMobile
-        ? fitDescriptionFontSize(
-            sectionAvailableWidth(viewportW),
-            mobileDescCap,
-            bricolageFont,
-            MOBILE_RISIKO_BODY_LINES,
-            12,
-            mobileDescCap,
-          )
+        ? MOBILE_DESC_PX_DESIGN
         : fitSectionBodyFontPx(viewportW, bricolageFont),
     );
 
     if (isMobile) {
-      setMobileTitlePx(fitMobileSectionTitlePx("Ungewissheit", viewportW, serifFont));
+      setMobileTitlePx(MOBILE_SINGLE_TITLE_PX_DESIGN);
     }
   }, [viewportW, isMobile, mobileDescCap]);
 
@@ -320,7 +327,7 @@ export default function UngewissheitSection({
     <section
       ref={sectionRef}
       data-scroll-section="ungewissheit"
-      className="relative w-full overflow-hidden bg-cream px-[6vw] pt-[6vh] pb-[8vh]"
+      className="relative w-full overflow-hidden bg-cream px-[6vw] pt-[3vh] pb-[8vh] lg:pt-[6vh] lg:pb-[8vh]"
     >
       {!isMobile && (
         <>
@@ -388,7 +395,6 @@ export default function UngewissheitSection({
         </>
       )}
 
-      {/* Mobile — title, question mark, description */}
       <div className="flex w-full flex-col items-center pt-[2vh] lg:hidden">
         <motion.h2
           className="z-10 w-full text-center font-serif font-extrabold tracking-tight text-purple"
@@ -464,13 +470,17 @@ export default function UngewissheitSection({
             fontSize: bodyFontPx,
             lineHeight: bodyLineHeight,
           }}
-          initial={isAnimPlaying ? { x: "100vw", opacity: 0 } : false}
+          initial={
+            isAnimPlaying
+              ? { scale: isMobile ? 1 : 1.86, y: isMobile ? "20vh" : "30vh", opacity: 0 }
+              : false
+          }
           animate={
             isAnimPlaying
-              ? { x: ["100vw", "0vw"], opacity: [0, 1] }
+              ? { scale: 1, y: "0vh", opacity: [0, 1] }
               : hasFinished
-                ? { x: "0vw", opacity: 1 }
-                : { x: "100vw", opacity: 0 }
+                ? { scale: 1, y: "0vh", opacity: 1 }
+                : { scale: isMobile ? 1 : 1.86, y: isMobile ? "20vh" : "30vh", opacity: 0 }
           }
           transition={
             isAnimPlaying
@@ -503,7 +513,6 @@ export default function UngewissheitSection({
         </motion.div>
       </div>
 
-      {/* Desktop — mark left, text right */}
       <div className="hidden w-full flex-row-reverse flex-nowrap items-start gap-x-[4vw] pt-[2vh] lg:flex">
         <div
           ref={!isMobile ? textColumnRef : undefined}
@@ -593,6 +602,7 @@ export default function UngewissheitSection({
           </motion.div>
         </div>
       </div>
+      <ScrollHintArrow visible={showScrollHint} />
     </section>
   );
 }

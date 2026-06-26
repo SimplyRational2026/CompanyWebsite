@@ -14,38 +14,6 @@ export function ScrollToTopOnLoad() {
   return null;
 }
 
-export function unlockPageScroll() {
-  document.documentElement.style.overflow = "";
-  document.body.style.overflow = "";
-}
-
-export function scrollToContactForm() {
-  unlockPageScroll();
-
-  const scroll = () => {
-    const form = document.getElementById("contact-form");
-    if (!form) {
-      return false;
-    }
-
-    const offset = 24;
-    const top = form.getBoundingClientRect().top + window.scrollY - offset;
-    window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
-    return true;
-  };
-
-  // Sections expand after heroIntroComplete — retry until layout settles.
-  requestAnimationFrame(() => {
-    requestAnimationFrame(scroll);
-  });
-  window.setTimeout(scroll, 120);
-  window.setTimeout(scroll, 400);
-  window.setTimeout(scroll, 900);
-  window.setTimeout(scroll, 1500);
-
-  return scroll();
-}
-
 export function useIntroScrollLock(locked: boolean) {
   useEffect(() => {
     if (!locked) {
@@ -71,4 +39,60 @@ export function useIntroScrollLock(locked: boolean) {
       document.removeEventListener("touchmove", prevent);
     };
   }, [locked]);
+}
+
+export function useScrollGate(enabled: boolean, frontierKey: string | null) {
+  useEffect(() => {
+    if (!enabled || !frontierKey) {
+      return;
+    }
+
+    const getMaxScroll = (): number => {
+      const el = document.querySelector(
+        `[data-scroll-section="${frontierKey}"]`,
+      ) as HTMLElement | null;
+      if (!el) {
+        return Number.POSITIVE_INFINITY;
+      }
+      const bottom = el.offsetTop + el.offsetHeight;
+      return Math.max(0, bottom - window.innerHeight);
+    };
+
+    const clamp = () => {
+      const max = getMaxScroll();
+      if (window.scrollY > max) {
+        window.scrollTo(0, max);
+      }
+    };
+
+    const onWheel = (e: WheelEvent) => {
+      if (e.deltaY > 0 && window.scrollY >= getMaxScroll() - 1) {
+        e.preventDefault();
+      }
+    };
+
+    let touchStartY = 0;
+    const onTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0]?.clientY ?? 0;
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      const currentY = e.touches[0]?.clientY ?? touchStartY;
+      if (currentY < touchStartY && window.scrollY >= getMaxScroll() - 1) {
+        e.preventDefault();
+      }
+    };
+
+    window.addEventListener("scroll", clamp, { passive: true });
+    window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
+    clamp();
+
+    return () => {
+      window.removeEventListener("scroll", clamp);
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+    };
+  }, [enabled, frontierKey]);
 }

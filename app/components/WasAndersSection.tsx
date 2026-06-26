@@ -23,7 +23,8 @@ import {
   WAS_VIDEO_ENTER,
   WAS_VIDEO_START,
 } from "@/app/lib/anim";
-import { fitDescriptionFontSize, MOBILE_RISIKO_BODY_LINES, WAS_ANDERS_BULLETS, WAS_ANDERS_TITLE } from "@/app/lib/fitText";
+import ScrollHintArrow from "@/app/components/ScrollHintArrow";
+import { WAS_ANDERS_BULLETS, WAS_ANDERS_TITLE } from "@/app/lib/fitText";
 import {
   fitMobileHeadlinePx,
   fitSectionHeadlineFontPx,
@@ -72,9 +73,15 @@ const BULLET_SLOTS = [
 export default function WasAndersSection({
   heroIntroComplete,
   mountImmediately = false,
+  onFinished,
+  onStarted,
+  showScrollHint = false,
 }: {
   heroIntroComplete: boolean;
   mountImmediately?: boolean;
+  onFinished?: () => void;
+  onStarted?: () => void;
+  showScrollHint?: boolean;
 }) {
   const sectionRef = useRef<HTMLElement>(null);
   const isAnimPlayingRef = useRef(false);
@@ -85,6 +92,19 @@ export default function WasAndersSection({
   const isInView = useInView(sectionRef, { amount: 0.35 });
   const [isAnimPlaying, setIsAnimPlaying] = useState(false);
   const [hasFinished, setHasFinished] = useState(false);
+
+  useEffect(() => {
+    if (hasFinished) {
+      onFinished?.();
+    }
+  }, [hasFinished, onFinished]);
+
+  useEffect(() => {
+    if (isAnimPlaying) {
+      onStarted?.();
+    }
+  }, [isAnimPlaying, onStarted]);
+
   const [visibleBullets, setVisibleBullets] = useState(0);
   const [ringRotation, setRingRotation] = useState(0);
   const [videoVisible, setVideoVisible] = useState(false);
@@ -110,31 +130,8 @@ export default function WasAndersSection({
         .trim() || "serif";
 
     if (isMobile) {
-      setMobileTitlePx(
-        fitMobileHeadlinePx(
-          ["Was anders wird mit", "uns"],
-          viewportW,
-          serifFont,
-          48,
-          20,
-        ),
-      );
-
-      const bricolageFont =
-        getComputedStyle(document.documentElement)
-          .getPropertyValue("--font-bricolage-grotesque")
-          .trim() || "sans-serif";
-
-      setMobileBodyFontPx(
-        fitDescriptionFontSize(
-          sectionAvailableWidth(viewportW),
-          mobileDescCap,
-          bricolageFont,
-          MOBILE_RISIKO_BODY_LINES,
-          12,
-          mobileDescCap,
-        ),
-      );
+      setMobileTitlePx(fitMobileHeadlinePx());
+      setMobileBodyFontPx(MOBILE_DESC_PX_DESIGN);
     } else {
       setTitleRestPx(
         fitSectionHeadlineFontPx(
@@ -148,17 +145,16 @@ export default function WasAndersSection({
     }
   }, [viewportW, bodyFontPx, isMobile, mobileDescCap]);
 
-  // Mobile ring / dot / bullet sizes
   const mobileRingSize = scalePx(MOBILE_WAS_RING_SIZE_BASE, mobileScale, 80);
   const mobileRingStroke = scalePx(MOBILE_LINE_WIDTH_BASE, mobileScale, 1);
   const mobileHubDotSize = scalePx(MOBILE_WAS_HUB_DOT_SIZE_BASE, mobileScale, 12);
   const mobileBulletDotSize = scalePx(MOBILE_WAS_BULLET_DOT_BASE, mobileScale, 6);
   const mobileRingRadius = Math.max(0, (mobileRingSize - mobileRingStroke) / 2);
+  const mobileRingCircum = Math.PI * mobileRingSize;
+  const mobileRingDashCount = Math.round(WAS_HUB_RING_DASH_COUNT * 0.66);
+  const mobileRingDashLength = (mobileRingCircum / mobileRingDashCount) * 0.58;
+  const mobileRingDashGap = (mobileRingCircum / mobileRingDashCount) * 0.42;
   const mobileRingCenter = mobileRingSize / 2;
-  const mobileRingCircumference = 2 * Math.PI * mobileRingRadius;
-  const mobileRingSegmentLength = mobileRingCircumference / WAS_HUB_RING_DASH_COUNT;
-  const mobileRingDashLength = mobileRingSegmentLength * 0.58;
-  const mobileRingDashGap = mobileRingSegmentLength * 0.42;
   const mobileVideoW = Math.min(
     scalePx(MOBILE_BRAIN_VIDEO_W_BASE, mobileScale, 120),
     sectionAvailableWidth(viewportW),
@@ -168,7 +164,6 @@ export default function WasAndersSection({
   const mobileVideoBorder = scalePx(MOBILE_BRAIN_VIDEO_BORDER_BASE, mobileScale, 3);
   const mobileVideoGap = scalePx(WAS_VIDEO_GAP_BASE, mobileScale, 32);
   const mobileBulletGap = scalePx(28, mobileScale, 14);
-  const mobileBulletLineGap = scalePx(WAS_HUB_TEXT_COLUMN_GAP_BASE, mobileScale, 20);
 
   const titleLargePx = scalePx(
     WAS_ANDERS_TITLE_ENTER_PX_DESIGN,
@@ -297,9 +292,8 @@ export default function WasAndersSection({
     <section
       ref={sectionRef}
       data-scroll-section="was-anders"
-      className="relative w-full overflow-x-hidden bg-cream px-[6vw] pt-[6vh] pb-[8vh] lg:pb-[8vh]"
+      className="relative w-full overflow-x-hidden bg-cream px-[6vw] pt-[3vh] pb-[8vh] lg:pt-[6vh] lg:pb-[8vh]"
     >
-      {/* ── MOBILE LAYOUT ─────────────────────────────────────────── */}
       <div className="flex w-full flex-col lg:hidden">
         <motion.h2
           className="w-full text-center font-serif font-extrabold tracking-tight text-purple"
@@ -325,7 +319,6 @@ export default function WasAndersSection({
           {WAS_ANDERS_TITLE}
         </motion.h2>
 
-        {/* Hub: break out of section's px-[6vw] padding so circle clips at true screen edge */}
         <div
           className="relative overflow-hidden"
           style={{
@@ -334,7 +327,6 @@ export default function WasAndersSection({
             width: viewportW,
           }}
         >
-          {/* Bullets — always rendered to lock in height, invisible until revealed */}
           <div
             className="flex flex-col"
             style={{
@@ -379,7 +371,6 @@ export default function WasAndersSection({
             })}
           </div>
 
-          {/* Circle — absolute, vertically centred, half off-screen left; only ring rotates */}
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center">
             <div
               className="relative"
@@ -464,7 +455,6 @@ export default function WasAndersSection({
         )}
       </div>
 
-      {/* ── DESKTOP LAYOUT ────────────────────────────────────────── */}
       <div className="hidden w-full lg:block">
         <div
           className="flex w-full justify-center"
@@ -662,6 +652,7 @@ export default function WasAndersSection({
           )}
         </div>
       </div>
+      <ScrollHintArrow visible={showScrollHint} />
     </section>
   );
 }

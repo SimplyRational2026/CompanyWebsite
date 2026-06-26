@@ -20,7 +20,8 @@ import {
   EASE,
   EASE_BRAIN_CLOSE,
 } from "@/app/lib/anim";
-import { ENTSCHEIDBAR_TITLE_LINES, ENTSCHEIDUNG_HEADLINE_LINES, ENTSCHEIDUNG_MOBILE_HEADLINE_FIT_LINES } from "@/app/lib/fitText";
+import ScrollHintArrow from "@/app/components/ScrollHintArrow";
+import { ENTSCHEIDBAR_TITLE_LINES, ENTSCHEIDUNG_HEADLINE_LINES } from "@/app/lib/fitText";
 import {
   fitMobileHeadlinePx,
   fitSectionHeadlineFontPx,
@@ -59,9 +60,15 @@ const STATIC_TRANSITION = { duration: 0 };
 export default function EntscheidungSection({
   heroIntroComplete,
   mountImmediately = false,
+  onFinished,
+  onStarted,
+  showScrollHint = false,
 }: {
   heroIntroComplete: boolean;
   mountImmediately?: boolean;
+  onFinished?: () => void;
+  onStarted?: () => void;
+  showScrollHint?: boolean;
 }) {
   const sectionRef = useRef<HTMLElement>(null);
   const isAnimPlayingRef = useRef(false);
@@ -71,6 +78,19 @@ export default function EntscheidungSection({
   const isInView = useInView(sectionRef, { amount: 0.35 });
   const [isAnimPlaying, setIsAnimPlaying] = useState(false);
   const [hasFinished, setHasFinished] = useState(false);
+
+  useEffect(() => {
+    if (hasFinished) {
+      onFinished?.();
+    }
+  }, [hasFinished, onFinished]);
+
+  useEffect(() => {
+    if (isAnimPlaying) {
+      onStarted?.();
+    }
+  }, [isAnimPlaying, onStarted]);
+
   const [videoVisible, setVideoVisible] = useState(false);
   const [headlineVisible, setHeadlineVisible] = useState(false);
   const [headlineFontPx, setHeadlineFontPx] = useState(ENTSCHEIDBAR_TITLE_PX_DESIGN);
@@ -93,15 +113,7 @@ export default function EntscheidungSection({
         .trim() || "serif";
 
     if (isMobile) {
-      setMobileHeadlinePx(
-        fitMobileHeadlinePx(
-          ENTSCHEIDUNG_MOBILE_HEADLINE_FIT_LINES,
-          viewportW,
-          serifFont,
-          48,
-          18,
-        ),
-      );
+      setMobileHeadlinePx(fitMobileHeadlinePx());
     } else {
       setHeadlineFontPx(
         fitSectionHeadlineFontPx(
@@ -131,11 +143,14 @@ export default function EntscheidungSection({
   const lineWidth = isMobile
     ? scalePx(MOBILE_LINE_WIDTH_BASE, mobileScale, 1)
     : scalePx(LINE_WIDTH_BASE, contentScale, 2);
-  const headlineGap = scalePx(48, isMobile ? mobileScale : contentScale, 20);
+  const headlineGap = isMobile
+    ? scalePx(140, mobileScale, 90)
+    : scalePx(48, contentScale, 20);
   const activeFontPx = isMobile ? mobileHeadlinePx : headlineFontPx;
+  const activeLineHeight = isMobile ? 1.2 : HEADLINE_LINE_HEIGHT;
   const headlineLineCount = isMobile ? 4 : ENTSCHEIDUNG_HEADLINE_LINES.length;
   const headlineBlockH = Math.round(
-    activeFontPx * HEADLINE_LINE_HEIGHT * headlineLineCount,
+    activeFontPx * activeLineHeight * headlineLineCount,
   );
   const brainShiftToCenter =
     headlineBlockH + headlineGap + scalePx(56, mediaScale, 24);
@@ -208,7 +223,7 @@ export default function EntscheidungSection({
     <section
       ref={sectionRef}
       data-scroll-section="entscheidung"
-      className="relative w-full overflow-hidden bg-cream px-[6vw] pt-[6vh] pb-[5vh]"
+      className="relative w-full overflow-hidden bg-cream px-[6vw] pt-[3vh] pb-[8vh] lg:pt-[6vh] lg:pb-[5vh]"
     >
       <div className="relative mx-auto flex w-full max-w-[1200px] flex-col items-center">
         {(headlineVisible || hasFinished) && (
@@ -216,7 +231,7 @@ export default function EntscheidungSection({
             className="absolute left-0 z-20 w-full text-center font-serif font-extrabold tracking-tight"
             style={{
               fontSize: activeFontPx,
-              lineHeight: HEADLINE_LINE_HEIGHT,
+              lineHeight: activeLineHeight,
               top: 0,
             }}
             initial={
@@ -404,6 +419,7 @@ export default function EntscheidungSection({
           )}
         </div>
       </div>
+      <ScrollHintArrow visible={showScrollHint} />
     </section>
   );
 }

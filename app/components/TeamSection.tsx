@@ -15,10 +15,9 @@ import {
   TEAM_TITLE_PAUSE,
   TEAM_TITLE_PHASE,
 } from "@/app/lib/anim";
+import ScrollHintArrow from "@/app/components/ScrollHintArrow";
 import {
   ENTSCHEIDBAR_TITLE_LINES,
-  fitDescriptionFontSize,
-  MOBILE_RISIKO_BODY_LINES,
   TEAM_FOOTER_TEXT,
   TEAM_MEMBERS,
 } from "@/app/lib/fitText";
@@ -49,15 +48,21 @@ import {
 import { preloadTeamMemberImages } from "@/app/lib/teamEntrance";
 
 const STATIC_TRANSITION = { duration: 0 };
-const FOOTER_TEXT_LINE_HEIGHT = 1.35;
+const FOOTER_TEXT_LINE_HEIGHT = 1.3;
 const TITLE_LINE_HEIGHT = 1.05;
 
 export default function TeamSection({
   heroIntroComplete,
   mountImmediately = false,
+  onFinished,
+  onStarted,
+  showScrollHint = false,
 }: {
   heroIntroComplete: boolean;
   mountImmediately?: boolean;
+  onFinished?: () => void;
+  onStarted?: () => void;
+  showScrollHint?: boolean;
 }) {
   const sectionRef = useRef<HTMLElement>(null);
   const isAnimPlayingRef = useRef(false);
@@ -68,6 +73,19 @@ export default function TeamSection({
   const isInView = useInView(sectionRef, { amount: 0.35 });
   const [isAnimPlaying, setIsAnimPlaying] = useState(false);
   const [hasFinished, setHasFinished] = useState(false);
+
+  useEffect(() => {
+    if (hasFinished) {
+      onFinished?.();
+    }
+  }, [hasFinished, onFinished]);
+
+  useEffect(() => {
+    if (isAnimPlaying) {
+      onStarted?.();
+    }
+  }, [isAnimPlaying, onStarted]);
+
   const [titleRestPx, setTitleRestPx] = useState(TEAM_TITLE_PX_DESIGN);
   const [mobileTitlePx, setMobileTitlePx] = useState(36);
   const [mobileBodyFontPx, setMobileBodyFontPx] = useState(MOBILE_DESC_PX_DESIGN);
@@ -93,31 +111,8 @@ export default function TeamSection({
         .trim() || "serif";
 
     if (isMobile) {
-      setMobileTitlePx(
-        fitMobileHeadlinePx(
-          ["Ein Team aus international", "renommierten Experten", "aus Wissenschaft und Praxis"],
-          viewportW,
-          serifFont,
-          48,
-          20,
-        ),
-      );
-
-      const bricolageF =
-        getComputedStyle(document.documentElement)
-          .getPropertyValue("--font-bricolage-grotesque")
-          .trim() || "sans-serif";
-
-      setMobileBodyFontPx(
-        fitDescriptionFontSize(
-          sectionAvailableWidth(viewportW),
-          mobileDescCap,
-          bricolageF,
-          MOBILE_RISIKO_BODY_LINES,
-          12,
-          mobileDescCap,
-        ),
-      );
+      setMobileTitlePx(fitMobileHeadlinePx());
+      setMobileBodyFontPx(MOBILE_DESC_PX_DESIGN);
     } else {
       setTitleRestPx(
         fitSectionHeadlineFontPx(
@@ -254,11 +249,9 @@ export default function TeamSection({
     <section
       ref={sectionRef}
       data-scroll-section="team"
-      className="relative w-full overflow-x-hidden bg-cream px-[6vw] pt-[6vh] pb-[10vh]"
+      className="relative w-full overflow-x-hidden bg-cream px-[6vw] pt-[3vh] pb-[8vh] lg:pt-[6vh] lg:pb-[10vh]"
     >
-      {/* ── MOBILE LAYOUT ─────────────────────────────────────────── */}
       <div className="flex w-full flex-col items-center lg:hidden">
-        {/* Title — wraps naturally */}
         <motion.h2
           className="w-full text-center font-serif font-extrabold tracking-tight"
           style={{ fontSize: mobileTitlePx, lineHeight: TITLE_LINE_HEIGHT }}
@@ -281,7 +274,6 @@ export default function TeamSection({
           <span className="text-ink"> aus Wissenschaft und Praxis</span>
         </motion.h2>
 
-        {/* Members — single column */}
         {showProfiles && (
           <motion.div
             layout={false}
@@ -308,7 +300,6 @@ export default function TeamSection({
           </motion.div>
         )}
 
-        {/* Footer — line + ball + wrapping text */}
         {showFooter && (
           <motion.div
             layout={false}
@@ -324,7 +315,6 @@ export default function TeamSection({
             }
             transition={slideInTransition(() => { footerEnteredRef.current = true; })}
           >
-            {/* Line with ball at its right end */}
             <div
               className="relative shrink-0"
               style={{ width: mobileFooterLineLen + mobileFooterBallSize, height: mobileFooterBallSize }}
@@ -347,7 +337,6 @@ export default function TeamSection({
         )}
       </div>
 
-      {/* ── DESKTOP LAYOUT ────────────────────────────────────────── */}
       <div className="hidden w-full lg:block">
       <div
         className="flex w-full justify-center"
@@ -478,7 +467,8 @@ export default function TeamSection({
           </motion.div>
         )}
       </div>
-      </div>{/* end desktop wrapper */}
+      </div>
+      <ScrollHintArrow visible={showScrollHint} />
     </section>
   );
 }

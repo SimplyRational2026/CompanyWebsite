@@ -19,20 +19,15 @@ import {
   SECTION_TITLE_PAUSE,
   SECTION_TITLE_PHASE,
 } from "@/app/lib/anim";
+import ScrollHintArrow from "@/app/components/ScrollHintArrow";
 import {
-  fitMobileSectionTitlePx,
   fitSectionBodyFontPx,
-  sectionAvailableWidth,
   sectionContentScale,
   sectionTitleLargePx,
   sectionTitleRestPx,
   sectionViewportDescCap,
 } from "@/app/lib/sectionTypography";
-import {
-  fitDescriptionFontSize,
-  MOBILE_RISIKO_BODY_LINES,
-  RISIKO_BODY_LINES,
-} from "@/app/lib/fitText";
+import { MOBILE_RISIKO_BODY_LINES, RISIKO_BODY_LINES } from "@/app/lib/fitText";
 import {
   DESC_PX_DESIGN,
   DESIGN_WIDTH,
@@ -44,6 +39,7 @@ import {
   MOBILE_DESC_LINE_HEIGHT,
   MOBILE_DESC_PX_DESIGN,
   MOBILE_DESIGN_WIDTH,
+  MOBILE_SINGLE_TITLE_PX_DESIGN,
   MOBILE_EXCLAMATION_MARK_H_BASE,
   MOBILE_EXCLAMATION_MARK_W_BASE,
   QUESTION_H_BASE,
@@ -78,9 +74,15 @@ function measureLineExtendWidth(
 export default function RisikoSection({
   heroIntroComplete,
   mountImmediately = false,
+  onFinished,
+  onStarted,
+  showScrollHint = false,
 }: {
   heroIntroComplete: boolean;
   mountImmediately?: boolean;
+  onFinished?: () => void;
+  onStarted?: () => void;
+  showScrollHint?: boolean;
 }) {
   const sectionRef = useRef<HTMLElement>(null);
   const markHostRef = useRef<HTMLDivElement>(null);
@@ -95,6 +97,18 @@ export default function RisikoSection({
   const isInView = useInView(sectionRef, { amount: 0.35 });
   const [isAnimPlaying, setIsAnimPlaying] = useState(false);
   const [hasFinished, setHasFinished] = useState(false);
+
+  useEffect(() => {
+    if (hasFinished) {
+      onFinished?.();
+    }
+  }, [hasFinished, onFinished]);
+
+  useEffect(() => {
+    if (isAnimPlaying) {
+      onStarted?.();
+    }
+  }, [isAnimPlaying, onStarted]);
   const [viewportW, setViewportW] = useState(1024);
   const [lineExtendWidth, setLineExtendWidth] = useState(0);
   const [markTopOffset, setMarkTopOffset] = useState(0);
@@ -123,26 +137,14 @@ export default function RisikoSection({
         .getPropertyValue("--font-bricolage-grotesque")
         .trim() || "sans-serif";
 
-    const serifFont =
-      getComputedStyle(document.documentElement)
-        .getPropertyValue("--font-noto-serif-jp")
-        .trim() || "serif";
-
     setBodyFontPx(
       isMobile
-        ? fitDescriptionFontSize(
-            sectionAvailableWidth(viewportW),
-            mobileDescCap,
-            bricolageFont,
-            MOBILE_RISIKO_BODY_LINES,
-            12,
-            mobileDescCap,
-          )
+        ? MOBILE_DESC_PX_DESIGN
         : fitSectionBodyFontPx(viewportW, bricolageFont),
     );
 
     if (isMobile) {
-      setMobileTitlePx(fitMobileSectionTitlePx("Risiko", viewportW, serifFont));
+      setMobileTitlePx(MOBILE_SINGLE_TITLE_PX_DESIGN);
     }
   }, [viewportW, isMobile, mobileDescCap]);
 
@@ -274,7 +276,7 @@ export default function RisikoSection({
     <section
       ref={sectionRef}
       data-scroll-section="risiko"
-      className="relative -mt-[3vh] w-full overflow-hidden bg-cream px-[6vw] pt-[5vh] pb-[10vh]"
+      className="relative -mt-[3vh] w-full overflow-hidden bg-cream px-[6vw] pt-[3vh] pb-[8vh] lg:pt-[5vh] lg:pb-[10vh]"
     >
       <div className="flex w-full flex-col items-center pt-[2vh] lg:grid lg:grid-cols-[min-content_8vw_min-content] lg:items-start lg:gap-x-[4vw]">
         <motion.h2
@@ -286,9 +288,7 @@ export default function RisikoSection({
           }}
           initial={
             isAnimPlaying
-              ? isMobile
-                ? { x: "-110vw", opacity: 0 }
-                : { x: "-120vw", opacity: 0, fontSize: titleLargePx }
+              ? { scale: isMobile ? 1 : 1.86, y: isMobile ? "20vh" : "30vh", opacity: 0 }
               : false
           }
           animate={
@@ -297,6 +297,7 @@ export default function RisikoSection({
                 ? {
                     x: ["-110vw", "0vw", "0vw"],
                     opacity: [0, 1, 1],
+                    fontSize: [titleRestPx, titleRestPx, titleRestPx],
                   }
                 : {
                     x: ["-120vw", "32vw", "32vw", "0vw"],
@@ -304,9 +305,9 @@ export default function RisikoSection({
                     fontSize: [titleLargePx, titleLargePx, titleLargePx, titleRestPx],
                   }
               : hasFinished
-                ? { x: "0vw", opacity: 1, ...(isMobile ? {} : { fontSize: titleRestPx }) }
+                ? { x: "0vw", opacity: 1, fontSize: titleRestPx }
                 : isMobile
-                  ? { x: "-110vw", opacity: 0 }
+                  ? { x: "-110vw", opacity: 0, fontSize: titleRestPx }
                   : { x: "-120vw", opacity: 0, fontSize: titleLargePx }
           }
           transition={
@@ -433,6 +434,7 @@ export default function RisikoSection({
           </ul>
         </motion.div>
       </div>
+      <ScrollHintArrow visible={showScrollHint} />
     </section>
   );
 }
