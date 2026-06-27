@@ -19,8 +19,11 @@ import {
   BLACK_TITLE_LINES,
   DESCRIPTION_LINES,
   fitDescriptionFontSize,
+  fitHeadlineFontSize,
   fitTitleFontSize,
   measureDescriptionHeight,
+  MOBILE_DESCRIPTION_LINES,
+  MOBILE_PURPLE_TITLE_LINES,
   PURPLE_TITLE_LINES,
 } from "@/app/lib/fitText";
 import {
@@ -180,7 +183,14 @@ export default function Hero({
 
     setTitleFontPx(
       isMobile
-        ? MOBILE_TITLE_PX_DESIGN
+        ? fitHeadlineFontSize(
+            viewportW * 0.9,
+            MOBILE_TITLE_PX_DESIGN,
+            fontFamily,
+            [...BLACK_TITLE_LINES, ...MOBILE_PURPLE_TITLE_LINES],
+            10,
+            MOBILE_TITLE_PX_DESIGN,
+          )
         : fitTitleFontSize(
             titleMaxW,
             viewportTitleCap,
@@ -206,7 +216,16 @@ export default function Hero({
       : Math.max(40, titleMaxW);
 
     if (isMobile) {
-      setDescFontPx(MOBILE_DESC_PX_DESIGN);
+      setDescFontPx(
+        fitDescriptionFontSize(
+          descContentWidth,
+          MOBILE_DESC_PX_DESIGN,
+          bricolageFont,
+          MOBILE_DESCRIPTION_LINES,
+          10,
+          MOBILE_DESC_PX_DESIGN,
+        ),
+      );
     } else {
       setDescFontPx(
         fitDescriptionFontSize(

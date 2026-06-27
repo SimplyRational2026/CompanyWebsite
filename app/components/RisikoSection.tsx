@@ -27,7 +27,7 @@ import {
   sectionTitleRestPx,
   sectionViewportDescCap,
 } from "@/app/lib/sectionTypography";
-import { MOBILE_RISIKO_BODY_LINES, RISIKO_BODY_LINES } from "@/app/lib/fitText";
+import { fitHeadlineFontSize, MOBILE_RISIKO_BODY_LINES, RISIKO_BODY_LINES } from "@/app/lib/fitText";
 import {
   DESC_PX_DESIGN,
   DESIGN_WIDTH,
@@ -144,7 +144,20 @@ export default function RisikoSection({
     );
 
     if (isMobile) {
-      setMobileTitlePx(MOBILE_SINGLE_TITLE_PX_DESIGN);
+      const serifFont =
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--font-noto-serif-jp")
+          .trim() || "serif";
+      setMobileTitlePx(
+        fitHeadlineFontSize(
+          viewportW * 0.9,
+          MOBILE_SINGLE_TITLE_PX_DESIGN,
+          serifFont,
+          ["Risiko"],
+          10,
+          MOBILE_SINGLE_TITLE_PX_DESIGN,
+        ),
+      );
     }
   }, [viewportW, isMobile, mobileDescCap]);
 
@@ -428,7 +441,7 @@ export default function RisikoSection({
                 <span aria-hidden className="text-purple">
                   •
                 </span>
-                <span className="whitespace-nowrap">{item}</span>
+                <span>{item}</span>
               </li>
             ))}
           </ul>

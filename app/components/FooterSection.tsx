@@ -75,8 +75,8 @@ function ContactDetails({
         {FOOTER_CONTACT.address}
       </p>
 
-      <p style={{ marginTop: emailGap }}>
-        <a href={`mailto:${FOOTER_CONTACT.email}`} className={linkClass}>
+      <p style={{ marginTop: emailGap }} className="break-words">
+        <a href={`mailto:${FOOTER_CONTACT.email}`} className={`${linkClass} break-all`}>
           {FOOTER_CONTACT.email}
         </a>
       </p>
@@ -177,8 +177,8 @@ function PurpleFooterBar({
 
               <p>{FOOTER_CONTACT.address}</p>
 
-              <p>
-                <a href={`mailto:${FOOTER_CONTACT.email}`} className="underline underline-offset-2 text-cream">
+              <p className="break-words">
+                <a href={`mailto:${FOOTER_CONTACT.email}`} className="underline underline-offset-2 text-cream break-all">
                   {FOOTER_CONTACT.email}
                 </a>
               </p>
