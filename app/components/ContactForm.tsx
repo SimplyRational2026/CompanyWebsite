@@ -1,14 +1,8 @@
 "use client";
 
 import { useRef } from "react";
-import {
-  fitDescriptionFontSize,
-  MOBILE_RISIKO_BODY_LINES,
-} from "@/app/lib/fitText";
-import {
-  sectionAvailableWidth,
-  useSectionContentScale,
-} from "@/app/lib/sectionTypography";
+import { fitMobileBodyFontPx } from "@/app/lib/fitText";
+import { useSectionContentScale } from "@/app/lib/sectionTypography";
 import {
   FOOTER_CONTACT_PX_DESIGN,
   FOOTER_FORM_GAP_BASE,
@@ -31,20 +25,15 @@ export default function ContactForm({ formId }: { formId?: string }) {
 
   const isMobile = viewportW < 1024;
   const mobileScale = Math.min(1, viewportW / MOBILE_DESIGN_WIDTH);
-  const mobileDescCap = Math.round(MOBILE_DESC_PX_DESIGN * mobileScale);
 
   const mobileBodyFontPx = isMobile
-    ? fitDescriptionFontSize(
-        sectionAvailableWidth(viewportW),
-        mobileDescCap,
+    ? fitMobileBodyFontPx(
+        viewportW,
         typeof document !== "undefined"
           ? getComputedStyle(document.documentElement)
               .getPropertyValue("--font-bricolage-grotesque")
               .trim() || "sans-serif"
           : "sans-serif",
-        MOBILE_RISIKO_BODY_LINES,
-        12,
-        mobileDescCap,
       )
     : MOBILE_DESC_PX_DESIGN;
 

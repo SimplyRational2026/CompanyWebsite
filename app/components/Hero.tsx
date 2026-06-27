@@ -20,9 +20,9 @@ import {
   DESCRIPTION_LINES,
   fitDescriptionFontSize,
   fitHeadlineFontSize,
+  fitMobileBodyFontPx,
   fitTitleFontSize,
   measureDescriptionHeight,
-  MOBILE_DESCRIPTION_LINES,
   MOBILE_PURPLE_TITLE_LINES,
   PURPLE_TITLE_LINES,
 } from "@/app/lib/fitText";
@@ -216,16 +216,7 @@ export default function Hero({
       : Math.max(40, titleMaxW);
 
     if (isMobile) {
-      setDescFontPx(
-        fitDescriptionFontSize(
-          descContentWidth,
-          MOBILE_DESC_PX_DESIGN,
-          bricolageFont,
-          MOBILE_DESCRIPTION_LINES,
-          10,
-          MOBILE_DESC_PX_DESIGN,
-        ),
-      );
+      setDescFontPx(fitMobileBodyFontPx(viewportW, bricolageFont));
     } else {
       setDescFontPx(
         fitDescriptionFontSize(
@@ -355,7 +346,7 @@ export default function Hero({
   return (
     <div
       data-scroll-section="hero"
-      className="relative min-h-screen w-full overflow-hidden bg-cream pb-[2vh]"
+      className="relative w-full overflow-hidden bg-cream pb-[2vh] lg:min-h-screen"
     >
       <div className="pointer-events-none absolute inset-x-0 top-0 z-40">
         <Nav

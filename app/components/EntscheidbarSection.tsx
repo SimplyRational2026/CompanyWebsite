@@ -24,6 +24,7 @@ import ScrollHintArrow from "@/app/components/ScrollHintArrow";
 import {
   ENTSCHEIDBAR_BRANCHES,
   ENTSCHEIDBAR_TITLE_LINES,
+  fitMobileBodyFontPx,
 } from "@/app/lib/fitText";
 import {
   fitEntscheidbarTreeLayout,
@@ -124,8 +125,12 @@ export default function EntscheidbarSection({
         .trim() || "serif";
 
     if (isMobile) {
+      const bricolageFont =
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--font-bricolage-grotesque")
+          .trim() || "sans-serif";
       setMobileTitlePx(fitMobileHeadlinePx());
-      setMobileBodyFontPx(MOBILE_DESC_PX_DESIGN);
+      setMobileBodyFontPx(fitMobileBodyFontPx(viewportW, bricolageFont));
     } else {
       setTitleRestPx(
         fitSectionHeadlineFontPx(

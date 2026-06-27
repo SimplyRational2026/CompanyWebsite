@@ -27,7 +27,7 @@ import {
   sectionTitleRestPx,
   sectionViewportDescCap,
 } from "@/app/lib/sectionTypography";
-import { fitHeadlineFontSize, UNGEWISSHEIT_BODY_LINES } from "@/app/lib/fitText";
+import { fitHeadlineFontSize, fitMobileBodyFontPx, UNGEWISSHEIT_BODY_LINES } from "@/app/lib/fitText";
 import {
   DESC_PX_DESIGN,
   DESIGN_WIDTH,
@@ -124,6 +124,7 @@ export default function UngewissheitSection({
     Math.max(10, Math.min(DESC_PX_DESIGN, viewportDescCap)),
   );
   const [mobileTitlePx, setMobileTitlePx] = useState(88);
+  const [mobileBodyTextPx, setMobileBodyTextPx] = useState(MOBILE_DESC_PX_DESIGN);
 
   useLayoutEffect(() => {
     setViewportW(window.innerWidth);
@@ -146,6 +147,7 @@ export default function UngewissheitSection({
     );
 
     if (isMobile) {
+      setMobileBodyTextPx(fitMobileBodyFontPx(viewportW, bricolageFont));
       const serifFont =
         getComputedStyle(document.documentElement)
           .getPropertyValue("--font-noto-serif-jp")
@@ -480,7 +482,7 @@ export default function UngewissheitSection({
           className="z-10 w-full max-w-full text-left"
           style={{
             marginTop: bodyGapMobile,
-            fontSize: bodyFontPx,
+            fontSize: mobileBodyTextPx,
             lineHeight: bodyLineHeight,
           }}
           initial={

@@ -18,6 +18,7 @@ import {
 import ScrollHintArrow from "@/app/components/ScrollHintArrow";
 import {
   ENTSCHEIDBAR_TITLE_LINES,
+  fitMobileBodyFontPx,
   TEAM_FOOTER_TEXT,
   TEAM_MEMBERS,
 } from "@/app/lib/fitText";
@@ -89,6 +90,7 @@ export default function TeamSection({
   const [titleRestPx, setTitleRestPx] = useState(TEAM_TITLE_PX_DESIGN);
   const [mobileTitlePx, setMobileTitlePx] = useState(36);
   const [mobileBodyFontPx, setMobileBodyFontPx] = useState(MOBILE_DESC_PX_DESIGN);
+  const [mobileFooterTextPx, setMobileFooterTextPx] = useState(MOBILE_DESC_PX_DESIGN);
   const [footerRingHovered, setFooterRingHovered] = useState(false);
   const [stageMounted, setStageMounted] = useState(false);
   const [slideOffsetPx, setSlideOffsetPx] = useState(1200);
@@ -111,8 +113,13 @@ export default function TeamSection({
         .trim() || "serif";
 
     if (isMobile) {
+      const bricolageFont =
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--font-bricolage-grotesque")
+          .trim() || "sans-serif";
       setMobileTitlePx(fitMobileHeadlinePx());
       setMobileBodyFontPx(MOBILE_DESC_PX_DESIGN);
+      setMobileFooterTextPx(fitMobileBodyFontPx(viewportW, bricolageFont));
     } else {
       setTitleRestPx(
         fitSectionHeadlineFontPx(
@@ -330,7 +337,7 @@ export default function TeamSection({
                 style={{ width: mobileFooterBallSize, height: mobileFooterBallSize }}
               />
             </div>
-            <p className="font-bricolage font-medium text-ink" style={{ fontSize: mobileBodyFontPx, lineHeight: FOOTER_TEXT_LINE_HEIGHT }}>
+            <p className="font-bricolage font-medium text-ink" style={{ fontSize: mobileFooterTextPx, lineHeight: FOOTER_TEXT_LINE_HEIGHT }}>
               {TEAM_FOOTER_TEXT}
             </p>
           </motion.div>

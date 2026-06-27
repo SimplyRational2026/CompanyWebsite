@@ -1,4 +1,13 @@
-import { DESC_PX_DESIGN, TITLE_PX_DESIGN } from "@/app/lib/scale";
+import {
+  DESC_PX_DESIGN,
+  MOBILE_BALL_SIZE_BASE,
+  MOBILE_DESC_BALL_GAP_BASE,
+  MOBILE_DESC_PX_DESIGN,
+  MOBILE_DESIGN_WIDTH,
+  MOBILE_FINAL_LINE_W_BASE,
+  scalePx,
+  TITLE_PX_DESIGN,
+} from "@/app/lib/scale";
 
 const BLACK_TITLE_LINES = [
   "Gute Entscheidungen",
@@ -354,6 +363,32 @@ export function fitDescriptionFontSize(
   const fitPx = Math.floor(maxWidth / widthRatio);
 
   return Math.max(minPx, Math.min(maxPx, viewportCap, fitPx));
+}
+
+// Shared mobile description/body font size. Mirrors the Hero's mobile
+// description fit exactly so every section's body text renders at the same px.
+export function fitMobileBodyFontPx(
+  viewportW: number,
+  fontFamily: string,
+): number {
+  const mobileScale = Math.min(1, viewportW / MOBILE_DESIGN_WIDTH);
+  const descContentWidth = Math.max(
+    40,
+    viewportW -
+      scalePx(MOBILE_FINAL_LINE_W_BASE, mobileScale, 36) -
+      scalePx(MOBILE_BALL_SIZE_BASE, mobileScale, 24) -
+      scalePx(MOBILE_DESC_BALL_GAP_BASE, mobileScale, 8) -
+      viewportW * 0.05,
+  );
+
+  return fitDescriptionFontSize(
+    descContentWidth,
+    MOBILE_DESC_PX_DESIGN,
+    fontFamily,
+    MOBILE_DESCRIPTION_LINES,
+    10,
+    MOBILE_DESC_PX_DESIGN,
+  );
 }
 
 export function measureDescriptionHeight(

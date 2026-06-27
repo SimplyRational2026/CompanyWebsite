@@ -101,7 +101,7 @@ export default function HeroMobile({
   }
 
   return (
-    <main className="relative min-h-screen lg:hidden">
+    <main className="relative lg:hidden">
       <motion.h1
         className="absolute inset-x-0 z-30 px-[5vw] text-center font-serif font-extrabold tracking-tight text-ink"
         style={{ fontSize: titleFontPx, lineHeight: `${titleLineH}px` }}
@@ -138,7 +138,7 @@ export default function HeroMobile({
       </motion.h1>
 
       <div
-        className="flex min-h-screen flex-col items-center px-[5vw]"
+        className="flex flex-col items-center px-[5vw]"
         style={{
           paddingTop: blackFinalTop + blackTitleH,
           paddingBottom: scalePx(88, contentScale, 52),

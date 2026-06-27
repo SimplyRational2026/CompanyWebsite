@@ -27,7 +27,7 @@ import {
   sectionTitleRestPx,
   sectionViewportDescCap,
 } from "@/app/lib/sectionTypography";
-import { fitHeadlineFontSize, MOBILE_RISIKO_BODY_LINES, RISIKO_BODY_LINES } from "@/app/lib/fitText";
+import { fitHeadlineFontSize, fitMobileBodyFontPx, MOBILE_RISIKO_BODY_LINES, RISIKO_BODY_LINES } from "@/app/lib/fitText";
 import {
   DESC_PX_DESIGN,
   DESIGN_WIDTH,
@@ -122,6 +122,7 @@ export default function RisikoSection({
     Math.max(10, Math.min(DESC_PX_DESIGN, viewportDescCap)),
   );
   const [mobileTitlePx, setMobileTitlePx] = useState(88);
+  const [mobileBodyTextPx, setMobileBodyTextPx] = useState(MOBILE_DESC_PX_DESIGN);
 
   useLayoutEffect(() => {
     setViewportW(window.innerWidth);
@@ -144,6 +145,7 @@ export default function RisikoSection({
     );
 
     if (isMobile) {
+      setMobileBodyTextPx(fitMobileBodyFontPx(viewportW, bricolageFont));
       const serifFont =
         getComputedStyle(document.documentElement)
           .getPropertyValue("--font-noto-serif-jp")
@@ -402,7 +404,7 @@ export default function RisikoSection({
           className="z-10 w-full max-w-full text-left lg:col-start-1 lg:row-start-2 lg:w-fit"
           style={{
             marginTop: isMobile ? bodyGapMobile : bodyGap,
-            fontSize: bodyFontPx,
+            fontSize: isMobile ? mobileBodyTextPx : bodyFontPx,
             lineHeight: bodyLineHeight,
           }}
           initial={isAnimPlaying ? { x: "-100vw", opacity: 0 } : false}

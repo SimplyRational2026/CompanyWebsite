@@ -24,7 +24,7 @@ import {
   WAS_VIDEO_START,
 } from "@/app/lib/anim";
 import ScrollHintArrow from "@/app/components/ScrollHintArrow";
-import { WAS_ANDERS_BULLETS, WAS_ANDERS_TITLE } from "@/app/lib/fitText";
+import { fitMobileBodyFontPx, WAS_ANDERS_BULLETS, WAS_ANDERS_TITLE } from "@/app/lib/fitText";
 import {
   fitMobileHeadlinePx,
   fitSectionHeadlineFontPx,
@@ -130,8 +130,12 @@ export default function WasAndersSection({
         .trim() || "serif";
 
     if (isMobile) {
+      const bricolageFont =
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--font-bricolage-grotesque")
+          .trim() || "sans-serif";
       setMobileTitlePx(fitMobileHeadlinePx());
-      setMobileBodyFontPx(MOBILE_DESC_PX_DESIGN);
+      setMobileBodyFontPx(fitMobileBodyFontPx(viewportW, bricolageFont));
     } else {
       setTitleRestPx(
         fitSectionHeadlineFontPx(

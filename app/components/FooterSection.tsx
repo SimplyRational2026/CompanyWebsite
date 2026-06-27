@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useLayoutEffect, useRef, useState } from "react";
 import {
   ENTSCHEIDBAR_TITLE_LINES,
+  fitMobileBodyFontPx,
   FOOTER_CONTACT,
   FOOTER_HEADLINE_LINES,
 } from "@/app/lib/fitText";
@@ -279,8 +280,12 @@ export default function FooterSection() {
         .trim() || "serif";
 
     if (isMobile) {
+      const bricolageFont =
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--font-bricolage-grotesque")
+          .trim() || "sans-serif";
       setMobileTitlePx(fitMobileHeadlinePx());
-      setMobileBodyFontPx(MOBILE_DESC_PX_DESIGN);
+      setMobileBodyFontPx(fitMobileBodyFontPx(viewportW, bricolageFont));
     } else {
       setHeadlinePx(
         fitSectionHeadlineFontPx(
