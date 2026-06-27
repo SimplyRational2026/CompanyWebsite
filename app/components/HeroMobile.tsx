@@ -158,10 +158,10 @@ export default function HeroMobile({
               aria-hidden
               className="absolute top-1/2 flex -translate-y-1/2 items-center"
               style={{ left: "50%" }}
-              initial={isIntroPlaying ? { x: offR, opacity: 0 } : false}
+              initial={isIntroPlaying ? { x: offR, opacity: 1 } : false}
               animate={
                 isIntroPlaying
-                  ? { x: [offR, 0, 0], opacity: [0, 1, 1] }
+                  ? { x: [offR, 0, 0], opacity: 1 }
                   : { x: 0, opacity: 1 }
               }
               transition={

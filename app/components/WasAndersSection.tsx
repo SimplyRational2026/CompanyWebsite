@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { motion, useInView } from "motion/react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
@@ -438,21 +437,18 @@ export default function WasAndersSection({
             }
           >
             <div
-              className="relative h-full w-full overflow-hidden bg-cream"
+              className="relative h-full w-full overflow-hidden bg-purple-deep"
               style={{ borderRadius: Math.max(0, mobileVideoRadius - mobileVideoBorder) }}
             >
-              <Image
-                src="/simply-rational-logo.png"
-                alt=""
-                width={1024}
-                height={512}
-                className="h-full w-full object-cover opacity-30"
+              <video
+                src="/susanne-video.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="auto"
+                className="h-full w-full object-cover"
                 aria-hidden
-              />
-              <div
-                aria-hidden
-                className="absolute inset-x-0 bottom-0 bg-linear-to-t from-purple/80 to-transparent"
-                style={{ height: "45%" }}
               />
             </div>
           </motion.div>
@@ -631,21 +627,18 @@ export default function WasAndersSection({
               }
             >
               <div
-                className="relative h-full w-full overflow-hidden bg-cream"
+                className="relative h-full w-full overflow-hidden bg-purple-deep"
                 style={{ borderRadius: Math.max(0, videoRadius - videoBorder) }}
               >
-                <Image
-                  src="/simply-rational-logo.png"
-                  alt=""
-                  width={1024}
-                  height={512}
-                  className="h-full w-full object-cover opacity-30"
+                <video
+                  src="/susanne-video.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="auto"
+                  className="h-full w-full object-cover"
                   aria-hidden
-                />
-                <div
-                  aria-hidden
-                  className="absolute inset-x-0 bottom-0 bg-linear-to-t from-purple/80 to-transparent"
-                  style={{ height: "45%" }}
                 />
               </div>
             </motion.div>

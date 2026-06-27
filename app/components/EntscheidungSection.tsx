@@ -95,6 +95,8 @@ export default function EntscheidungSection({
   const [headlineVisible, setHeadlineVisible] = useState(false);
   const [headlineFontPx, setHeadlineFontPx] = useState(ENTSCHEIDBAR_TITLE_PX_DESIGN);
   const [mobileHeadlinePx, setMobileHeadlinePx] = useState(32);
+  const [measuredHeadlineH, setMeasuredHeadlineH] = useState(0);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
 
   const { viewportW, bodyFontPx, contentScale } =
     useSectionContentScale(isAnimPlayingRef);
@@ -127,6 +129,13 @@ export default function EntscheidungSection({
     }
   }, [viewportW, bodyFontPx, isMobile]);
 
+  useLayoutEffect(() => {
+    if (!headlineRef.current) {
+      return;
+    }
+    setMeasuredHeadlineH(headlineRef.current.offsetHeight);
+  }, [headlineVisible, hasFinished, mobileHeadlinePx, headlineFontPx, isMobile, viewportW]);
+
   const mediaScale = isMobile ? mobileScale : contentScale;
   const brainW = isMobile
     ? scalePx(MOBILE_BRAIN_W_BASE, mobileScale, 48)
@@ -144,13 +153,14 @@ export default function EntscheidungSection({
     ? scalePx(MOBILE_LINE_WIDTH_BASE, mobileScale, 1)
     : scalePx(LINE_WIDTH_BASE, contentScale, 2);
   const headlineGap = isMobile
-    ? scalePx(64, mobileScale, 40)
+    ? scalePx(28, mobileScale, 20)
     : scalePx(48, contentScale, 20);
   const activeFontPx = isMobile ? mobileHeadlinePx : headlineFontPx;
   const activeLineHeight = isMobile ? 1.2 : HEADLINE_LINE_HEIGHT;
   const headlineLineCount = isMobile ? 4 : ENTSCHEIDUNG_HEADLINE_LINES.length;
-  const headlineBlockH = Math.round(
-    activeFontPx * activeLineHeight * headlineLineCount,
+  const headlineBlockH = Math.max(
+    measuredHeadlineH,
+    Math.round(activeFontPx * activeLineHeight * headlineLineCount),
   );
   const brainShiftToCenter =
     headlineBlockH + headlineGap + scalePx(56, mediaScale, 24);
@@ -174,7 +184,10 @@ export default function EntscheidungSection({
     : scalePx(BRAIN_VIDEO_BORDER_BASE, contentScale, 3);
   const brainRestTop = brainShiftToCenter;
   const brainCenterY = brainRestTop + brainH / 2;
-  const videoRestTop = Math.round(brainCenterY - videoH / 2);
+  const videoRestTop = Math.max(
+    Math.round(brainCenterY - videoH / 2),
+    headlineBlockH + headlineGap,
+  );
   const mediaStageHeight = Math.max(
     brainRestTop + brainH + ballSize * 2,
     videoRestTop + videoH,
@@ -228,6 +241,7 @@ export default function EntscheidungSection({
       <div className="relative mx-auto flex w-full max-w-[1200px] flex-col items-center">
         {(headlineVisible || hasFinished) && (
           <motion.h2
+            ref={headlineRef}
             className="absolute left-0 z-20 w-full text-center font-serif font-extrabold tracking-tight"
             style={{
               fontSize: activeFontPx,
@@ -396,23 +410,20 @@ export default function EntscheidungSection({
               }
             >
               <div
-                className="relative h-full w-full overflow-hidden bg-cream"
+                className="relative h-full w-full overflow-hidden bg-purple-deep"
                 style={{
                   borderRadius: Math.max(0, videoRadius - videoBorder),
                 }}
               >
-                <Image
-                  src="/simply-rational-logo.png"
-                  alt=""
-                  width={1024}
-                  height={512}
-                  className="h-full w-full object-cover opacity-30"
+                <video
+                  src="/philipp-video.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="auto"
+                  className="h-full w-full object-cover"
                   aria-hidden
-                />
-                <div
-                  aria-hidden
-                  className="absolute inset-x-0 bottom-0 bg-linear-to-t from-purple/80 to-transparent"
-                  style={{ height: "45%" }}
                 />
               </div>
             </motion.div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Hero from "./components/Hero";
 import EntscheidungSection from "./components/EntscheidungSection";
 import EntscheidbarSection from "./components/EntscheidbarSection";
@@ -11,6 +11,7 @@ import UngewissheitSection from "./components/UngewissheitSection";
 import WasAndersSection from "./components/WasAndersSection";
 import ContactModalProvider from "./components/ContactModalProvider";
 import { useScrollGate } from "./lib/scrollLock";
+import { preloadSiteImages } from "./lib/teamEntrance";
 
 const GATED_SECTIONS = [
   "risiko",
@@ -29,6 +30,24 @@ export default function Home() {
   const [startedSections, setStartedSections] = useState<
     Record<string, boolean>
   >({});
+  const [footerReached, setFooterReached] = useState(false);
+
+  useEffect(() => {
+    void preloadSiteImages();
+  }, []);
+
+  useEffect(() => {
+    const el = document.querySelector('[data-scroll-section="contact-footer"]');
+    if (!el) {
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => setFooterReached(entry.isIntersecting),
+      { threshold: 0.01 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const handleHeroIntroComplete = useCallback(() => {
     setHeroIntroComplete(true);
@@ -51,7 +70,7 @@ export default function Home() {
   useScrollGate(heroIntroComplete, frontierKey);
 
   const activeArrowKey = useMemo((): string | null => {
-    if (!heroIntroComplete) {
+    if (!heroIntroComplete || footerReached) {
       return null;
     }
 
@@ -73,7 +92,7 @@ export default function Home() {
     }
 
     return "hero";
-  }, [finishedSections, startedSections, heroIntroComplete, frontierKey]);
+  }, [finishedSections, startedSections, heroIntroComplete, frontierKey, footerReached]);
 
   return (
     <ContactModalProvider>
