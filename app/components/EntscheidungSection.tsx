@@ -144,7 +144,7 @@ export default function EntscheidungSection({
     ? scalePx(MOBILE_LINE_WIDTH_BASE, mobileScale, 1)
     : scalePx(LINE_WIDTH_BASE, contentScale, 2);
   const headlineGap = isMobile
-    ? scalePx(140, mobileScale, 90)
+    ? scalePx(64, mobileScale, 40)
     : scalePx(48, contentScale, 20);
   const activeFontPx = isMobile ? mobileHeadlinePx : headlineFontPx;
   const activeLineHeight = isMobile ? 1.2 : HEADLINE_LINE_HEIGHT;

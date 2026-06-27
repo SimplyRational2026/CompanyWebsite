@@ -246,7 +246,8 @@ export default function TeamSection({
 
   const mobileMemberW = Math.round(sectionAvailableWidth(viewportW));
   const mobileCardScale = mobileBodyFontPx / DESC_PX_DESIGN;
-  const mobileFooterBallSize = scalePx(44, mobileScale, 24);
+  const mobileFooterBallSize = scalePx(28, mobileScale, 16);
+  const mobileFooterBreakout = Math.round(viewportW * 0.06);
   const mobileFooterLineW = scalePx(MOBILE_LINE_WIDTH_BASE, mobileScale, 1);
   const mobileFooterLineLen = scalePx(52, mobileScale, 28);
   const mobileFooterTextGap = scalePx(14, mobileScale, 8);
@@ -324,12 +325,16 @@ export default function TeamSection({
           >
             <div
               className="relative shrink-0"
-              style={{ width: mobileFooterLineLen + mobileFooterBallSize, height: mobileFooterBallSize }}
+              style={{
+                marginLeft: -mobileFooterBreakout,
+                width: mobileFooterBreakout + mobileFooterLineLen + mobileFooterBallSize,
+                height: mobileFooterBallSize,
+              }}
             >
               <div
                 aria-hidden
                 className="absolute left-0 top-1/2 -translate-y-1/2 bg-purple"
-                style={{ width: mobileFooterLineLen + mobileFooterBallSize, height: mobileFooterLineW }}
+                style={{ width: mobileFooterBreakout + mobileFooterLineLen + mobileFooterBallSize, height: mobileFooterLineW }}
               />
               <div
                 aria-hidden

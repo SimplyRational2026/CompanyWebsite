@@ -11,7 +11,6 @@ import {
   FOOTER_FORM_TEXTAREA_H_BASE,
   MOBILE_DESC_PX_DESIGN,
   MOBILE_DESIGN_WIDTH,
-  NAV_BUTTON_FONT,
   NAV_BUTTON_PX_X,
   NAV_BUTTON_PX_Y,
   NAV_BUTTON_RADIUS,
@@ -57,9 +56,6 @@ export default function ContactForm({ formId }: { formId?: string }) {
   const buttonPaddingY = isMobile
     ? scalePx(14, mobileScale, 10)
     : scalePx(NAV_BUTTON_PX_Y, contentScale, 10);
-  const buttonFontPx = isMobile
-    ? mobileBodyFontPx
-    : scalePx(NAV_BUTTON_FONT, contentScale, 11);
   const buttonRadius = scalePx(NAV_BUTTON_RADIUS, activeScale, 10);
   const inputPadY = scalePx(15, activeScale, 10);
 
@@ -128,11 +124,11 @@ export default function ContactForm({ formId }: { formId?: string }) {
 
       <button
         type="submit"
-        className="w-full shrink-0 bg-white font-bricolage font-semibold tracking-wide text-purple transition hover:bg-cream"
+        className="w-full shrink-0 bg-white font-bricolage font-semibold text-purple transition hover:bg-cream"
         style={{
           paddingInline: buttonPaddingX,
           paddingBlock: buttonPaddingY,
-          fontSize: buttonFontPx,
+          fontSize: contactFontPx,
           borderRadius: buttonRadius,
           marginTop: formGap,
         }}

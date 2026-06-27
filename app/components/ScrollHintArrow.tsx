@@ -7,13 +7,13 @@ export default function ScrollHintArrow({ visible }: { visible: boolean }) {
   return (
     <motion.div
       aria-hidden
-      className="pointer-events-none absolute inset-x-0 bottom-[1.5vh] flex justify-center text-purple lg:bottom-[3vh]"
+      className="pointer-events-none absolute inset-x-0 bottom-[1vh] flex justify-center text-purple lg:bottom-[3vh]"
       initial={{ opacity: 0 }}
       animate={{ opacity: visible ? 1 : 0 }}
       transition={{ duration: 0.5, ease: EASE }}
     >
       <motion.svg
-        className="h-[60px] w-[60px] lg:h-[72px] lg:w-[72px]"
+        className="h-[36px] w-[36px] lg:h-[72px] lg:w-[72px]"
         viewBox="0 0 24 24"
         fill="none"
         animate={visible ? { y: [0, 6, 0] } : { y: 0 }}

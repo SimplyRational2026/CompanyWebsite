@@ -485,17 +485,13 @@ export default function UngewissheitSection({
             fontSize: mobileBodyTextPx,
             lineHeight: bodyLineHeight,
           }}
-          initial={
-            isAnimPlaying
-              ? { scale: isMobile ? 1 : 1.86, y: isMobile ? "20vh" : "30vh", opacity: 0 }
-              : false
-          }
+          initial={isAnimPlaying ? { x: "100vw", opacity: 0 } : false}
           animate={
             isAnimPlaying
-              ? { scale: 1, y: "0vh", opacity: [0, 1] }
+              ? { x: "0vw", opacity: [0, 1] }
               : hasFinished
-                ? { scale: 1, y: "0vh", opacity: 1 }
-                : { scale: isMobile ? 1 : 1.86, y: isMobile ? "20vh" : "30vh", opacity: 0 }
+                ? { x: "0vw", opacity: 1 }
+                : { x: "100vw", opacity: 0 }
           }
           transition={
             isAnimPlaying

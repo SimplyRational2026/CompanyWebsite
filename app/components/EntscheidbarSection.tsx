@@ -204,12 +204,12 @@ export default function EntscheidbarSection({
   );
   const mBallTargets = [
     ...mBranchTops,
-    mBranchGap * ENTSCHEIDBAR_BRANCHES.length + mSpineBottom,
+    mBranchTops[mBranchTops.length - 1] + mSpineBottom,
   ];
   const mSpineHeight = mBallTargets[mBallTargets.length - 1] + mBallSize / 2;
   const mSpineBodyHeight = mSpineHeight - mBallSize / 2;
   const mTreeStageH = mSpineHeight + mBallSize;
-  const mHorizLineLength = Math.ceil(viewportW * 0.55);
+  const mHorizLineLength = Math.ceil(viewportW * 0.92);
 
   const titleBlockH = Math.round(
     Math.max(titleRestPx, titleLargePx) * TITLE_LINE_HEIGHT * 2,

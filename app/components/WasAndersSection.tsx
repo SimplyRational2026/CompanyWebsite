@@ -154,7 +154,7 @@ export default function WasAndersSection({
   const mobileHubDotSize = scalePx(MOBILE_WAS_HUB_DOT_SIZE_BASE, mobileScale, 12);
   const mobileBulletDotSize = scalePx(MOBILE_WAS_BULLET_DOT_BASE, mobileScale, 6);
   const mobileRingRadius = Math.max(0, (mobileRingSize - mobileRingStroke) / 2);
-  const mobileRingCircum = Math.PI * mobileRingSize;
+  const mobileRingCircum = 2 * Math.PI * mobileRingRadius;
   const mobileRingDashCount = Math.round(WAS_HUB_RING_DASH_COUNT * 0.66);
   const mobileRingDashLength = (mobileRingCircum / mobileRingDashCount) * 0.58;
   const mobileRingDashGap = (mobileRingCircum / mobileRingDashCount) * 0.42;

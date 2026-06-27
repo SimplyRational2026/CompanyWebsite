@@ -141,7 +141,7 @@ export default function HeroMobile({
         className="flex flex-col items-center px-[5vw]"
         style={{
           paddingTop: blackFinalTop + blackTitleH,
-          paddingBottom: scalePx(88, contentScale, 52),
+          paddingBottom: "8vh",
         }}
       >
         <div className="flex w-full flex-col items-center">

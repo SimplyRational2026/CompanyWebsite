@@ -126,28 +126,28 @@ const FOOTER_CONTACT = {
 
 const TEAM_MEMBERS = [
   {
-    image: "/gerd_gigerenzer.svg",
+    image: "/gerd_gigerenzer.webp",
     width: 400,
     height: 345,
     role: "Prof. Dr.",
     name: "Gerd Gigerenzer",
   },
   {
-    image: "/florian_artinger.svg",
+    image: "/florian_artinger.webp",
     width: 411,
     height: 345,
     role: "Prof. Dr.",
     name: "Florian Artinger",
   },
   {
-    image: "/susanne_jung.svg",
+    image: "/susanne_jung.webp",
     width: 411,
     height: 345,
     role: "Dipl. Andragogin, M.A.",
     name: "Susanne Jung",
   },
   {
-    image: "/philip_leipold.svg",
+    image: "/philip_leipold.webp",
     width: 412,
     height: 345,
     role: "Dipl. Psychologe",
