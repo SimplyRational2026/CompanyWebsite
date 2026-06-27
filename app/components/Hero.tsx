@@ -18,7 +18,6 @@ import {
 import {
   BLACK_TITLE_LINES,
   DESCRIPTION_LINES,
-  fitDescriptionFontSize,
   fitHeadlineFontSize,
   fitMobileBodyFontPx,
   fitTitleFontSize,
@@ -40,10 +39,8 @@ import {
   MOBILE_DASH_GAP_BASE,
   MOBILE_DASH_LENGTH_BASE,
   MOBILE_BALL_SIZE_BASE,
-  MOBILE_DESC_BALL_GAP_BASE,
   MOBILE_DESC_LINE_HEIGHT,
   MOBILE_DESC_PX_DESIGN,
-  MOBILE_FINAL_LINE_W_BASE,
   MOBILE_LINE_WIDTH_BASE,
   MOBILE_DESIGN_WIDTH,
   MOBILE_TITLE_PX_DESIGN,
@@ -53,6 +50,7 @@ import {
   TITLE_DIVERGE_PURPLE_BASE,
   TITLE_PX_DESIGN,
 } from "@/app/lib/scale";
+import { fitSectionBodyFontPx } from "@/app/lib/sectionTypography";
 import { useIntroScrollLock } from "@/app/lib/scrollLock";
 import Nav from "./Nav";
 import HeroMobile from "./HeroMobile";
@@ -167,7 +165,6 @@ export default function Hero({
           Math.min(1, viewportW / DESIGN_WIDTH),
       );
   const titleDesignPx = isMobile ? MOBILE_TITLE_PX_DESIGN : TITLE_PX_DESIGN;
-  const descDesignPx = isMobile ? MOBILE_DESC_PX_DESIGN : DESC_PX_DESIGN;
   const [titleFontPx, setTitleFontPx] = useState(() =>
     Math.max(10, Math.min(TITLE_PX_DESIGN, viewportTitleCap)),
   );
@@ -204,32 +201,14 @@ export default function Hero({
       getComputedStyle(document.documentElement)
         .getPropertyValue("--font-bricolage-grotesque")
         .trim() || "sans-serif";
-    const descContentWidth = isMobile
-      ? Math.max(
-          40,
-          viewportW -
-            scalePx(MOBILE_FINAL_LINE_W_BASE, mobileScale, 36) -
-            scalePx(MOBILE_BALL_SIZE_BASE, mobileScale, 24) -
-            scalePx(MOBILE_DESC_BALL_GAP_BASE, mobileScale, 8) -
-            viewportW * 0.05,
-        )
-      : Math.max(40, titleMaxW);
-
     if (isMobile) {
       setDescFontPx(fitMobileBodyFontPx(viewportW, bricolageFont));
     } else {
-      setDescFontPx(
-        fitDescriptionFontSize(
-          descContentWidth,
-          viewportDescCap,
-          bricolageFont,
-          DESCRIPTION_LINES,
-          10,
-          descDesignPx,
-        ),
-      );
+      // Use the same body-size fit as the Risiko/other body sections so the
+      // hero description matches their desktop font size exactly.
+      setDescFontPx(fitSectionBodyFontPx(viewportW, bricolageFont));
     }
-  }, [titleMaxW, viewportTitleCap, viewportDescCap, isMobile, titleDesignPx, descDesignPx, viewportW, mobileScale]);
+  }, [titleMaxW, viewportTitleCap, isMobile, titleDesignPx, viewportW, mobileScale]);
 
   const contentScale = titleFontPx / titleDesignPx;
   const navContentScale = isMobile ? Math.max(preScale, 0.48) : contentScale;

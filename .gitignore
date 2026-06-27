@@ -59,3 +59,6 @@ next-env.d.ts
 .LSOverride
 ehthumbs.db
 Desktop.ini
+
+# Large source videos (re-encoded versions live in public/)
+video-originals/

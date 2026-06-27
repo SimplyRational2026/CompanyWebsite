@@ -61,7 +61,7 @@ export default function Nav({
         className="pointer-events-auto flex items-center justify-between"
         style={{ height: navHeight, paddingInline: navPaddingX }}
       >
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-8 lg:gap-20">
           <div
             className="flex items-center"
             style={{ height: logoSlotHeight, width: logoWidth }}

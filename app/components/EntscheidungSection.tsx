@@ -21,6 +21,7 @@ import {
   EASE_BRAIN_CLOSE,
 } from "@/app/lib/anim";
 import ScrollHintArrow from "@/app/components/ScrollHintArrow";
+import VideoPlayer from "@/app/components/VideoPlayer";
 import { ENTSCHEIDBAR_TITLE_LINES, ENTSCHEIDUNG_HEADLINE_LINES } from "@/app/lib/fitText";
 import {
   fitMobileHeadlinePx,
@@ -35,7 +36,6 @@ import {
   BRAIN_H_BASE,
   ENTSCHEIDBAR_TITLE_PX_DESIGN,
   BRAIN_VIDEO_BORDER_BASE,
-  BRAIN_VIDEO_H_BASE,
   BRAIN_VIDEO_RADIUS_BASE,
   BRAIN_VIDEO_W_BASE,
   BRAIN_W_BASE,
@@ -46,7 +46,6 @@ import {
   MOBILE_BRAIN_H_BASE,
   MOBILE_BRAIN_W_BASE,
   MOBILE_BRAIN_VIDEO_W_BASE,
-  MOBILE_BRAIN_VIDEO_H_BASE,
   MOBILE_BRAIN_VIDEO_RADIUS_BASE,
   MOBILE_BRAIN_VIDEO_BORDER_BASE,
   MOBILE_LINE_WIDTH_BASE,
@@ -173,9 +172,10 @@ export default function EntscheidungSection({
   const videoW = isMobile
     ? Math.min(scalePx(MOBILE_BRAIN_VIDEO_W_BASE, mobileScale, 120), availableW)
     : Math.min(scalePx(BRAIN_VIDEO_W_BASE, contentScale, 120), availableW);
-  const videoH = isMobile
-    ? scalePx(MOBILE_BRAIN_VIDEO_H_BASE, mobileScale, 140)
-    : scalePx(BRAIN_VIDEO_H_BASE, contentScale, 140);
+  // Source video is square (1:1); keep the frame square so it wraps the whole
+  // video with no cropping. Derived from width so it stays square even when the
+  // width is clamped to the available space on narrow screens.
+  const videoH = videoW;
   const videoRadius = isMobile
     ? scalePx(MOBILE_BRAIN_VIDEO_RADIUS_BASE, mobileScale, 12)
     : scalePx(BRAIN_VIDEO_RADIUS_BASE, contentScale, 12);
@@ -409,23 +409,11 @@ export default function EntscheidungSection({
                   : STATIC_TRANSITION
               }
             >
-              <div
-                className="relative h-full w-full overflow-hidden bg-purple-deep"
-                style={{
-                  borderRadius: Math.max(0, videoRadius - videoBorder),
-                }}
-              >
-                <video
-                  src="/philipp-video.mp4"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  preload="auto"
-                  className="h-full w-full object-cover"
-                  aria-hidden
-                />
-              </div>
+              <VideoPlayer
+                src="/philipp-video.mp4"
+                radius={Math.max(0, videoRadius - videoBorder)}
+                label="Philipp video"
+              />
             </motion.div>
           )}
         </div>

@@ -83,9 +83,9 @@ export const WAS_HUB_RING_SIZE_BASE = 380;
 export const WAS_HUB_RING_DASH_COUNT = 30;
 export const WAS_HUB_GAP_BASE = 48;
 export const WAS_VIDEO_GAP_BASE = 88;
-export const WAS_HUB_BULLET_MAX_W_BASE = 420;
+export const WAS_HUB_BULLET_MAX_W_BASE = 580;
 export const WAS_HUB_BULLET_DOT_BASE = 20;
-export const WAS_HUB_COLUMN_GAP_BASE = 152;
+export const WAS_HUB_COLUMN_GAP_BASE = 210;
 export const WAS_HUB_TEXT_COLUMN_GAP_BASE = 80;
 
 export const ENTSCHEIDBAR_TITLE_PX_DESIGN = 72;

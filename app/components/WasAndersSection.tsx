@@ -23,6 +23,7 @@ import {
   WAS_VIDEO_START,
 } from "@/app/lib/anim";
 import ScrollHintArrow from "@/app/components/ScrollHintArrow";
+import VideoPlayer from "@/app/components/VideoPlayer";
 import { fitMobileBodyFontPx, WAS_ANDERS_BULLETS, WAS_ANDERS_TITLE } from "@/app/lib/fitText";
 import {
   fitMobileHeadlinePx,
@@ -33,12 +34,10 @@ import {
 } from "@/app/lib/sectionTypography";
 import {
   BRAIN_VIDEO_BORDER_BASE,
-  BRAIN_VIDEO_H_BASE,
   BRAIN_VIDEO_RADIUS_BASE,
   BRAIN_VIDEO_W_BASE,
   LINE_WIDTH_BASE,
   MOBILE_BRAIN_VIDEO_BORDER_BASE,
-  MOBILE_BRAIN_VIDEO_H_BASE,
   MOBILE_BRAIN_VIDEO_RADIUS_BASE,
   MOBILE_BRAIN_VIDEO_W_BASE,
   MOBILE_DESC_PX_DESIGN,
@@ -162,7 +161,8 @@ export default function WasAndersSection({
     scalePx(MOBILE_BRAIN_VIDEO_W_BASE, mobileScale, 120),
     sectionAvailableWidth(viewportW),
   );
-  const mobileVideoH = scalePx(MOBILE_BRAIN_VIDEO_H_BASE, mobileScale, 140);
+  // Source video is square (1:1); keep the frame square so it wraps the whole video.
+  const mobileVideoH = mobileVideoW;
   const mobileVideoRadius = scalePx(MOBILE_BRAIN_VIDEO_RADIUS_BASE, mobileScale, 12);
   const mobileVideoBorder = scalePx(MOBILE_BRAIN_VIDEO_BORDER_BASE, mobileScale, 3);
   const mobileVideoGap = scalePx(WAS_VIDEO_GAP_BASE, mobileScale, 32);
@@ -217,7 +217,7 @@ export default function WasAndersSection({
     scalePx(BRAIN_VIDEO_W_BASE, contentScale, 120),
     availableW,
   );
-  const videoH = scalePx(BRAIN_VIDEO_H_BASE, contentScale, 240);
+  const videoH = videoW;
   const videoRadius = scalePx(BRAIN_VIDEO_RADIUS_BASE, contentScale, 12);
   const videoBorder = scalePx(BRAIN_VIDEO_BORDER_BASE, contentScale, 3);
   const videoGap = scalePx(WAS_VIDEO_GAP_BASE, contentScale, 32);
@@ -436,21 +436,11 @@ export default function WasAndersSection({
                 : STATIC_TRANSITION
             }
           >
-            <div
-              className="relative h-full w-full overflow-hidden bg-purple-deep"
-              style={{ borderRadius: Math.max(0, mobileVideoRadius - mobileVideoBorder) }}
-            >
-              <video
-                src="/susanne-video.mp4"
-                autoPlay
-                loop
-                muted
-                playsInline
-                preload="auto"
-                className="h-full w-full object-cover"
-                aria-hidden
-              />
-            </div>
+            <VideoPlayer
+              src="/susanne-video.mp4"
+              radius={Math.max(0, mobileVideoRadius - mobileVideoBorder)}
+              label="Susanne video"
+            />
           </motion.div>
         )}
       </div>
@@ -626,21 +616,11 @@ export default function WasAndersSection({
                   : STATIC_TRANSITION
               }
             >
-              <div
-                className="relative h-full w-full overflow-hidden bg-purple-deep"
-                style={{ borderRadius: Math.max(0, videoRadius - videoBorder) }}
-              >
-                <video
-                  src="/susanne-video.mp4"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  preload="auto"
-                  className="h-full w-full object-cover"
-                  aria-hidden
-                />
-              </div>
+              <VideoPlayer
+                src="/susanne-video.mp4"
+                radius={Math.max(0, videoRadius - videoBorder)}
+                label="Susanne video"
+              />
             </motion.div>
           )}
 
