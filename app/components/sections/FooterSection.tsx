@@ -227,6 +227,25 @@ function PurpleFooterBar({
                 compact
               />
 
+              <nav
+                className="ml-auto flex flex-col items-end gap-2 text-right font-bricolage font-medium text-cream"
+                style={{ fontSize: contactFontPx }}
+                aria-label="Rechtliches"
+              >
+                <a
+                  href="/impressum"
+                  className="underline underline-offset-2 transition-opacity hover:opacity-80"
+                >
+                  Impressum
+                </a>
+                <a
+                  href="/datenschutz"
+                  className="underline underline-offset-2 transition-opacity hover:opacity-80"
+                >
+                  Datenschutzerklärung
+                </a>
+              </nav>
+
               <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
                 <Image
                   src="/simply_rational_white_logo.svg"

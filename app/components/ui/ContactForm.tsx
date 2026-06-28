@@ -195,7 +195,7 @@ export default function ContactForm({ formId }: { formId?: string }) {
         style={{
           paddingInline: buttonPaddingX,
           paddingBlock: buttonPaddingY,
-          fontSize: contactFontPx,
+          fontSize: isMobile ? contactFontPx : bodyFontPx,
           borderRadius: buttonRadius,
           marginTop: formGap,
         }}

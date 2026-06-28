@@ -236,42 +236,42 @@ export default function EntscheidungSection({
       className="relative w-full overflow-hidden bg-cream px-[6vw] pt-[3vh] pb-[8vh] lg:pt-[6vh] lg:pb-[11vh]"
     >
       <div className="relative mx-auto flex w-full max-w-[1200px] flex-col items-center">
-        {(headlineVisible || hasFinished) && (
-          <motion.h2
-            ref={headlineRef}
-            className="absolute left-0 z-20 w-full bg-cream text-center font-serif font-extrabold tracking-tight"
-            style={{
-              fontSize: activeFontPx,
-              lineHeight: activeLineHeight,
-              top: 0,
-            }}
-            initial={
-              isAnimPlaying && !hasFinished ? { x: "-120vw", opacity: 0 } : false
-            }
-            animate={{ x: "0vw", opacity: 1 }}
-            transition={
-              isAnimPlaying && !hasFinished
-                ? { duration: BRAIN_TEXT_DUR, ease: EASE }
-                : STATIC_TRANSITION
-            }
-          >
-            {isMobile ? (
-              <>
-                <span className="text-ink">{ENTSCHEIDUNG_HEADLINE_LINES[0]}</span>
-                <span className="text-purple">{" "}{ENTSCHEIDUNG_HEADLINE_LINES[1]}</span>
-              </>
-            ) : (
-              <>
-                <span className="block whitespace-nowrap text-ink">
-                  {ENTSCHEIDUNG_HEADLINE_LINES[0]}
-                </span>
-                <span className="block whitespace-nowrap text-purple">
-                  {ENTSCHEIDUNG_HEADLINE_LINES[1]}
-                </span>
-              </>
-            )}
-          </motion.h2>
-        )}
+        <motion.h2
+          ref={headlineRef}
+          className="absolute left-0 z-20 w-full bg-cream text-center font-serif font-extrabold tracking-tight"
+          style={{
+            fontSize: activeFontPx,
+            lineHeight: activeLineHeight,
+            top: 0,
+          }}
+          initial={false}
+          animate={
+            headlineVisible || hasFinished
+              ? { x: "0vw", opacity: 1 }
+              : { x: "-120vw", opacity: 0 }
+          }
+          transition={
+            isAnimPlaying && !hasFinished
+              ? { duration: BRAIN_TEXT_DUR, ease: EASE }
+              : STATIC_TRANSITION
+          }
+        >
+          {isMobile ? (
+            <>
+              <span className="text-ink">{ENTSCHEIDUNG_HEADLINE_LINES[0]}</span>
+              <span className="text-purple">{" "}{ENTSCHEIDUNG_HEADLINE_LINES[1]}</span>
+            </>
+          ) : (
+            <>
+              <span className="block whitespace-nowrap text-ink">
+                {ENTSCHEIDUNG_HEADLINE_LINES[0]}
+              </span>
+              <span className="block whitespace-nowrap text-purple">
+                {ENTSCHEIDUNG_HEADLINE_LINES[1]}
+              </span>
+            </>
+          )}
+        </motion.h2>
 
         <div
           className="relative w-full overflow-visible"
@@ -281,7 +281,7 @@ export default function EntscheidungSection({
             <motion.div
               className="absolute left-1/2 flex items-start"
               style={{ top: 0 }}
-              initial={{ x: "-50%", y: 0 }}
+              initial={{ x: "-50%", y: isMobile ? brainShiftToCenter : 0 }}
               animate={{ x: "calc(-50% + 110vw)", y: brainShiftToCenter }}
               transition={{
                 y: {
