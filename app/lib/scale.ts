@@ -43,7 +43,7 @@ export const EXCLAMATION_DOT_X_RATIO = 34.5 / 189;
 export const EXCLAMATION_DOT_Y_RATIO = 533.5 / 568;
 export const QUESTION_W_BASE = 349;
 export const QUESTION_H_BASE = 459;
-export const MOBILE_EXCLAMATION_MARK_H_BASE = Math.round(QUESTION_H_BASE * 0.72);
+export const MOBILE_EXCLAMATION_MARK_H_BASE = Math.round(QUESTION_H_BASE * 0.62);
 export const MOBILE_EXCLAMATION_MARK_W_BASE = Math.round(
   EXCLAMATION_W_BASE * (MOBILE_EXCLAMATION_MARK_H_BASE / EXCLAMATION_H_BASE),
 );
@@ -58,7 +58,6 @@ export const BRAIN_H_BASE = 516;
 export const BRAIN_GAP_BASE = 64;
 export const BRAIN_BALL_SIZE_BASE = 50;
 export const BRAIN_VIDEO_W_BASE = 480;
-export const BRAIN_VIDEO_H_BASE = 580;
 export const BRAIN_VIDEO_RADIUS_BASE = 28;
 export const BRAIN_VIDEO_BORDER_BASE = 5;
 export const BRAIN_BALL_DROP_BASE = 440;
@@ -68,7 +67,6 @@ export const MOBILE_BRAIN_GAP_BASE = 48;
 export const MOBILE_BRAIN_BALL_SIZE_BASE = 36;
 export const MOBILE_BRAIN_BALL_DROP_BASE = 155;
 export const MOBILE_BRAIN_VIDEO_W_BASE = 340;
-export const MOBILE_BRAIN_VIDEO_H_BASE = 408;
 export const MOBILE_BRAIN_VIDEO_RADIUS_BASE = 18;
 export const MOBILE_BRAIN_VIDEO_BORDER_BASE = 3;
 export const WAS_HUB_ENTER_DROP_BASE = 440;
@@ -139,7 +137,7 @@ export const FOOTER_BAR_PAD_Y_BASE = 28;
 export const FOOTER_LOGO_W_BASE = 520;
 export const FOOTER_LOGO_OFFSET_Y_BASE = 64;
 
-export const RING_DASH_GAP_RATIO = 0.42;
+const RING_DASH_GAP_RATIO = 0.42;
 
 export function getRingDashStyle(
   ringSize: number,

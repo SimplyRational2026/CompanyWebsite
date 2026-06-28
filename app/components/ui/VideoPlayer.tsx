@@ -2,19 +2,14 @@
 
 import { useRef, useState } from "react";
 
-/**
- * Click-to-play video with sound and a play/pause overlay button.
- *
- * Nothing is downloaded until the viewer presses play (preload="none"),
- * which keeps the page light. Audio is enabled because playback always
- * starts from a user gesture.
- */
 export default function VideoPlayer({
   src,
+  poster,
   radius,
   label = "Video",
 }: {
   src: string;
+  poster?: string;
   radius: number;
   label?: string;
 }) {
@@ -39,6 +34,7 @@ export default function VideoPlayer({
       <video
         ref={videoRef}
         src={src}
+        poster={poster}
         playsInline
         preload="none"
         className="h-full w-full object-cover"
@@ -53,7 +49,6 @@ export default function VideoPlayer({
         aria-label={playing ? `Pause ${label}` : `Play ${label}`}
         className="group absolute inset-0 flex items-center justify-center focus:outline-none"
       >
-        {/* Dark scrim: solid when paused, only on hover while playing */}
         <span
           aria-hidden
           className={`pointer-events-none absolute inset-0 bg-black/30 transition-opacity duration-200 ${
@@ -61,7 +56,6 @@ export default function VideoPlayer({
           }`}
         />
 
-        {/* Play / pause badge */}
         <span
           aria-hidden
           className={`pointer-events-none relative flex aspect-square w-1/4 max-w-20 min-w-11 items-center justify-center rounded-full bg-white/95 text-purple-deep shadow-lg transition-all duration-200 ${

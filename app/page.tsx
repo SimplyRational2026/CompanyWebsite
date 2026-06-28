@@ -1,15 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Hero from "./components/Hero";
-import EntscheidungSection from "./components/EntscheidungSection";
-import EntscheidbarSection from "./components/EntscheidbarSection";
-import FooterSection from "./components/FooterSection";
-import RisikoSection from "./components/RisikoSection";
-import TeamSection from "./components/TeamSection";
-import UngewissheitSection from "./components/UngewissheitSection";
-import WasAndersSection from "./components/WasAndersSection";
-import ContactModalProvider from "./components/ContactModalProvider";
+import Hero from "./components/sections/Hero";
+import EntscheidungSection from "./components/sections/EntscheidungSection";
+import EntscheidbarSection from "./components/sections/EntscheidbarSection";
+import FooterSection from "./components/sections/FooterSection";
+import RisikoSection from "./components/sections/RisikoSection";
+import TeamSection from "./components/sections/TeamSection";
+import UngewissheitSection from "./components/sections/UngewissheitSection";
+import WasAndersSection from "./components/sections/WasAndersSection";
+import ContactModalProvider from "./components/ui/ContactModalProvider";
 import { useScrollGate } from "./lib/scrollLock";
 import { preloadSiteImages } from "./lib/teamEntrance";
 

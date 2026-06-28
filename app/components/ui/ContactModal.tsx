@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef } from "react";
 import { EASE } from "@/app/lib/anim";
-import ContactForm from "@/app/components/ContactForm";
+import ContactForm from "@/app/components/ui/ContactForm";
 import {
   sectionAvailableWidth,
   useSectionContentScale,

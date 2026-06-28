@@ -20,8 +20,8 @@ import {
   EASE,
   EASE_BRAIN_CLOSE,
 } from "@/app/lib/anim";
-import ScrollHintArrow from "@/app/components/ScrollHintArrow";
-import VideoPlayer from "@/app/components/VideoPlayer";
+import ScrollHintArrow from "@/app/components/ui/ScrollHintArrow";
+import VideoPlayer from "@/app/components/ui/VideoPlayer";
 import { ENTSCHEIDBAR_TITLE_LINES, ENTSCHEIDUNG_HEADLINE_LINES } from "@/app/lib/fitText";
 import {
   fitMobileHeadlinePx,
@@ -172,9 +172,6 @@ export default function EntscheidungSection({
   const videoW = isMobile
     ? Math.min(scalePx(MOBILE_BRAIN_VIDEO_W_BASE, mobileScale, 120), availableW)
     : Math.min(scalePx(BRAIN_VIDEO_W_BASE, contentScale, 120), availableW);
-  // Source video is square (1:1); keep the frame square so it wraps the whole
-  // video with no cropping. Derived from width so it stays square even when the
-  // width is clamped to the available space on narrow screens.
   const videoH = videoW;
   const videoRadius = isMobile
     ? scalePx(MOBILE_BRAIN_VIDEO_RADIUS_BASE, mobileScale, 12)
@@ -236,13 +233,13 @@ export default function EntscheidungSection({
     <section
       ref={sectionRef}
       data-scroll-section="entscheidung"
-      className="relative w-full overflow-hidden bg-cream px-[6vw] pt-[3vh] pb-[8vh] lg:pt-[6vh] lg:pb-[5vh]"
+      className="relative w-full overflow-hidden bg-cream px-[6vw] pt-[3vh] pb-[8vh] lg:pt-[6vh] lg:pb-[11vh]"
     >
       <div className="relative mx-auto flex w-full max-w-[1200px] flex-col items-center">
         {(headlineVisible || hasFinished) && (
           <motion.h2
             ref={headlineRef}
-            className="absolute left-0 z-20 w-full text-center font-serif font-extrabold tracking-tight"
+            className="absolute left-0 z-20 w-full bg-cream text-center font-serif font-extrabold tracking-tight"
             style={{
               fontSize: activeFontPx,
               lineHeight: activeLineHeight,
@@ -411,6 +408,7 @@ export default function EntscheidungSection({
             >
               <VideoPlayer
                 src="/philipp-video.mp4"
+                poster="/philipp-poster.jpg"
                 radius={Math.max(0, videoRadius - videoBorder)}
                 label="Philipp video"
               />

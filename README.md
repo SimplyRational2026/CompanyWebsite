@@ -11,6 +11,20 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Environment
+
+Copy `.env.example` to `.env.local` and fill in the values.
+
+| Variable         | Required | Description                                        |
+| ---------------- | -------- | -------------------------------------------------- |
+| `RESEND_API_KEY` | Yes      | API key for sending contact emails via Resend      |
+| `CONTACT_TO`     | No       | Recipient address (defaults to the gut-entscheiden inbox) |
+| `CONTACT_FROM`   | No       | Verified sender address                            |
+
+The contact form posts to `/api/contact`, which sends the message with [Resend](https://resend.com).
+Verify the `simplyrational.de` domain in Resend and set `RESEND_API_KEY` in the deployment
+environment (e.g. Vercel project settings). Without the key the endpoint returns a 500 and no email is sent.
+
 ## Scripts
 
 | Command         | Description              |
@@ -24,19 +38,14 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ```
 app/
+  api/
+    contact/route.ts      Contact form endpoint (Resend)
   components/
-    Hero.tsx
-    Nav.tsx
-    RisikoSection.tsx
-  lib/
-    anim.ts
-    fitText.ts
-    scale.ts
-    scrollLock.ts
+    sections/             Page sections (Hero, Nav, Risiko, Team, Footer, ...)
+    ui/                   Reusable pieces (VideoPlayer, ContactForm, ContactModal, ...)
+  lib/                    Animation timings, text fitting, scaling helpers
   globals.css
   layout.tsx
   page.tsx
-public/
-  exclamation_point.svg
-  simply-rational-logo.png
+public/                   Images, videos, PDFs
 ```

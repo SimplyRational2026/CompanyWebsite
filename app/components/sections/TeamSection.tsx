@@ -2,7 +2,7 @@
 
 import { motion, useInView } from "motion/react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import TeamMemberCard from "@/app/components/TeamMemberCard";
+import TeamMemberCard from "@/app/components/ui/TeamMemberCard";
 import {
   EASE,
   EASE_BOUNCE,
@@ -15,7 +15,7 @@ import {
   TEAM_TITLE_PAUSE,
   TEAM_TITLE_PHASE,
 } from "@/app/lib/anim";
-import ScrollHintArrow from "@/app/components/ScrollHintArrow";
+import ScrollHintArrow from "@/app/components/ui/ScrollHintArrow";
 import {
   ENTSCHEIDBAR_TITLE_LINES,
   fitMobileBodyFontPx,
@@ -162,6 +162,10 @@ export default function TeamSection({
           .trim() || "sans-serif"
       : "sans-serif";
 
+  const titleBlockH = Math.round(
+    Math.max(titleRestPx, titleLargePx) * TITLE_LINE_HEIGHT * 3,
+  );
+
   const { memberW, memberGap, rowW } = fitTeamLayout(contentScale, viewportW);
   const { lineExtend, textGap } = fitTeamFooterLayout(
     rowW,
@@ -170,10 +174,6 @@ export default function TeamSection({
     bodyFontPx,
     TEAM_FOOTER_TEXT,
     bricolageFont,
-  );
-
-  const titleBlockH = Math.round(
-    Math.max(titleRestPx, titleLargePx) * TITLE_LINE_HEIGHT * 3,
   );
 
   useEffect(() => {
@@ -257,7 +257,7 @@ export default function TeamSection({
     <section
       ref={sectionRef}
       data-scroll-section="team"
-      className="relative w-full overflow-x-hidden bg-cream px-[6vw] pt-[3vh] pb-[8vh] lg:pt-[6vh] lg:pb-[10vh]"
+      className="relative w-full overflow-x-hidden bg-cream px-[6vw] pt-[3vh] pb-[8vh] lg:pt-[4vh] lg:pb-[10vh]"
     >
       <div className="flex w-full flex-col items-center lg:hidden">
         <motion.h2

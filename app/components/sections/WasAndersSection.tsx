@@ -22,8 +22,8 @@ import {
   WAS_VIDEO_ENTER,
   WAS_VIDEO_START,
 } from "@/app/lib/anim";
-import ScrollHintArrow from "@/app/components/ScrollHintArrow";
-import VideoPlayer from "@/app/components/VideoPlayer";
+import ScrollHintArrow from "@/app/components/ui/ScrollHintArrow";
+import VideoPlayer from "@/app/components/ui/VideoPlayer";
 import { fitMobileBodyFontPx, WAS_ANDERS_BULLETS, WAS_ANDERS_TITLE } from "@/app/lib/fitText";
 import {
   fitMobileHeadlinePx,
@@ -161,7 +161,6 @@ export default function WasAndersSection({
     scalePx(MOBILE_BRAIN_VIDEO_W_BASE, mobileScale, 120),
     sectionAvailableWidth(viewportW),
   );
-  // Source video is square (1:1); keep the frame square so it wraps the whole video.
   const mobileVideoH = mobileVideoW;
   const mobileVideoRadius = scalePx(MOBILE_BRAIN_VIDEO_RADIUS_BASE, mobileScale, 12);
   const mobileVideoBorder = scalePx(MOBILE_BRAIN_VIDEO_BORDER_BASE, mobileScale, 3);
@@ -295,7 +294,7 @@ export default function WasAndersSection({
     <section
       ref={sectionRef}
       data-scroll-section="was-anders"
-      className="relative w-full overflow-x-hidden bg-cream px-[6vw] pt-[3vh] pb-[8vh] lg:pt-[6vh] lg:pb-[8vh]"
+      className="relative w-full overflow-x-hidden bg-cream px-[6vw] pt-[3vh] pb-[8vh] lg:pt-[6vh] lg:pb-[16vh]"
     >
       <div className="flex w-full flex-col lg:hidden">
         <motion.h2
@@ -438,6 +437,7 @@ export default function WasAndersSection({
           >
             <VideoPlayer
               src="/susanne-video.mp4"
+              poster="/susanne-poster.jpg"
               radius={Math.max(0, mobileVideoRadius - mobileVideoBorder)}
               label="Susanne video"
             />
@@ -618,6 +618,7 @@ export default function WasAndersSection({
             >
               <VideoPlayer
                 src="/susanne-video.mp4"
+                poster="/susanne-poster.jpg"
                 radius={Math.max(0, videoRadius - videoBorder)}
                 label="Susanne video"
               />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { fitMobileBodyFontPx } from "@/app/lib/fitText";
 import { useSectionContentScale } from "@/app/lib/sectionTypography";
 import {
@@ -17,10 +17,14 @@ import {
   scalePx,
 } from "@/app/lib/scale";
 
+type SubmitStatus = "idle" | "sending" | "success" | "error";
+
 export default function ContactForm({ formId }: { formId?: string }) {
   const isAnimPlayingRef = useRef(false);
   const { viewportW, bodyFontPx, contentScale } =
     useSectionContentScale(isAnimPlayingRef);
+
+  const [status, setStatus] = useState<SubmitStatus>("idle");
 
   const isMobile = viewportW < 1024;
   const mobileScale = Math.min(1, viewportW / MOBILE_DESIGN_WIDTH);
@@ -59,25 +63,73 @@ export default function ContactForm({ formId }: { formId?: string }) {
   const buttonRadius = scalePx(NAV_BUTTON_RADIUS, activeScale, 10);
   const inputPadY = scalePx(15, activeScale, 10);
 
+  const inputClass =
+    "w-full rounded-2xl bg-cream px-4 font-bricolage text-ink outline-none placeholder:text-ink/45";
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (status === "sending") {
+      return;
+    }
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const payload = {
+      name: String(formData.get("name") ?? ""),
+      email: String(formData.get("email") ?? ""),
+      subject: String(formData.get("subject") ?? ""),
+      message: String(formData.get("message") ?? ""),
+      privacy: formData.get("privacy") === "on",
+      company: String(formData.get("company") ?? ""),
+    };
+
+    setStatus("sending");
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        throw new Error("request_failed");
+      }
+      setStatus("success");
+      form.reset();
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  const isSending = status === "sending";
+  const buttonLabel = isSending
+    ? "Wird gesendet …"
+    : status === "success"
+      ? "Gesendet ✓"
+      : "Klarheit in Entscheidungen bringen";
+
   return (
     <form
       id={formId}
-      className="flex w-full flex-col bg-purple shadow-[0_24px_48px_-12px_rgba(102,26,174,0.35)]"
+      onSubmit={handleSubmit}
+      className="flex w-full scroll-mt-6 flex-col bg-purple shadow-[0_24px_48px_-12px_rgba(102,26,174,0.35)] lg:scroll-mt-10"
       style={{ borderRadius: formRadius, padding: formPad }}
-      onSubmit={(event) => event.preventDefault()}
     >
       <input
         type="text"
         name="name"
         placeholder="Name"
-        className="w-full rounded-2xl bg-cream px-4 font-bricolage text-ink outline-none placeholder:text-ink/45"
+        required
+        maxLength={120}
+        className={inputClass}
         style={{ fontSize: contactFontPx, paddingBlock: inputPadY }}
       />
       <input
         type="email"
         name="email"
         placeholder="Email"
-        className="w-full rounded-2xl bg-cream px-4 font-bricolage text-ink outline-none placeholder:text-ink/45"
+        required
+        maxLength={200}
+        className={inputClass}
         style={{
           fontSize: contactFontPx,
           marginTop: formGap,
@@ -88,7 +140,9 @@ export default function ContactForm({ formId }: { formId?: string }) {
         type="text"
         name="subject"
         placeholder="Betreff"
-        className="w-full rounded-2xl bg-cream px-4 font-bricolage text-ink outline-none placeholder:text-ink/45"
+        required
+        maxLength={200}
+        className={inputClass}
         style={{
           fontSize: contactFontPx,
           marginTop: formGap,
@@ -99,6 +153,8 @@ export default function ContactForm({ formId }: { formId?: string }) {
       <textarea
         name="message"
         placeholder="Ihre Nachricht"
+        required
+        maxLength={5000}
         className="resize-none rounded-2xl bg-cream px-4 py-3 font-bricolage text-ink outline-none placeholder:text-ink/45"
         style={{
           fontSize: contactFontPx,
@@ -107,6 +163,15 @@ export default function ContactForm({ formId }: { formId?: string }) {
         }}
       />
 
+      <div aria-hidden className="pointer-events-none absolute -left-[9999px] h-0 w-0 overflow-hidden">
+        <input
+          type="text"
+          name="company"
+          tabIndex={-1}
+          autoComplete="off"
+        />
+      </div>
+
       <label
         className="flex shrink-0 items-start gap-3 font-bricolage text-cream"
         style={{ fontSize: smallFontPx, marginTop: formGap }}
@@ -114,6 +179,7 @@ export default function ContactForm({ formId }: { formId?: string }) {
         <input
           type="checkbox"
           name="privacy"
+          required
           className="mt-1 size-4 shrink-0 rounded border-cream bg-white accent-purple"
         />
         <span>
@@ -124,7 +190,8 @@ export default function ContactForm({ formId }: { formId?: string }) {
 
       <button
         type="submit"
-        className="w-full shrink-0 bg-white font-bricolage font-semibold text-purple transition hover:bg-cream"
+        disabled={isSending}
+        className="w-full shrink-0 bg-white font-bricolage font-semibold text-purple transition hover:bg-cream disabled:cursor-not-allowed disabled:opacity-70"
         style={{
           paddingInline: buttonPaddingX,
           paddingBlock: buttonPaddingY,
@@ -133,8 +200,19 @@ export default function ContactForm({ formId }: { formId?: string }) {
           marginTop: formGap,
         }}
       >
-        Klarheit in Entscheidungen bringen
+        {buttonLabel}
       </button>
+
+      {(status === "success" || status === "error") && (
+        <p
+          className="font-bricolage text-cream"
+          style={{ fontSize: smallFontPx, marginTop: formGap }}
+        >
+          {status === "success"
+            ? "Vielen Dank! Ihre Nachricht wurde gesendet."
+            : "Etwas ist schiefgelaufen. Bitte versuchen Sie es später erneut."}
+        </p>
+      )}
     </form>
   );
 }

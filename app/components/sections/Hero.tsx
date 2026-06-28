@@ -54,7 +54,7 @@ import { fitSectionBodyFontPx } from "@/app/lib/sectionTypography";
 import { useIntroScrollLock } from "@/app/lib/scrollLock";
 import Nav from "./Nav";
 import HeroMobile from "./HeroMobile";
-import ScrollHintArrow from "./ScrollHintArrow";
+import ScrollHintArrow from "@/app/components/ui/ScrollHintArrow";
 
 const STATIC_TRANSITION = { duration: 0 };
 
@@ -204,8 +204,6 @@ export default function Hero({
     if (isMobile) {
       setDescFontPx(fitMobileBodyFontPx(viewportW, bricolageFont));
     } else {
-      // Use the same body-size fit as the Risiko/other body sections so the
-      // hero description matches their desktop font size exactly.
       setDescFontPx(fitSectionBodyFontPx(viewportW, bricolageFont));
     }
   }, [titleMaxW, viewportTitleCap, isMobile, titleDesignPx, viewportW, mobileScale]);

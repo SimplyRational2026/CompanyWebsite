@@ -8,7 +8,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import ContactModal from "@/app/components/ContactModal";
+import ContactModal from "@/app/components/ui/ContactModal";
 
 interface ContactModalContextValue {
   openContactModal: () => void;

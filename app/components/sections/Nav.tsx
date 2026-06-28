@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
 import { D800, EASE, EASE_BOUNCE, STEPS } from "@/app/lib/anim";
-import { useContactModal } from "@/app/components/ContactModalProvider";
+import { useContactModal } from "@/app/components/ui/ContactModalProvider";
 import {
   NAV_BUTTON_FONT,
   NAV_BUTTON_PX_X,

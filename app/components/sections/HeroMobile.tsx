@@ -8,7 +8,7 @@ import {
   MOBILE_PURPLE_TITLE_LINES,
 } from "@/app/lib/fitText";
 import { scalePx, MOBILE_DESIGN_WIDTH, MOBILE_DESC_BALL_GAP_BASE, MOBILE_FINAL_LINE_W_BASE, MOBILE_FINAL_ROW_INSET_BASE } from "@/app/lib/scale";
-import ScrollHintArrow from "@/app/components/ScrollHintArrow";
+import ScrollHintArrow from "@/app/components/ui/ScrollHintArrow";
 
 const STATIC_TRANSITION = { duration: 0 };
 

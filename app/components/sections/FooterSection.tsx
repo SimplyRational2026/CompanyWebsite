@@ -14,6 +14,7 @@ import {
   sectionAvailableWidth,
   useSectionContentScale,
 } from "@/app/lib/sectionTypography";
+import ContactForm from "@/app/components/ui/ContactForm";
 import {
   FOOTER_CONTACT_PX_DESIGN,
   FOOTER_ARCH_R_BASE,
@@ -21,19 +22,12 @@ import {
   FOOTER_ARCH_VISIBLE_RATIO,
   FOOTER_BAR_H_BASE,
   FOOTER_BAR_PAD_Y_BASE,
-  FOOTER_FORM_GAP_BASE,
-  FOOTER_FORM_PAD_BASE,
-  FOOTER_FORM_RADIUS_BASE,
-  FOOTER_FORM_TEXTAREA_H_BASE,
   FOOTER_LOGO_W_BASE,
   FOOTER_LOGO_OFFSET_Y_BASE,
   FOOTER_CREAM_BOTTOM_VH,
   ENTSCHEIDBAR_TITLE_PX_DESIGN,
   MOBILE_DESC_PX_DESIGN,
   MOBILE_DESIGN_WIDTH,
-  NAV_BUTTON_PX_X,
-  NAV_BUTTON_PX_Y,
-  NAV_BUTTON_RADIUS,
   scalePx,
 } from "@/app/lib/scale";
 
@@ -300,22 +294,13 @@ export default function FooterSection() {
 
   const contentW = sectionAvailableWidth(viewportW);
 
-  const activeScale = isMobile ? mobileScale : contentScale;
   const activeContactFontPx = isMobile ? mobileBodyFontPx : scalePx(FOOTER_CONTACT_PX_DESIGN, contentScale, 13);
   const activeSmallFontPx = isMobile
     ? Math.max(11, Math.round(mobileBodyFontPx * 0.82))
     : Math.max(12, Math.round(bodyFontPx * 0.76));
 
-  const formRadius = scalePx(FOOTER_FORM_RADIUS_BASE, activeScale, 16);
-  const formPad = isMobile ? scalePx(18, mobileScale, 14) : scalePx(FOOTER_FORM_PAD_BASE, contentScale, 20);
-  const formGap = scalePx(FOOTER_FORM_GAP_BASE, activeScale, 10);
-  const textareaH = scalePx(FOOTER_FORM_TEXTAREA_H_BASE, activeScale, 120);
   const contactFontPx = activeContactFontPx;
   const smallFontPx = activeSmallFontPx;
-  const buttonPaddingX = isMobile ? scalePx(16, mobileScale, 12) : scalePx(NAV_BUTTON_PX_X, contentScale, 20);
-  const buttonPaddingY = isMobile ? scalePx(14, mobileScale, 10) : scalePx(NAV_BUTTON_PX_Y, contentScale, 10);
-  const buttonRadius = scalePx(NAV_BUTTON_RADIUS, activeScale, 10);
-  const inputPadY = scalePx(15, activeScale, 10);
 
   return (
     <section data-scroll-section="contact-footer" className="relative w-full">
@@ -354,7 +339,7 @@ export default function FooterSection() {
           <div className="order-2 flex justify-start lg:order-1 lg:pr-6">
             <div className="border-l-[5px] border-purple pl-4 sm:pl-5 lg:max-w-[88%]">
               <ContactDetails
-                fontPx={contactFontPx}
+                fontPx={isMobile ? mobileBodyFontPx : bodyFontPx}
                 variant="dark"
                 showCompany={false}
                 contentScale={contentScale}
@@ -363,85 +348,7 @@ export default function FooterSection() {
           </div>
 
           <div className="order-1 w-full min-w-0 lg:order-2">
-            <form
-              id="contact-form"
-              className="flex w-full scroll-mt-6 flex-col bg-purple shadow-[0_24px_48px_-12px_rgba(102,26,174,0.35)] lg:scroll-mt-10"
-              style={{
-                borderRadius: formRadius,
-                padding: formPad,
-              }}
-              onSubmit={(event) => event.preventDefault()}
-            >
-            <input
-              type="text"
-              name="name"
-              placeholder="Name"
-              className="w-full rounded-2xl bg-cream px-4 font-bricolage text-ink outline-none placeholder:text-ink/45"
-              style={{ fontSize: contactFontPx, paddingBlock: inputPadY }}
-            />
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              className="w-full rounded-2xl bg-cream px-4 font-bricolage text-ink outline-none placeholder:text-ink/45"
-              style={{
-                fontSize: contactFontPx,
-                marginTop: formGap,
-                paddingBlock: inputPadY,
-              }}
-            />
-            <input
-              type="text"
-              name="subject"
-              placeholder="Betreff"
-              className="w-full rounded-2xl bg-cream px-4 font-bricolage text-ink outline-none placeholder:text-ink/45"
-              style={{
-                fontSize: contactFontPx,
-                marginTop: formGap,
-                paddingBlock: inputPadY,
-              }}
-            />
-
-            <textarea
-              name="message"
-              placeholder="Ihre Nachricht"
-              className="resize-none rounded-2xl bg-cream px-4 py-3 font-bricolage text-ink outline-none placeholder:text-ink/45"
-              style={{
-                fontSize: contactFontPx,
-                marginTop: formGap,
-                height: textareaH,
-              }}
-            />
-
-            <label
-              className="flex shrink-0 items-start gap-3 font-bricolage text-cream"
-              style={{ fontSize: smallFontPx, marginTop: formGap }}
-            >
-              <input
-                type="checkbox"
-                name="privacy"
-                className="mt-1 size-4 shrink-0 rounded border-cream bg-white accent-purple"
-              />
-              <span>
-                Mit dem Absenden dieses Formulars akzeptiere ich die Verarbeitung
-                meiner persönlichen Daten gemäß den Datenschutzbestimmungen.
-              </span>
-            </label>
-
-            <button
-              type="submit"
-              className="w-full shrink-0 bg-white font-bricolage font-semibold text-purple transition hover:bg-cream"
-              style={{
-                paddingInline: buttonPaddingX,
-                paddingBlock: buttonPaddingY,
-                fontSize: contactFontPx,
-                borderRadius: buttonRadius,
-                marginTop: formGap,
-              }}
-            >
-              Klarheit in Entscheidungen bringen
-            </button>
-            </form>
+            <ContactForm formId="contact-form" />
           </div>
         </div>
       </div>

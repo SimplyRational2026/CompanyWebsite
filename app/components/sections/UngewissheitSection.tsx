@@ -19,7 +19,7 @@ import {
   SECTION_TITLE_PAUSE,
   SECTION_TITLE_PHASE,
 } from "@/app/lib/anim";
-import ScrollHintArrow from "@/app/components/ScrollHintArrow";
+import ScrollHintArrow from "@/app/components/ui/ScrollHintArrow";
 import {
   fitSectionBodyFontPx,
   sectionContentScale,
@@ -274,14 +274,18 @@ export default function UngewissheitSection({
   }, [isAnimPlaying, markW]);
 
   useLayoutEffect(() => {
-    if (!hasFinished || !lineBaselineRef.current) {
+    if (!hasFinished || !sectionRef.current || !markHostRef.current) {
       return;
     }
 
-    const base = lineBaselineRef.current;
-    const scaleRatio = base.contentScale > 0 ? contentScale / base.contentScale : 1;
-    setLineExtendWidth(base.lineExtendWidth * scaleRatio);
-  }, [hasFinished, contentScale]);
+    const width = measureLineExtendWidthLeft(
+      sectionRef.current,
+      markHostRef.current,
+      markW,
+    );
+    lineBaselineRef.current = { contentScale, lineExtendWidth: width };
+    setLineExtendWidth(width);
+  }, [hasFinished, contentScale, markW, isMobile, viewportW]);
 
   useEffect(() => {
     const onResize = () => {

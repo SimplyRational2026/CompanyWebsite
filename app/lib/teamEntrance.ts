@@ -14,7 +14,7 @@ function preloadImage(src: string): Promise<void> {
   });
 }
 
-export function preloadImages(srcs: readonly string[]): Promise<void> {
+function preloadImages(srcs: readonly string[]): Promise<void> {
   if (typeof window === "undefined") {
     return Promise.resolve();
   }
@@ -26,8 +26,6 @@ export function preloadTeamMemberImages(): Promise<void> {
   return preloadImages(TEAM_MEMBERS.map((member) => member.image));
 }
 
-// Every image used across the gated sections, so they are cached before the
-// user scrolls into the section that renders them.
 const SITE_PRELOAD_IMAGES: readonly string[] = [
   "/exclamation_point.svg",
   "/question_mark.svg",
@@ -35,6 +33,8 @@ const SITE_PRELOAD_IMAGES: readonly string[] = [
   "/right_brain.svg",
   "/simply-rational-logo.png",
   "/simply_rational_white_logo.svg",
+  "/philipp-poster.jpg",
+  "/susanne-poster.jpg",
   ...ENTSCHEIDBAR_BRANCHES.map((branch) => branch.icon),
   ...TEAM_MEMBERS.map((member) => member.image),
 ];

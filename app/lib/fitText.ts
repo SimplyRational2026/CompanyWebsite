@@ -64,13 +64,6 @@ const ENTSCHEIDUNG_HEADLINE_LINES = [
   "sondern die Qualität der Entscheidung.",
 ] as const;
 
-const ENTSCHEIDUNG_MOBILE_HEADLINE_FIT_LINES = [
-  "Das Problem ist nicht",
-  "fehlendes Wissen,",
-  "sondern die Qualität",
-  "der Entscheidung.",
-] as const;
-
 const WAS_ANDERS_TITLE = "Was anders wird mit uns" as const;
 
 const WAS_ANDERS_BULLETS = [
@@ -97,12 +90,6 @@ const WAS_ANDERS_BULLETS = [
 const ENTSCHEIDBAR_TITLE_LINES = [
   "Wir machen Entscheidungen",
   "entscheidbar",
-] as const;
-
-const TEAM_TITLE_LINES = [
-  "Ein Team aus international",
-  "renommierten Experten aus",
-  "Wissenschaft und Praxis",
 ] as const;
 
 const TEAM_FOOTER_TEXT =
@@ -365,8 +352,6 @@ export function fitDescriptionFontSize(
   return Math.max(minPx, Math.min(maxPx, viewportCap, fitPx));
 }
 
-// Shared mobile description/body font size. Mirrors the Hero's mobile
-// description fit exactly so every section's body text renders at the same px.
 export function fitMobileBodyFontPx(
   viewportW: number,
   fontFamily: string,
@@ -407,7 +392,6 @@ export {
   ENTSCHEIDBAR_BRANCHES,
   ENTSCHEIDBAR_TITLE_LINES,
   ENTSCHEIDUNG_HEADLINE_LINES,
-  ENTSCHEIDUNG_MOBILE_HEADLINE_FIT_LINES,
   PURPLE_TITLE_LINES,
   MOBILE_RISIKO_BODY_LINES,
   RISIKO_BODY_LINES,
@@ -415,7 +399,6 @@ export {
   FOOTER_CONTACT,
   FOOTER_HEADLINE_LINES,
   TEAM_MEMBERS,
-  TEAM_TITLE_LINES,
   UNGEWISSHEIT_BODY_LINES,
   WAS_ANDERS_BULLETS,
   WAS_ANDERS_TITLE,

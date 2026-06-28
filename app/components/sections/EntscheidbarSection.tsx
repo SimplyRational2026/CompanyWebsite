@@ -20,7 +20,7 @@ import {
   ENT_TITLE_SHRINK,
   ENT_TITLE_SHRINK_START,
 } from "@/app/lib/anim";
-import ScrollHintArrow from "@/app/components/ScrollHintArrow";
+import ScrollHintArrow from "@/app/components/ui/ScrollHintArrow";
 import {
   ENTSCHEIDBAR_BRANCHES,
   ENTSCHEIDBAR_TITLE_LINES,
@@ -184,7 +184,8 @@ export default function EntscheidbarSection({
     ],
     [branchTops, branchSpacing, spineBottomPad],
   );
-  const spineHeight = ballTargets[ballTargets.length - 1] + ballSize / 2;
+  const ballRestY = ballTargets[ballTargets.length - 1];
+  const spineHeight = ballRestY + ballSize / 2;
   const spineBodyHeight = spineHeight - ballSize / 2;
   const treeStageH = spineHeight + ballSize;
   const horizLineLength = Math.ceil(viewportW * 0.58);
@@ -206,7 +207,8 @@ export default function EntscheidbarSection({
     ...mBranchTops,
     mBranchTops[mBranchTops.length - 1] + mSpineBottom,
   ];
-  const mSpineHeight = mBallTargets[mBallTargets.length - 1] + mBallSize / 2;
+  const mBallRestY = mBallTargets[mBallTargets.length - 1];
+  const mSpineHeight = mBallRestY + mBallSize / 2;
   const mSpineBodyHeight = mSpineHeight - mBallSize / 2;
   const mTreeStageH = mSpineHeight + mBallSize;
   const mHorizLineLength = Math.ceil(viewportW * 0.92);
@@ -301,7 +303,7 @@ export default function EntscheidbarSection({
     <section
       ref={sectionRef}
       data-scroll-section="entscheidbar"
-      className="relative w-full overflow-x-hidden bg-cream px-[6vw] pt-[3vh] pb-[8vh] lg:pt-[6vh] lg:pb-[8vh]"
+      className="relative w-full overflow-x-hidden bg-cream px-[6vw] pt-[3vh] pb-[8vh] lg:pt-[3vh] lg:pb-[8vh]"
     >
       <div className="flex w-full flex-col lg:hidden">
         <motion.h2
@@ -346,7 +348,7 @@ export default function EntscheidbarSection({
               className="absolute z-20"
               style={{ top: 0, left: mSpineX - mBallSize / 2, marginTop: -mBallSize / 2 }}
               initial={isAnimPlaying && !hasFinished ? { x: "120vw", y: 0 } : false}
-              animate={{ x: 0, y: ballCanMove || hasFinished ? mobileBallY : 0 }}
+              animate={{ x: 0, y: hasFinished ? mBallRestY : ballCanMove ? mobileBallY : 0 }}
               transition={
                 isAnimPlaying && !hasFinished
                   ? {
@@ -525,7 +527,7 @@ export default function EntscheidbarSection({
             }
             animate={{
               x: 0,
-              y: ballCanMove || hasFinished ? ballY : 0,
+              y: hasFinished ? ballRestY : ballCanMove ? ballY : 0,
             }}
             transition={
               isAnimPlaying && !hasFinished

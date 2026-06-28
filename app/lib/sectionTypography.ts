@@ -32,7 +32,7 @@ const EXCLAMATION_MARK_W_BASE = Math.round(
   EXCLAMATION_W_BASE * (QUESTION_H_BASE / EXCLAMATION_H_BASE),
 );
 
-export const SECTION_MARK_W_BASE = Math.max(
+const SECTION_MARK_W_BASE = Math.max(
   EXCLAMATION_MARK_W_BASE,
   QUESTION_W_BASE,
 );
@@ -42,7 +42,7 @@ const SECTION_BODY_FIT_LINES = [
   ...UNGEWISSHEIT_BODY_LINES,
 ] as const;
 
-export function sectionTextMaxW(viewportW: number): number {
+function sectionTextMaxW(viewportW: number): number {
   const preScale = Math.min(1, viewportW / DESIGN_WIDTH);
   const horizontalPad = viewportW * 0.06 * 2;
   const layoutGaps = viewportW * 0.14;
@@ -203,8 +203,7 @@ export function fitTeamLayout(
 } {
   const availableW = sectionAvailableWidth(viewportW);
   const memberGap = scalePx(TEAM_MEMBER_GAP_BASE, contentScale, 8);
-  let memberW = Math.floor((availableW - memberGap * 3) / 4);
-  memberW = Math.max(80, memberW);
+  const memberW = Math.max(80, Math.floor((availableW - memberGap * 3) / 4));
   const rowW = memberW * 4 + memberGap * 3;
 
   return { memberW, memberGap, rowW };
