@@ -36,7 +36,6 @@ import {
   ENTSCHEIDBAR_TITLE_ENTER_PX_DESIGN,
   ENTSCHEIDBAR_TITLE_PX_DESIGN,
   ENT_TREE_BALL_SIZE_BASE,
-  ENT_TREE_BULLET_DOT_BASE,
   ENT_TREE_LINE_W_BASE,
   ENT_TREE_ICON_LINE_NUDGE,
   ENT_TREE_FIRST_BRANCH_RATIO,
@@ -49,7 +48,6 @@ import {
   MOBILE_ENT_BRANCH_LINE_W_BASE,
   MOBILE_ENT_BRANCH_GAP_BASE,
   MOBILE_ENT_BRANCH_INNER_GAP_BASE,
-  MOBILE_ENT_BULLET_DOT_BASE,
   MOBILE_ENT_SPINE_X_BASE,
   MOBILE_ENT_SPINE_BOTTOM_BASE,
   MOBILE_LINE_WIDTH_BASE,
@@ -152,7 +150,6 @@ export default function EntscheidbarSection({
   const titleTreeGap = scalePx(ENT_TREE_TITLE_GAP_BASE, contentScale, 24);
   const ballSize = scalePx(ENT_TREE_BALL_SIZE_BASE, contentScale, 32);
   const lineW = scalePx(ENT_TREE_LINE_W_BASE, contentScale, 2);
-  const bulletDotSize = scalePx(ENT_TREE_BULLET_DOT_BASE, contentScale, 10);
   const branchFontPx = bodyFontPx;
   const spineBottomPad = scalePx(ENT_TREE_SPINE_BOTTOM_BASE, contentScale, 32);
 
@@ -196,7 +193,6 @@ export default function EntscheidbarSection({
   const mBranchLineW = scalePx(MOBILE_ENT_BRANCH_LINE_W_BASE, mobileScale, 10);
   const mBranchGap = scalePx(MOBILE_ENT_BRANCH_GAP_BASE, mobileScale, 64);
   const mInnerGap = scalePx(MOBILE_ENT_BRANCH_INNER_GAP_BASE, mobileScale, 6);
-  const mBulletDot = scalePx(MOBILE_ENT_BULLET_DOT_BASE, mobileScale, 6);
   const mSpineX = scalePx(MOBILE_ENT_SPINE_X_BASE, mobileScale, 14);
   const mSpineBottom = scalePx(MOBILE_ENT_SPINE_BOTTOM_BASE, mobileScale, 52);
   const mFirstBranchTop = Math.round(mBranchGap * ENT_TREE_FIRST_BRANCH_RATIO);
@@ -415,8 +411,7 @@ export default function EntscheidbarSection({
                       </div>
                     );
                   })()}
-                  <div className="flex items-center" style={{ gap: mInnerGap, marginLeft: mInnerGap }}>
-                    <span aria-hidden className="shrink-0 rounded-full bg-purple" style={{ width: mBulletDot, height: mBulletDot }} />
+                  <div className="flex items-center" style={{ marginLeft: mInnerGap }}>
                     <p className="font-bricolage font-bold text-ink" style={{ fontSize: mobileBodyFontPx, lineHeight: BRANCH_TEXT_LINE_HEIGHT }}>
                       {branch.text}
                     </p>
@@ -641,20 +636,11 @@ export default function EntscheidbarSection({
                     <div
                       className="flex items-center flex-row"
                       style={{
-                        gap: branchInnerGap,
                         maxWidth: textMaxW,
                         marginLeft: isLeft ? 0 : branchInnerGap,
                         marginRight: isLeft ? branchInnerGap : 0,
                       }}
                     >
-                      <span
-                        aria-hidden
-                        className="shrink-0 rounded-full bg-purple"
-                        style={{
-                          width: bulletDotSize,
-                          height: bulletDotSize,
-                        }}
-                      />
                       <p
                         className="font-bricolage font-bold text-ink"
                         style={{

@@ -250,7 +250,7 @@ export default function Hero({
   );
   const ballDrop = columnHeight / 2 + descriptionGap + descHeight / 2;
   const descriptionTop = columnHeight / 2 + ballDrop - descHeight / 2;
-  const titleLineH = titleFontPx * 1.15;
+  const titleLineH = titleFontPx * 1.05;
   const ballGapOffset = titleLineH * 0.5;
   const viewportMidY = viewportH / 2;
   const ballCenterY = viewportMidY - ballGapOffset;
