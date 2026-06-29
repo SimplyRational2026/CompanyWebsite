@@ -31,7 +31,7 @@ import {
   scalePx,
 } from "@/app/lib/scale";
 
-const TITLE_LINE_HEIGHT = 1.05;
+const TITLE_LINE_HEIGHT = 1.15;
 const CONTACT_LINE_HEIGHT = 1.45;
 
 function ContactDetails({

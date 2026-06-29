@@ -185,7 +185,7 @@ export default function RisikoSection({
   const bulletGap = scalePx(32, contentScale, 12);
   const markGapMobile = scalePx(28, contentScale, 14);
   const bodyGapMobile = scalePx(36, contentScale, 18);
-  const titleLineH = titleRestPx * 1.05;
+  const titleLineH = titleRestPx * 1.15;
   const bodyLines = isMobile ? MOBILE_RISIKO_BODY_LINES : RISIKO_BODY_LINES;
 
   useLayoutEffect(() => {
@@ -302,7 +302,7 @@ export default function RisikoSection({
           className="z-10 w-full text-center font-serif font-extrabold tracking-tight text-purple lg:col-start-1 lg:row-start-1 lg:w-fit lg:self-start lg:text-left"
           style={{
             fontSize: titleRestPx,
-            lineHeight: 1.05,
+            lineHeight: 1.15,
             transformOrigin: "center center",
           }}
           initial={

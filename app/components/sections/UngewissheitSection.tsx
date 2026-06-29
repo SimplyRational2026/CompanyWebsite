@@ -188,7 +188,7 @@ export default function UngewissheitSection({
   const markGapMobile = scalePx(28, contentScale, 14);
   const bodyGapMobile = scalePx(36, contentScale, 18);
   const titleScale = titleLargePx / titleRestPx;
-  const titleLineH = titleRestPx * 1.05;
+  const titleLineH = titleRestPx * 1.15;
 
   useLayoutEffect(() => {
     if (
@@ -364,7 +364,7 @@ export default function UngewissheitSection({
               className="pointer-events-none absolute top-[8vh] left-1/2 z-30 w-fit whitespace-nowrap font-serif font-extrabold tracking-tight text-purple"
               style={{
                 fontSize: titleRestPx,
-                lineHeight: 1.05,
+                lineHeight: 1.15,
                 transformOrigin: "left center",
                 backfaceVisibility: "hidden",
                 willChange: isAnimPlaying ? "transform" : undefined,
@@ -419,7 +419,7 @@ export default function UngewissheitSection({
           className="z-10 w-full text-center font-serif font-extrabold tracking-tight text-purple"
           style={{
             fontSize: titleRestPx,
-            lineHeight: 1.05,
+            lineHeight: 1.15,
             transformOrigin: "center center",
           }}
           initial={isAnimPlaying ? { x: "110vw", opacity: 0 } : false}

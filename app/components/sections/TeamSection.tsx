@@ -50,7 +50,7 @@ import { preloadTeamMemberImages } from "@/app/lib/teamEntrance";
 
 const STATIC_TRANSITION = { duration: 0 };
 const FOOTER_TEXT_LINE_HEIGHT = 1.3;
-const TITLE_LINE_HEIGHT = 1.05;
+const TITLE_LINE_HEIGHT = 1.15;
 
 export default function TeamSection({
   heroIntroComplete,

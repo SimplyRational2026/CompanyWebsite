@@ -54,7 +54,7 @@ import {
   scalePx,
 } from "@/app/lib/scale";
 
-const TITLE_LINE_HEIGHT = 1.05;
+const TITLE_LINE_HEIGHT = 1.15;
 const BRANCH_TEXT_LINE_HEIGHT = 1.3;
 const STATIC_TRANSITION = { duration: 0 };
 

@@ -53,7 +53,7 @@ import {
   scalePx,
 } from "@/app/lib/scale";
 
-const HEADLINE_LINE_HEIGHT = 1.05;
+const HEADLINE_LINE_HEIGHT = 1.15;
 const STATIC_TRANSITION = { duration: 0 };
 
 export default function EntscheidungSection({

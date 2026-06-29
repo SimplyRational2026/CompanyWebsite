@@ -221,7 +221,7 @@ export default function WasAndersSection({
   const videoBorder = scalePx(BRAIN_VIDEO_BORDER_BASE, contentScale, 3);
   const videoGap = scalePx(WAS_VIDEO_GAP_BASE, contentScale, 32);
   const titleBlockH = Math.round(
-    Math.max(titleRestPx, titleLargePx) * 1.05,
+    Math.max(titleRestPx, titleLargePx) * 1.15,
   );
 
   useEffect(() => {
@@ -299,7 +299,7 @@ export default function WasAndersSection({
       <div className="flex w-full flex-col lg:hidden">
         <motion.h2
           className="w-full text-center font-serif font-extrabold tracking-tight text-purple"
-          style={{ fontSize: mobileTitlePx, lineHeight: 1.05 }}
+          style={{ fontSize: mobileTitlePx, lineHeight: 1.15 }}
           initial={{ x: "-120vw", opacity: 0 }}
           animate={
             isAnimPlaying && !hasFinished
@@ -455,7 +455,7 @@ export default function WasAndersSection({
               className="w-fit whitespace-nowrap text-center font-serif font-extrabold tracking-tight text-purple"
               style={{
                 fontSize: titleRestPx,
-                lineHeight: 1.05,
+                lineHeight: 1.15,
                 transformOrigin: "center center",
               }}
               initial={
