@@ -42,6 +42,7 @@ export default function Nav({
   const buttonRadius = scalePx(NAV_BUTTON_RADIUS, contentScale, 10);
   const dividerHeight = scalePx(NAV_DIVIDER_H, contentScale, 2);
   const navPaddingX = scalePx(56, contentScale, 16);
+  const linkedinSize = scalePx(22, contentScale, 22);
   const navExtraTransition = staticExtras
     ? { duration: 0 }
     : {
@@ -143,6 +144,35 @@ export default function Nav({
         </div>
 
         <div className="flex items-center gap-4">
+          <AnimatePresence>
+            {showExtras &&
+              (staticExtras ? (
+                <a
+                  href="https://www.linkedin.com/company/simply-rational/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Simply Rational auf LinkedIn"
+                  className="hidden text-purple transition-opacity hover:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple lg:block"
+                >
+                  <LinkedInIcon size={linkedinSize} />
+                </a>
+              ) : (
+                <motion.a
+                  href="https://www.linkedin.com/company/simply-rational/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Simply Rational auf LinkedIn"
+                  className="hidden text-purple transition-opacity hover:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple lg:block"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={navExtraTransition}
+                >
+                  <LinkedInIcon size={linkedinSize} />
+                </motion.a>
+              ))}
+          </AnimatePresence>
+
           <AnimatePresence>
             {showExtras &&
               (staticExtras ? (
@@ -297,9 +327,35 @@ export default function Nav({
             >
               Gute Entscheidung
             </button>
+            <a
+              href="https://www.linkedin.com/company/simply-rational/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Simply Rational auf LinkedIn"
+              onClick={() => setMobileMenuOpen(false)}
+              className="mt-2 text-purple transition-opacity hover:opacity-60"
+            >
+              <LinkedInIcon size={26} />
+            </a>
           </motion.div>
         )}
       </AnimatePresence>
     </header>
+  );
+}
+
+function LinkedInIcon({ size }: { size: number }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+      className="block"
+    >
+      <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z" />
+    </svg>
   );
 }
