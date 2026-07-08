@@ -24,9 +24,9 @@ const bricolageGrotesque = Bricolage_Grotesque({
 });
 
 export const metadata: Metadata = {
-  title: "Simply Rational",
+  title: "Simply Rational GmbH \u2013 Das Institut f\u00fcr Entscheidung",
   description:
-    "Gute Entscheidungen scheitern nicht an zu wenig Daten. Sondern an fehlender Klarheit, Struktur und Nachvollziehbarkeit.",
+    "We support organizations in measurably improving decision-making. To achieve this, we combine Nobel Prize-winning insights from behavioral science with organizational expertise.",
 };
 
 export default function RootLayout({
