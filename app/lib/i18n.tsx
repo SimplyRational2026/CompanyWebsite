@@ -24,6 +24,13 @@ export default function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>("de");
 
   useEffect(() => {
+    // The /en path always forces English (temporary English entry point,
+    // e.g. via the .com -> .de/en/ redirect); it wins over any stored choice.
+    const path = window.location.pathname;
+    if (path === "/en" || path.startsWith("/en/")) {
+      setLocaleState("en");
+      return;
+    }
     try {
       const stored = window.localStorage.getItem(STORAGE_KEY);
       if (stored === "de" || stored === "en") {
