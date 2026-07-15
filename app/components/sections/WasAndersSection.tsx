@@ -25,6 +25,7 @@ import {
 import ScrollHintArrow from "@/app/components/ui/ScrollHintArrow";
 import VideoPlayer from "@/app/components/ui/VideoPlayer";
 import { fitMobileBodyFontPx, WAS_ANDERS_BULLETS, WAS_ANDERS_TITLE } from "@/app/lib/fitText";
+import { useContent } from "@/app/lib/i18n";
 import {
   fitMobileHeadlinePx,
   fitSectionHeadlineFontPx,
@@ -81,6 +82,7 @@ export default function WasAndersSection({
   onStarted?: () => void;
   showScrollHint?: boolean;
 }) {
+  const content = useContent();
   const sectionRef = useRef<HTMLElement>(null);
   const isAnimPlayingRef = useRef(false);
   const hasPlayedRef = useRef(false);
@@ -318,7 +320,7 @@ export default function WasAndersSection({
               : STATIC_TRANSITION
           }
         >
-          {WAS_ANDERS_TITLE}
+          {content.wasAnders.title}
         </motion.h2>
 
         <div
@@ -337,7 +339,7 @@ export default function WasAndersSection({
               paddingRight: Math.round(viewportW * 0.06),
             }}
           >
-            {WAS_ANDERS_BULLETS.map((lines, i) => {
+            {WAS_ANDERS_BULLETS.map((_, i) => {
               const revealed = visibleBullets > i || hasFinished;
               return (
                 <motion.div
@@ -366,7 +368,7 @@ export default function WasAndersSection({
                     style={{ width: mobileBulletDotSize, height: mobileBulletDotSize }}
                   />
                   <p className="font-bricolage font-bold text-ink">
-                    {lines.join(" ")}
+                    {content.wasAnders.bullets[i].join(" ")}
                   </p>
                 </motion.div>
               );
@@ -484,7 +486,7 @@ export default function WasAndersSection({
                   : STATIC_TRANSITION
               }
             >
-              {WAS_ANDERS_TITLE}
+              {content.wasAnders.title}
             </motion.h2>
           )}
         </div>
@@ -585,7 +587,7 @@ export default function WasAndersSection({
                           style={{ width: bulletDotSize, height: bulletDotSize }}
                         />
                         <p className="font-bricolage font-bold text-ink">
-                          {WAS_ANDERS_BULLETS[slot.index].map((line) => (
+                          {content.wasAnders.bullets[slot.index].map((line) => (
                             <span key={line} className="block whitespace-nowrap">
                               {line}
                             </span>

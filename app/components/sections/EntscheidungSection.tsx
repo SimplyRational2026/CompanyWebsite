@@ -23,6 +23,7 @@ import {
 import ScrollHintArrow from "@/app/components/ui/ScrollHintArrow";
 import VideoPlayer from "@/app/components/ui/VideoPlayer";
 import { ENTSCHEIDBAR_TITLE_LINES, ENTSCHEIDUNG_HEADLINE_LINES } from "@/app/lib/fitText";
+import { useContent } from "@/app/lib/i18n";
 import {
   fitMobileHeadlinePx,
   fitSectionHeadlineFontPx,
@@ -69,6 +70,7 @@ export default function EntscheidungSection({
   onStarted?: () => void;
   showScrollHint?: boolean;
 }) {
+  const content = useContent();
   const sectionRef = useRef<HTMLElement>(null);
   const isAnimPlayingRef = useRef(false);
   const hasPlayedRef = useRef(false);
@@ -258,16 +260,16 @@ export default function EntscheidungSection({
         >
           {isMobile ? (
             <>
-              <span className="text-ink">{ENTSCHEIDUNG_HEADLINE_LINES[0]}</span>
-              <span className="text-purple">{" "}{ENTSCHEIDUNG_HEADLINE_LINES[1]}</span>
+              <span className="text-ink">{content.entscheidung.headlineLines[0]}</span>
+              <span className="text-purple">{" "}{content.entscheidung.headlineLines[1]}</span>
             </>
           ) : (
             <>
               <span className="block whitespace-nowrap text-ink">
-                {ENTSCHEIDUNG_HEADLINE_LINES[0]}
+                {content.entscheidung.headlineLines[0]}
               </span>
               <span className="block whitespace-nowrap text-purple">
-                {ENTSCHEIDUNG_HEADLINE_LINES[1]}
+                {content.entscheidung.headlineLines[1]}
               </span>
             </>
           )}

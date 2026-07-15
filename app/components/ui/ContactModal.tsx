@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef } from "react";
 import { EASE } from "@/app/lib/anim";
 import ContactForm from "@/app/components/ui/ContactForm";
+import { useContent } from "@/app/lib/i18n";
 import {
   sectionAvailableWidth,
   useSectionContentScale,
@@ -16,6 +17,7 @@ export default function ContactModal({
   open: boolean;
   onClose: () => void;
 }) {
+  const content = useContent();
   const isAnimPlayingRef = useRef(false);
   const { viewportW } = useSectionContentScale(isAnimPlayingRef);
   const isMobile = viewportW < 1024;
@@ -56,7 +58,7 @@ export default function ContactModal({
         >
           <button
             type="button"
-            aria-label="Schließen"
+            aria-label={content.contactModal.close}
             onClick={onClose}
             className="absolute inset-0 cursor-default bg-ink/40 backdrop-blur-md"
           />
@@ -73,7 +75,7 @@ export default function ContactModal({
           >
             <button
               type="button"
-              aria-label="Schließen"
+              aria-label={content.contactModal.close}
               onClick={onClose}
               className="absolute -top-3 -right-3 z-10 flex size-9 items-center justify-center rounded-full bg-cream text-ink shadow-lg transition hover:bg-white"
             >

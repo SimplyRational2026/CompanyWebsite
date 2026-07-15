@@ -1,7 +1,14 @@
-import { redirect } from 'next/navigation'
+"use client";
 
-// Any URL that doesn't match a real route (`/`, `/impressum`, `/datenschutz`)
-// lands here and gets redirected to the homepage.
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
 export default function NotFound() {
-  redirect('/')
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace("/");
+  }, [router]);
+
+  return null;
 }

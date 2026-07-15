@@ -1,14 +1,46 @@
 "use client";
 
 import { useEffect, useLayoutEffect } from "react";
+import { usePathname } from "next/navigation";
+
+function clearOverflowLocks() {
+  const html = document.documentElement;
+  const body = document.body;
+  html.style.overflow = "";
+  body.style.overflow = "";
+  body.style.position = "";
+  body.style.top = "";
+  body.style.width = "";
+}
+
+function resetScrollAndOverflow() {
+  if ("scrollRestoration" in history) {
+    history.scrollRestoration = "manual";
+  }
+  clearOverflowLocks();
+  window.scrollTo(0, 0);
+}
 
 export function ScrollToTopOnLoad() {
-  useLayoutEffect(() => {
-    if ("scrollRestoration" in history) {
-      history.scrollRestoration = "manual";
-    }
+  const pathname = usePathname();
 
-    window.scrollTo(0, 0);
+  useLayoutEffect(() => {
+    resetScrollAndOverflow();
+  }, [pathname]);
+
+  useEffect(() => {
+    const onPageShow = (event: PageTransitionEvent) => {
+      // Back/forward cache restores a frozen page. Don't reload — reloading
+      // mid-restore remounts at the default desktop width before the layout
+      // effect can re-measure, which paints the page zoomed-in on mobile.
+      // Just clear any leftover intro scroll-lock and return to the top.
+      if (event.persisted) {
+        resetScrollAndOverflow();
+      }
+    };
+
+    window.addEventListener("pageshow", onPageShow);
+    return () => window.removeEventListener("pageshow", onPageShow);
   }, []);
 
   return null;

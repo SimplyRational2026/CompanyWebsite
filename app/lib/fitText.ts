@@ -50,15 +50,6 @@ const RISIKO_BODY_LINES = [
   "Entscheidungen wirklich tragfähig sind.",
 ] as const;
 
-const MOBILE_RISIKO_BODY_LINES = [
-  "Wenn Wahrscheinlichkeiten bekannt sind,",
-  "entscheiden Daten. Wir machen komplexe",
-  "Informationen verständlich, nachvollziehbar",
-  "und regulatorisch belastbar – damit",
-  "datenbasierte Entscheidungen wirklich",
-  "tragfähig sind.",
-] as const;
-
 const ENTSCHEIDUNG_HEADLINE_LINES = [
   "Das Problem ist nicht fehlendes Wissen,",
   "sondern die Qualität der Entscheidung.",
@@ -94,12 +85,6 @@ const ENTSCHEIDBAR_TITLE_LINES = [
 
 const TEAM_FOOTER_TEXT =
   "Basierend auf jahrzehntelanger, wissenschaftlicher Arbeit." as const;
-
-const FOOTER_HEADLINE_LINES = [
-  "Menschliche Urteilskraft, klare Entscheidungslogik",
-  "und transparente KI - für weiterhin gute",
-  "Entscheidungen",
-] as const;
 
 const FOOTER_CONTACT = {
   company: "SIMPLY RATIONAL GmbH",
@@ -387,17 +372,13 @@ export function measureDescriptionHeight(
 export {
   BLACK_TITLE_LINES,
   DESCRIPTION_LINES,
-  MOBILE_DESCRIPTION_LINES,
   MOBILE_PURPLE_TITLE_LINES,
   ENTSCHEIDBAR_BRANCHES,
   ENTSCHEIDBAR_TITLE_LINES,
   ENTSCHEIDUNG_HEADLINE_LINES,
-  PURPLE_TITLE_LINES,
-  MOBILE_RISIKO_BODY_LINES,
   RISIKO_BODY_LINES,
   TEAM_FOOTER_TEXT,
   FOOTER_CONTACT,
-  FOOTER_HEADLINE_LINES,
   TEAM_MEMBERS,
   UNGEWISSHEIT_BODY_LINES,
   WAS_ANDERS_BULLETS,

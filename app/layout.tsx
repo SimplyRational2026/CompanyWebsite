@@ -6,6 +6,7 @@ import {
 } from "next/font/google";
 import "./globals.css";
 import { ScrollToTopOnLoad } from "./lib/scrollLock";
+import LocaleProvider from "./lib/i18n";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,7 +42,7 @@ export default function RootLayout({
     >
       <body>
         <ScrollToTopOnLoad />
-        {children}
+        <LocaleProvider>{children}</LocaleProvider>
       </body>
     </html>
   );

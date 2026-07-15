@@ -1,13 +1,14 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useLayoutEffect, useRef, useState } from "react";
 import {
   ENTSCHEIDBAR_TITLE_LINES,
   fitMobileBodyFontPx,
   FOOTER_CONTACT,
-  FOOTER_HEADLINE_LINES,
 } from "@/app/lib/fitText";
+import { useContent } from "@/app/lib/i18n";
 import {
   fitMobileHeadlinePx,
   fitSectionHeadlineFontPx,
@@ -111,6 +112,7 @@ function PurpleFooterBar({
   mobileBodyFontPx: number;
   mobileScale: number;
 }) {
+  const content = useContent();
   const archR = Math.min(
     scalePx(FOOTER_ARCH_R_BASE, isMobile ? mobileScale : contentScale, 340),
     Math.round(viewportW * (isMobile ? 0.75 : 0.55)),
@@ -191,19 +193,19 @@ function PurpleFooterBar({
                 </div>
               ))}
 
-              <a href="/impressum" className="underline underline-offset-2 font-medium text-cream">
-                Impressum
-              </a>
-              <a href="/datenschutz" className="underline underline-offset-2 font-medium text-cream">
-                Datenschutzerklärung
-              </a>
+              <Link href="/impressum" className="underline underline-offset-2 font-medium text-cream">
+                {content.footer.impressum}
+              </Link>
+              <Link href="/datenschutz" className="underline underline-offset-2 font-medium text-cream">
+                {content.footer.datenschutz}
+              </Link>
 
               <div
                 className="w-full border-t border-cream/35"
                 style={{ paddingTop: copyrightPad, paddingBottom: copyrightPad }}
               >
                 <p className="text-center font-bricolage text-cream/90" style={{ fontSize: smallFontPx }}>
-                  © 2026 SIMPLY RATIONAL GmbH
+                  {content.footer.copyright}
                 </p>
               </div>
             </div>
@@ -230,20 +232,20 @@ function PurpleFooterBar({
               <nav
                 className="ml-auto flex flex-col items-end gap-2 text-right font-bricolage font-medium text-cream"
                 style={{ fontSize: contactFontPx }}
-                aria-label="Rechtliches"
+                aria-label={content.footer.legalAria}
               >
-                <a
+                <Link
                   href="/impressum"
                   className="underline underline-offset-2 transition-opacity hover:opacity-80"
                 >
-                  Impressum
-                </a>
-                <a
+                  {content.footer.impressum}
+                </Link>
+                <Link
                   href="/datenschutz"
                   className="underline underline-offset-2 transition-opacity hover:opacity-80"
                 >
-                  Datenschutzerklärung
-                </a>
+                  {content.footer.datenschutz}
+                </Link>
               </nav>
 
               <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
@@ -263,7 +265,7 @@ function PurpleFooterBar({
               style={{ marginTop: copyrightGap, paddingTop: copyrightPad, paddingBottom: copyrightPad }}
             >
               <p className="text-center font-bricolage text-cream/90" style={{ fontSize: smallFontPx }}>
-                © 2026 SIMPLY RATIONAL GmbH
+                {content.footer.copyright}
               </p>
             </div>
           </div>
@@ -274,6 +276,7 @@ function PurpleFooterBar({
 }
 
 export default function FooterSection() {
+  const content = useContent();
   const isAnimPlayingRef = useRef(false);
   const { viewportW, bodyFontPx, contentScale } =
     useSectionContentScale(isAnimPlayingRef);
@@ -331,24 +334,32 @@ export default function FooterSection() {
           className="mx-auto w-full text-center font-serif font-extrabold tracking-tight lg:hidden"
           style={{ fontSize: mobileTitlePx, lineHeight: TITLE_LINE_HEIGHT }}
         >
-          <span className="text-ink">Menschliche Urteilskraft, klare Entscheidungslogik und transparente KI - </span>
-          <span className="text-purple">für weiterhin gute Entscheidungen</span>
+          {content.footer.headlineMobileSegments.map((seg, i) => (
+            <span
+              key={i}
+              className={seg.color === "purple" ? "text-purple" : "text-ink"}
+            >
+              {seg.text}
+            </span>
+          ))}
         </h2>
 
         <h2
           className="mx-auto hidden w-fit max-w-full text-center font-serif font-extrabold tracking-tight lg:block"
           style={{ fontSize: headlinePx, lineHeight: TITLE_LINE_HEIGHT }}
         >
-          <span className="block whitespace-nowrap text-ink">
-            {FOOTER_HEADLINE_LINES[0]}
-          </span>
-          <span className="block whitespace-nowrap">
-            <span className="text-ink">und transparente KI - </span>
-            <span className="text-purple">für weiterhin gute</span>
-          </span>
-          <span className="block whitespace-nowrap text-purple">
-            {FOOTER_HEADLINE_LINES[2]}
-          </span>
+          {content.footer.headlineDesktopLines.map((line, i) => (
+            <span key={i} className="block whitespace-nowrap">
+              {line.map((seg, j) => (
+                <span
+                  key={j}
+                  className={seg.color === "purple" ? "text-purple" : "text-ink"}
+                >
+                  {seg.text}
+                </span>
+              ))}
+            </span>
+          ))}
         </h2>
 
         <div

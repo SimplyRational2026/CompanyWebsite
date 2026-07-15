@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { fitMobileBodyFontPx } from "@/app/lib/fitText";
+import { useContent } from "@/app/lib/i18n";
 import { useSectionContentScale } from "@/app/lib/sectionTypography";
 import {
   FOOTER_CONTACT_PX_DESIGN,
@@ -20,6 +21,7 @@ import {
 type SubmitStatus = "idle" | "sending" | "success" | "error";
 
 export default function ContactForm({ formId }: { formId?: string }) {
+  const content = useContent();
   const isAnimPlayingRef = useRef(false);
   const { viewportW, bodyFontPx, contentScale } =
     useSectionContentScale(isAnimPlayingRef);
@@ -102,10 +104,10 @@ export default function ContactForm({ formId }: { formId?: string }) {
 
   const isSending = status === "sending";
   const buttonLabel = isSending
-    ? "Wird gesendet …"
+    ? content.contactForm.submitSending
     : status === "success"
-      ? "Gesendet ✓"
-      : "Klarheit in Entscheidungen bringen";
+      ? content.contactForm.submitSuccess
+      : content.contactForm.submitIdle;
 
   return (
     <form
@@ -117,7 +119,7 @@ export default function ContactForm({ formId }: { formId?: string }) {
       <input
         type="text"
         name="name"
-        placeholder="Name"
+        placeholder={content.contactForm.name}
         required
         maxLength={120}
         className={inputClass}
@@ -126,7 +128,7 @@ export default function ContactForm({ formId }: { formId?: string }) {
       <input
         type="email"
         name="email"
-        placeholder="Email"
+        placeholder={content.contactForm.email}
         required
         maxLength={200}
         className={inputClass}
@@ -139,7 +141,7 @@ export default function ContactForm({ formId }: { formId?: string }) {
       <input
         type="text"
         name="subject"
-        placeholder="Betreff"
+        placeholder={content.contactForm.subject}
         required
         maxLength={200}
         className={inputClass}
@@ -152,7 +154,7 @@ export default function ContactForm({ formId }: { formId?: string }) {
 
       <textarea
         name="message"
-        placeholder="Ihre Nachricht"
+        placeholder={content.contactForm.message}
         required
         maxLength={5000}
         className="resize-none rounded-2xl bg-cream px-4 py-3 font-bricolage text-ink outline-none placeholder:text-ink/45"
@@ -182,10 +184,7 @@ export default function ContactForm({ formId }: { formId?: string }) {
           required
           className="mt-1 size-4 shrink-0 rounded border-cream bg-white accent-purple"
         />
-        <span>
-          Mit dem Absenden dieses Formulars akzeptiere ich die Verarbeitung
-          meiner persönlichen Daten gemäß den Datenschutzbestimmungen.
-        </span>
+        <span>{content.contactForm.privacy}</span>
       </label>
 
       <button
@@ -209,8 +208,8 @@ export default function ContactForm({ formId }: { formId?: string }) {
           style={{ fontSize: smallFontPx, marginTop: formGap }}
         >
           {status === "success"
-            ? "Vielen Dank! Ihre Nachricht wurde gesendet."
-            : "Etwas ist schiefgelaufen. Bitte versuchen Sie es später erneut."}
+            ? content.contactForm.successMessage
+            : content.contactForm.errorMessage}
         </p>
       )}
     </form>

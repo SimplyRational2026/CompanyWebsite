@@ -94,7 +94,6 @@ export const MOBILE_ENT_ICON_SIZE_BASE = 72;
 export const MOBILE_ENT_BRANCH_LINE_W_BASE = 18;
 export const MOBILE_ENT_BRANCH_GAP_BASE = 138;
 export const MOBILE_ENT_BRANCH_INNER_GAP_BASE = 8;
-export const MOBILE_ENT_BULLET_DOT_BASE = 8;
 export const MOBILE_ENT_SPINE_X_BASE = 28;
 export const MOBILE_ENT_SPINE_BOTTOM_BASE = 88;
 export const ENT_TREE_LINE_W_BASE = 6;
@@ -105,7 +104,6 @@ export const ENT_TREE_BRANCH_GAP_BASE = 156;
 export const ENT_TREE_FIRST_BRANCH_RATIO = 0.42;
 export const ENT_TREE_TEXT_MAX_W_BASE = 380;
 export const ENT_TREE_BRANCH_INNER_GAP_BASE = 24;
-export const ENT_TREE_BULLET_DOT_BASE = 20;
 export const ENT_TREE_SPINE_BOTTOM_BASE = 168;
 export const ENT_TREE_ICON_LINE_NUDGE = 0.05;
 

@@ -22,6 +22,7 @@ import {
   TEAM_FOOTER_TEXT,
   TEAM_MEMBERS,
 } from "@/app/lib/fitText";
+import { useContent } from "@/app/lib/i18n";
 import {
   fitMobileHeadlinePx,
   fitSectionHeadlineFontPx,
@@ -65,6 +66,7 @@ export default function TeamSection({
   onStarted?: () => void;
   showScrollHint?: boolean;
 }) {
+  const content = useContent();
   const sectionRef = useRef<HTMLElement>(null);
   const isAnimPlayingRef = useRef(false);
   const hasPlayedRef = useRef(false);
@@ -277,9 +279,14 @@ export default function TeamSection({
               : STATIC_TRANSITION
           }
         >
-          <span className="text-ink">Ein Team aus </span>
-          <span className="text-purple">international renommierten Experten</span>
-          <span className="text-ink"> aus Wissenschaft und Praxis</span>
+          {content.team.titleMobileSegments.map((seg, i) => (
+            <span
+              key={i}
+              className={seg.color === "purple" ? "text-purple" : "text-ink"}
+            >
+              {seg.text}
+            </span>
+          ))}
         </motion.h2>
 
         {showProfiles && (
@@ -297,10 +304,10 @@ export default function TeamSection({
             }
             transition={slideInTransition(() => { profilesEnteredRef.current = true; })}
           >
-            {TEAM_MEMBERS.map((member) => (
+            {TEAM_MEMBERS.map((member, index) => (
               <TeamMemberCard
                 key={member.image}
-                member={member}
+                member={{ ...member, role: content.team.memberRoles[index] }}
                 memberW={mobileMemberW}
                 contentScale={mobileCardScale}
               />
@@ -343,7 +350,7 @@ export default function TeamSection({
               />
             </div>
             <p className="font-bricolage font-medium text-ink" style={{ fontSize: mobileFooterTextPx, lineHeight: FOOTER_TEXT_LINE_HEIGHT }}>
-              {TEAM_FOOTER_TEXT}
+              {content.team.footerText}
             </p>
           </motion.div>
         )}
@@ -382,14 +389,18 @@ export default function TeamSection({
                 : STATIC_TRANSITION
             }
           >
-            <span className="block whitespace-nowrap text-ink">
-              Ein Team aus <span className="text-purple">international</span>
-            </span>
-            <span className="block whitespace-nowrap">
-              <span className="text-purple">renommierten Experten</span>
-              <span className="text-ink"> aus</span>
-            </span>
-            <span className="block whitespace-nowrap text-ink">Wissenschaft und Praxis</span>
+            {content.team.titleDesktopLines.map((line, i) => (
+              <span key={i} className="block whitespace-nowrap">
+                {line.map((seg, j) => (
+                  <span
+                    key={j}
+                    className={seg.color === "purple" ? "text-purple" : "text-ink"}
+                  >
+                    {seg.text}
+                  </span>
+                ))}
+              </span>
+            ))}
           </motion.h2>
         )}
       </div>
@@ -416,10 +427,10 @@ export default function TeamSection({
             }
             transition={slideInTransition(() => { profilesEnteredRef.current = true; })}
           >
-            {TEAM_MEMBERS.map((member) => (
+            {TEAM_MEMBERS.map((member, index) => (
               <TeamMemberCard
                 key={member.image}
-                member={member}
+                member={{ ...member, role: content.team.memberRoles[index] }}
                 memberW={memberW}
                 contentScale={contentScale}
               />
@@ -474,7 +485,7 @@ export default function TeamSection({
               style={{ left: ringCenter, top: ringCenter, width: dotSize, height: dotSize, transform: "translate(-50%, -50%)" }} />
             <p className="absolute top-1/2 -translate-y-1/2 font-bricolage font-medium text-ink"
               style={{ left: ringCenter + lineExtend + textGap, fontSize: bodyFontPx, lineHeight: FOOTER_TEXT_LINE_HEIGHT, whiteSpace: "nowrap" }}>
-              {TEAM_FOOTER_TEXT}
+              {content.team.footerText}
             </p>
           </motion.div>
         )}

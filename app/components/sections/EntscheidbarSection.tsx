@@ -26,6 +26,7 @@ import {
   ENTSCHEIDBAR_TITLE_LINES,
   fitMobileBodyFontPx,
 } from "@/app/lib/fitText";
+import { useContent } from "@/app/lib/i18n";
 import {
   fitEntscheidbarTreeLayout,
   fitMobileHeadlinePx,
@@ -73,6 +74,7 @@ export default function EntscheidbarSection({
   onStarted?: () => void;
   showScrollHint?: boolean;
 }) {
+  const content = useContent();
   const sectionRef = useRef<HTMLElement>(null);
   const isAnimPlayingRef = useRef(false);
   const hasPlayedRef = useRef(false);
@@ -319,8 +321,8 @@ export default function EntscheidbarSection({
               : STATIC_TRANSITION
           }
         >
-          <span className="block text-ink">{ENTSCHEIDBAR_TITLE_LINES[0]}</span>
-          <span className="block text-purple">{ENTSCHEIDBAR_TITLE_LINES[1]}</span>
+          <span className="block text-ink">{content.entscheidbar.titleLines[0]}</span>
+          <span className="block text-purple">{content.entscheidbar.titleLines[1]}</span>
         </motion.h2>
 
         <div
@@ -413,7 +415,7 @@ export default function EntscheidbarSection({
                   })()}
                   <div className="flex items-center" style={{ marginLeft: mInnerGap }}>
                     <p className="font-bricolage font-bold text-ink" style={{ fontSize: mobileBodyFontPx, lineHeight: BRANCH_TEXT_LINE_HEIGHT }}>
-                      {branch.text}
+                      {content.entscheidbar.branchTexts[index]}
                     </p>
                   </div>
                 </motion.div>
@@ -466,10 +468,10 @@ export default function EntscheidbarSection({
             }
           >
             <span className="block whitespace-nowrap text-ink">
-              {ENTSCHEIDBAR_TITLE_LINES[0]}
+              {content.entscheidbar.titleLines[0]}
             </span>
             <span className="block whitespace-nowrap text-purple">
-              {ENTSCHEIDBAR_TITLE_LINES[1]}
+              {content.entscheidbar.titleLines[1]}
             </span>
           </motion.h2>
         )}
@@ -648,7 +650,7 @@ export default function EntscheidbarSection({
                           lineHeight: BRANCH_TEXT_LINE_HEIGHT,
                         }}
                       >
-                        {branch.text}
+                        {content.entscheidbar.branchTexts[index]}
                       </p>
                     </div>
                   </motion.div>

@@ -27,7 +27,8 @@ import {
   sectionTitleRestPx,
   sectionViewportDescCap,
 } from "@/app/lib/sectionTypography";
-import { fitHeadlineFontSize, fitMobileBodyFontPx, UNGEWISSHEIT_BODY_LINES } from "@/app/lib/fitText";
+import { fitHeadlineFontSize, fitMobileBodyFontPx } from "@/app/lib/fitText";
+import { useContent, useLocale } from "@/app/lib/i18n";
 import {
   DESC_PX_DESIGN,
   DESIGN_WIDTH,
@@ -46,12 +47,6 @@ import {
   RISIKO_DASH_LENGTH_BASE,
   scalePx,
 } from "@/app/lib/scale";
-
-const UNGEWISSHEIT_BULLETS = [
-  "Es entstehen Entscheidungslogiken",
-  "Erfahrung wird nutzbar gemacht",
-  "Wissen bleibt im Unternehmen",
-] as const;
 
 const BODY_LINE_HEIGHT = 1.35;
 const STATIC_TRANSITION = { duration: 0 };
@@ -80,6 +75,8 @@ export default function UngewissheitSection({
   onStarted?: () => void;
   showScrollHint?: boolean;
 }) {
+  const content = useContent();
+  const { locale } = useLocale();
   const sectionRef = useRef<HTMLElement>(null);
   const markHostRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
@@ -210,7 +207,7 @@ export default function UngewissheitSection({
     setTitleCenterOffsetPx(Math.round(centerOffsetPx));
     setTitleEnterOffsetPx(Math.round(viewportW * 1.2));
     setTitleRestOffsetPx(Math.round(columnLeft - sectionCenter));
-  }, [isMobile, viewportW, titleRestPx, titleScale, contentScale]);
+  }, [isMobile, viewportW, titleRestPx, titleScale, contentScale, locale]);
 
   useLayoutEffect(() => {
     if (isMobile || !bodyRef.current) {
@@ -219,7 +216,7 @@ export default function UngewissheitSection({
 
     const bodyH = bodyRef.current.offsetHeight;
     setMarkTopOffset(Math.round(titleLineH + bodyGap + bodyH - markH));
-  }, [isMobile, titleLineH, bodyGap, markH, bodyFontPx, contentScale]);
+  }, [isMobile, titleLineH, bodyGap, markH, bodyFontPx, contentScale, locale]);
 
   useEffect(() => {
     if (!heroIntroComplete || (!mountImmediately && !isInView) || hasPlayedRef.current) {
@@ -285,7 +282,7 @@ export default function UngewissheitSection({
     );
     lineBaselineRef.current = { contentScale, lineExtendWidth: width };
     setLineExtendWidth(width);
-  }, [hasFinished, contentScale, markW, isMobile, viewportW]);
+  }, [hasFinished, contentScale, markW, isMobile, viewportW, locale, markTopOffset]);
 
   useEffect(() => {
     const onResize = () => {
@@ -356,7 +353,7 @@ export default function UngewissheitSection({
             className="pointer-events-none invisible absolute left-0 top-0 whitespace-nowrap font-serif font-extrabold tracking-tight"
             style={{ fontSize: titleRestPx }}
           >
-            Ungewissheit
+            {content.ungewissheit.title}
           </span>
 
           {(isAnimPlaying || hasFinished) && (
@@ -408,7 +405,7 @@ export default function UngewissheitSection({
                   : STATIC_TRANSITION
               }
             >
-              Ungewissheit
+              {content.ungewissheit.title}
             </motion.h2>
           )}
         </>
@@ -443,7 +440,7 @@ export default function UngewissheitSection({
               : STATIC_TRANSITION
           }
         >
-          Ungewissheit
+          {content.ungewissheit.title}
         </motion.h2>
 
         <div
@@ -508,15 +505,13 @@ export default function UngewissheitSection({
           }
         >
           <p className="font-bricolage font-medium text-ink">
-            Wenn Zukunft nicht berechenbar ist, braucht es menschliche
-            Urteilskraft. Wir schaffen Strukturen, damit Erfahrung, Intuition
-            und Wissen klar genutzt werden können.
+            {content.ungewissheit.mobileBody}
           </p>
           <ul
             className="font-bricolage space-y-3 font-bold text-ink"
             style={{ marginTop: bulletGap }}
           >
-            {UNGEWISSHEIT_BULLETS.map((item) => (
+            {content.ungewissheit.bullets.map((item) => (
               <li key={item} className="flex gap-3">
                 <span aria-hidden className="text-purple">
                   •
@@ -562,7 +557,7 @@ export default function UngewissheitSection({
             }
           >
             <p className="font-bricolage font-medium text-ink">
-              {UNGEWISSHEIT_BODY_LINES.map((line) => (
+              {content.ungewissheit.bodyLines.map((line) => (
                 <span key={line} className="block whitespace-nowrap">
                   {line}
                 </span>
@@ -572,7 +567,7 @@ export default function UngewissheitSection({
               className="font-bricolage space-y-3 font-bold text-ink"
               style={{ marginTop: bulletGap }}
             >
-              {UNGEWISSHEIT_BULLETS.map((item) => (
+              {content.ungewissheit.bullets.map((item) => (
                 <li key={item} className="flex gap-3">
                   <span aria-hidden className="text-purple">
                     •

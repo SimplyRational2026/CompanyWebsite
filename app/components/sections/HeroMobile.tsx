@@ -4,10 +4,9 @@ import { motion } from "motion/react";
 import { EASE, EASE_BOUNCE, MOBILE_STEPS } from "@/app/lib/anim";
 import {
   BLACK_TITLE_LINES,
-  MOBILE_DESCRIPTION_LINES,
-  MOBILE_PURPLE_TITLE_LINES,
 } from "@/app/lib/fitText";
 import { scalePx, MOBILE_DESIGN_WIDTH, MOBILE_DESC_BALL_GAP_BASE, MOBILE_FINAL_LINE_W_BASE, MOBILE_FINAL_ROW_INSET_BASE } from "@/app/lib/scale";
+import { useContent } from "@/app/lib/i18n";
 import ScrollHintArrow from "@/app/components/ui/ScrollHintArrow";
 
 const STATIC_TRANSITION = { duration: 0 };
@@ -47,6 +46,7 @@ export default function HeroMobile({
   viewportH,
   showScrollHint = false,
 }: HeroMobileProps) {
+  const content = useContent();
   const mobileScale = Math.min(1, viewportW / MOBILE_DESIGN_WIDTH);
   const navGap = scalePx(32, contentScale, 20);
   const blackTitleH = BLACK_TITLE_LINES.length * titleLineH;
@@ -130,7 +130,7 @@ export default function HeroMobile({
             : STATIC_TRANSITION
         }
       >
-        {BLACK_TITLE_LINES.map((line) => (
+        {content.hero.blackTitleLines.map((line) => (
           <span key={line} className="block">
             {line}
           </span>
@@ -253,7 +253,7 @@ export default function HeroMobile({
                 : STATIC_TRANSITION
             }
           >
-            {MOBILE_PURPLE_TITLE_LINES.map((line) => (
+            {content.hero.mobilePurpleTitleLines.map((line) => (
               <span key={line} className="block">
                 {line}
               </span>
@@ -323,7 +323,7 @@ export default function HeroMobile({
                     : STATIC_TRANSITION
                 }
               >
-                {MOBILE_DESCRIPTION_LINES.map((line) => (
+                {content.hero.mobileDescriptionLines.map((line) => (
                   <span key={line} className="block">
                     {line}
                   </span>

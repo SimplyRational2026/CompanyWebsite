@@ -27,7 +27,8 @@ import {
   sectionTitleRestPx,
   sectionViewportDescCap,
 } from "@/app/lib/sectionTypography";
-import { fitHeadlineFontSize, fitMobileBodyFontPx, MOBILE_RISIKO_BODY_LINES, RISIKO_BODY_LINES } from "@/app/lib/fitText";
+import { fitHeadlineFontSize, fitMobileBodyFontPx } from "@/app/lib/fitText";
+import { useContent, useLocale } from "@/app/lib/i18n";
 import {
   DESC_PX_DESIGN,
   DESIGN_WIDTH,
@@ -47,12 +48,6 @@ import {
   RISIKO_DASH_LENGTH_BASE,
   scalePx,
 } from "@/app/lib/scale";
-
-const RISIKO_BULLETS = [
-  "Transparente, erklärbare Analysen",
-  "EU-AI-Act-konform",
-  "Nachvollziehbar & auditierbar",
-] as const;
 
 const BODY_LINE_HEIGHT = 1.35;
 const STATIC_TRANSITION = { duration: 0 };
@@ -84,6 +79,8 @@ export default function RisikoSection({
   onStarted?: () => void;
   showScrollHint?: boolean;
 }) {
+  const content = useContent();
+  const { locale } = useLocale();
   const sectionRef = useRef<HTMLElement>(null);
   const markHostRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
@@ -186,7 +183,6 @@ export default function RisikoSection({
   const markGapMobile = scalePx(28, contentScale, 14);
   const bodyGapMobile = scalePx(36, contentScale, 18);
   const titleLineH = titleRestPx * 1.15;
-  const bodyLines = isMobile ? MOBILE_RISIKO_BODY_LINES : RISIKO_BODY_LINES;
 
   useLayoutEffect(() => {
     if (isMobile || !bodyRef.current) {
@@ -195,7 +191,7 @@ export default function RisikoSection({
 
     const bodyH = bodyRef.current.offsetHeight;
     setMarkTopOffset(Math.round(titleLineH + bodyGap + bodyH - markH));
-  }, [isMobile, titleLineH, bodyGap, markH, bodyFontPx, contentScale]);
+  }, [isMobile, titleLineH, bodyGap, markH, bodyFontPx, contentScale, locale]);
 
   useEffect(() => {
     if (!heroIntroComplete || (!mountImmediately && !isInView) || hasPlayedRef.current) {
@@ -261,7 +257,7 @@ export default function RisikoSection({
     );
     lineBaselineRef.current = { contentScale, lineExtendWidth: width };
     setLineExtendWidth(width);
-  }, [hasFinished, contentScale, markW, isMobile, viewportW]);
+  }, [hasFinished, contentScale, markW, isMobile, viewportW, locale, markTopOffset]);
 
   useEffect(() => {
     const onResize = () => {
@@ -345,7 +341,7 @@ export default function RisikoSection({
               : STATIC_TRANSITION
           }
         >
-          Risiko
+          {content.risiko.title}
         </motion.h2>
 
         <div
@@ -431,8 +427,8 @@ export default function RisikoSection({
         >
           <p className="font-bricolage font-medium text-ink">
             {isMobile
-              ? "Wenn Wahrscheinlichkeiten bekannt sind, entscheiden Daten. Wir machen komplexe Informationen verständlich, nachvollziehbar und regulatorisch belastbar – damit datenbasierte Entscheidungen wirklich tragfähig sind."
-              : bodyLines.map((line) => (
+              ? content.risiko.mobileBody
+              : content.risiko.bodyLines.map((line) => (
                   <span key={line} className="block whitespace-nowrap">
                     {line}
                   </span>
@@ -442,7 +438,7 @@ export default function RisikoSection({
             className="font-bricolage space-y-3 font-bold text-ink"
             style={{ marginTop: bulletGap }}
           >
-            {RISIKO_BULLETS.map((item) => (
+            {content.risiko.bullets.map((item) => (
               <li key={item} className="flex gap-3">
                 <span aria-hidden className="text-purple">
                   •

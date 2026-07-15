@@ -5,6 +5,8 @@ import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
 import { D800, EASE, EASE_BOUNCE, STEPS } from "@/app/lib/anim";
 import { useContactModal } from "@/app/components/ui/ContactModalProvider";
+import type { Locale } from "@/app/lib/content";
+import { useContent, useLocale } from "@/app/lib/i18n";
 import {
   NAV_BUTTON_FONT,
   NAV_BUTTON_PX_X,
@@ -31,6 +33,8 @@ export default function Nav({
   staticExtras = false,
 }: NavProps) {
   const { openContactModal } = useContactModal();
+  const { locale, setLocale } = useLocale();
+  const content = useContent();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navHeight = scalePx(NAV_HEIGHT_BASE, contentScale, 56);
@@ -100,7 +104,7 @@ export default function Nav({
                     className={pdfLinkClass}
                     style={{ fontSize: buttonFontSize }}
                   >
-                    Entscheidungsbarometer
+                    {content.nav.pdf1}
                   </a>
                   <a
                     href="/20260618_FourPager_.Insurance_Entscheidungsintelligenz.pdf"
@@ -109,7 +113,7 @@ export default function Nav({
                     className={pdfLinkClass}
                     style={{ fontSize: buttonFontSize }}
                   >
-                    Versicherungen
+                    {content.nav.pdf2}
                   </a>
                 </div>
               ) : (
@@ -127,7 +131,7 @@ export default function Nav({
                     className={pdfLinkClass}
                     style={{ fontSize: buttonFontSize }}
                   >
-                    Entscheidungsbarometer
+                    {content.nav.pdf1}
                   </a>
                   <a
                     href="/20260618_FourPager_.Insurance_Entscheidungsintelligenz.pdf"
@@ -136,7 +140,7 @@ export default function Nav({
                     className={pdfLinkClass}
                     style={{ fontSize: buttonFontSize }}
                   >
-                    Versicherungen
+                    {content.nav.pdf2}
                   </a>
                 </motion.div>
               ))}
@@ -151,7 +155,7 @@ export default function Nav({
                   href="https://www.linkedin.com/company/simply-rational/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Simply Rational auf LinkedIn"
+                  aria-label={content.nav.linkedin}
                   className="hidden text-purple transition-opacity hover:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple lg:block"
                 >
                   <LinkedInIcon size={linkedinSize} />
@@ -161,7 +165,7 @@ export default function Nav({
                   href="https://www.linkedin.com/company/simply-rational/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Simply Rational auf LinkedIn"
+                  aria-label={content.nav.linkedin}
                   className="hidden text-purple transition-opacity hover:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple lg:block"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -187,7 +191,7 @@ export default function Nav({
                     borderRadius: buttonRadius,
                   }}
                 >
-                  Gute Entscheidung
+                  {content.nav.cta}
                 </button>
               ) : (
                 <motion.button
@@ -205,8 +209,36 @@ export default function Nav({
                   exit={{ opacity: 0 }}
                   transition={navExtraTransition}
                 >
-                  Gute Entscheidung
+                  {content.nav.cta}
                 </motion.button>
+              ))}
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {showExtras &&
+              (staticExtras ? (
+                <LangToggle
+                  locale={locale}
+                  setLocale={setLocale}
+                  labels={content.langSwitch}
+                  className="hidden lg:flex"
+                  fontSize={buttonFontSize}
+                />
+              ) : (
+                <motion.div
+                  className="hidden lg:flex"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={navExtraTransition}
+                >
+                  <LangToggle
+                    locale={locale}
+                    setLocale={setLocale}
+                    labels={content.langSwitch}
+                    fontSize={buttonFontSize}
+                  />
+                </motion.div>
               ))}
           </AnimatePresence>
 
@@ -214,7 +246,9 @@ export default function Nav({
             {showExtras && (
               <motion.button
                 type="button"
-                aria-label={mobileMenuOpen ? "Menü schließen" : "Menü öffnen"}
+                aria-label={
+                  mobileMenuOpen ? content.nav.menuClose : content.nav.menuOpen
+                }
                 aria-expanded={mobileMenuOpen}
                 onClick={() => setMobileMenuOpen((o) => !o)}
                 className="pointer-events-auto flex h-10 w-10 flex-col items-end justify-center gap-[6px] lg:hidden"
@@ -306,7 +340,7 @@ export default function Nav({
               onClick={() => setMobileMenuOpen(false)}
               className="font-bricolage text-base font-semibold tracking-wide text-ink transition-opacity hover:opacity-60"
             >
-              Entscheidungsbarometer
+              {content.nav.pdf1}
             </a>
             <a
               href="/20260618_FourPager_.Insurance_Entscheidungsintelligenz.pdf"
@@ -315,7 +349,7 @@ export default function Nav({
               onClick={() => setMobileMenuOpen(false)}
               className="font-bricolage text-base font-semibold tracking-wide text-ink transition-opacity hover:opacity-60"
             >
-              Versicherungen
+              {content.nav.pdf2}
             </a>
             <button
               type="button"
@@ -325,22 +359,79 @@ export default function Nav({
               }}
               className="font-bricolage mt-2 cursor-pointer rounded-xl bg-purple px-8 py-3 text-base font-semibold tracking-wide text-cream shadow-[0_10px_28px_-10px_rgba(102,26,174,0.55)] transition hover:bg-purple-deep"
             >
-              Gute Entscheidung
+              {content.nav.cta}
             </button>
             <a
               href="https://www.linkedin.com/company/simply-rational/"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Simply Rational auf LinkedIn"
+              aria-label={content.nav.linkedin}
               onClick={() => setMobileMenuOpen(false)}
               className="mt-2 text-purple transition-opacity hover:opacity-60"
             >
               <LinkedInIcon size={26} />
             </a>
+            <LangToggle
+              locale={locale}
+              setLocale={setLocale}
+              labels={content.langSwitch}
+              className="mt-2 text-base"
+            />
           </motion.div>
         )}
       </AnimatePresence>
     </header>
+  );
+}
+
+function LangToggle({
+  locale,
+  setLocale,
+  labels,
+  className = "",
+  fontSize,
+}: {
+  locale: Locale;
+  setLocale: (locale: Locale) => void;
+  labels: { de: string; en: string };
+  className?: string;
+  fontSize?: number;
+}) {
+  const options: { value: Locale; label: string }[] = [
+    { value: "de", label: labels.de },
+    { value: "en", label: labels.en },
+  ];
+
+  return (
+    <div
+      className={`pointer-events-auto flex items-center gap-1 ${className}`}
+      role="group"
+      aria-label="Language"
+      style={fontSize ? { fontSize } : undefined}
+    >
+      {options.map((option, index) => {
+        const active = locale === option.value;
+        return (
+          <div key={option.value} className="flex items-center">
+            {index > 0 && (
+              <span aria-hidden className="mr-1 text-ink/40">
+                /
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={() => setLocale(option.value)}
+              aria-pressed={active}
+              className={`font-bricolage cursor-pointer font-semibold tracking-wide transition-opacity hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple ${
+                active ? "text-purple" : "text-ink/60"
+              }`}
+            >
+              {option.label}
+            </button>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 

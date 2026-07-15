@@ -23,7 +23,6 @@ import {
   fitTitleFontSize,
   measureDescriptionHeight,
   MOBILE_PURPLE_TITLE_LINES,
-  PURPLE_TITLE_LINES,
 } from "@/app/lib/fitText";
 import {
   BALL_COL_W_BASE,
@@ -52,6 +51,7 @@ import {
 } from "@/app/lib/scale";
 import { fitSectionBodyFontPx } from "@/app/lib/sectionTypography";
 import { useIntroScrollLock } from "@/app/lib/scrollLock";
+import { useContent } from "@/app/lib/i18n";
 import Nav from "./Nav";
 import HeroMobile from "./HeroMobile";
 import ScrollHintArrow from "@/app/components/ui/ScrollHintArrow";
@@ -67,6 +67,7 @@ export default function Hero({
   onIntroComplete,
   showScrollHint = false,
 }: HeroProps) {
+  const content = useContent();
   const isIntroPlayingRef = useRef(true);
   const [isIntroPlaying, setIsIntroPlaying] = useState(true);
   const [logoInNav, setLogoInNav] = useState(false);
@@ -496,7 +497,7 @@ export default function Hero({
                 : STATIC_TRANSITION
             }
           >
-            {BLACK_TITLE_LINES.map((line) => (
+            {content.hero.blackTitleLines.map((line) => (
               <span key={line} className="block whitespace-nowrap">
                 {line}
               </span>
@@ -586,7 +587,7 @@ export default function Hero({
                   : STATIC_TRANSITION
               }
             >
-              {PURPLE_TITLE_LINES.map((line) => (
+              {content.hero.purpleTitleLines.map((line) => (
                 <span key={line} className="block whitespace-nowrap">
                   {line}
                 </span>
@@ -613,7 +614,7 @@ export default function Hero({
                   : STATIC_TRANSITION
               }
             >
-              {DESCRIPTION_LINES.map((line) => (
+              {content.hero.descriptionLines.map((line) => (
                 <span key={line} className="block whitespace-nowrap">
                   {line}
                 </span>
