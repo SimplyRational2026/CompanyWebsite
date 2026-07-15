@@ -40,10 +40,7 @@ export default function LocaleProvider({ children }: { children: ReactNode }) {
     } catch {
       // ignore storage access errors
     }
-    // No explicit choice yet: default from the domain (.com → English).
-    if (window.location.hostname.endsWith(".com")) {
-      setLocaleState("en");
-    }
+    // No explicit choice yet: German is the default everywhere.
   }, []);
 
   useEffect(() => {
