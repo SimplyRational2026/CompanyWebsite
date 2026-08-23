@@ -162,9 +162,9 @@ export function useBarometerTypography(): {
       ),
     ),
   );
-  // The Befragung heading is far longer than the others and carries a 22
-  // character compound word, so it gets its own fit rather than the shared
-  // title size, which is measured against the home page's short title words.
+  // "Entscheidungsbarometer" may not be cut, so the heading can never exceed
+  // the size at which that word still fits its (full bleed) line. On anything
+  // but the narrowest phones that leaves the shared title size untouched.
   const [befragungTitleMobilePx, setBefragungTitleMobilePx] = useState(
     MOBILE_TITLE_PX_DESIGN,
   );
@@ -203,9 +203,11 @@ export function useBarometerTypography(): {
           ),
     );
 
+    // Measured against the full bleed line the heading gets on mobile (the
+    // viewport less the 1vw gutter either side), not the section's content box.
     setBefragungTitleMobilePx(
       fitHeadlineFontSize(
-        viewportW * 0.9,
+        viewportW * 0.98,
         MOBILE_TITLE_PX_DESIGN,
         serifFont,
         BEFRAGUNG_TITLE_FIT_LINES,
@@ -235,8 +237,12 @@ export function useBarometerTypography(): {
     ? Math.max(preScale, 0.48)
     : titlePx / titleDesignPx;
 
-  // Desktop keeps the shared title size; only the mobile breaks need the fit.
-  const befragungTitlePx = isMobile ? befragungTitleMobilePx : titlePx;
+  // The shared title size, capped only where the compound word would not fit
+  // whole -- so the heading matches the other titles unless it physically
+  // cannot. Desktop is never capped.
+  const befragungTitlePx = isMobile
+    ? Math.min(titlePx, befragungTitleMobilePx)
+    : titlePx;
 
   return {
     viewportW,

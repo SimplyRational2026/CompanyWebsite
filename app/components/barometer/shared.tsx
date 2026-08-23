@@ -123,17 +123,21 @@ export function SectionHeading({
   fontPx,
   align = "center",
   className,
+  hyphens = "auto",
 }: {
   lines: readonly { text: string; purple?: boolean }[];
   fontPx: number;
   align?: "center" | "left";
   className?: string;
+  // "manual" breaks only where the text carries a soft hyphen, so a single
+  // over-long word can hyphenate without every other word being fair game.
+  hyphens?: "auto" | "manual";
 }) {
   return (
     <h2
-      className={`font-serif font-extrabold tracking-tight hyphens-auto break-words ${
-        align === "center" ? "text-center" : "text-left"
-      } ${className ?? ""}`}
+      className={`font-serif font-extrabold tracking-tight break-words ${
+        hyphens === "manual" ? "hyphens-manual" : "hyphens-auto"
+      } ${align === "center" ? "text-center" : "text-left"} ${className ?? ""}`}
       style={{ fontSize: fontPx, lineHeight: 1.15 }}
     >
       {lines.map((line) => (

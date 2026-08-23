@@ -457,24 +457,32 @@ export function MisstSection({
   );
 }
 
-// "Entscheidungsbarometer" is wider than the mobile measure at the shared
-// title size, so the heading hyphenated it mid-word and pushed "einer" onto a
-// line of its own -- five lines in all. These breaks keep the compound word
-// whole and land the heading in four; typography.ts fits the font to the
-// longest of them. The colour split has to fall on a line boundary, so the
-// ink and purple halves each take two lines.
+// "Entscheidungsbarometer" may not be cut, and at the shared title size that
+// one word is nearly as wide as the phone itself -- wider than the section's
+// px-[6vw] content box. So the heading goes full bleed on mobile (see
+// BEFRAGUNG_TITLE_MOBILE_CLASS) and takes a line of its own, which buys the
+// room to keep it whole at the same size the other titles use.
+//
+// It also runs with hyphens: manual on mobile and no line carries a soft
+// hyphen, so there is no break point inside a word to fall back on.
 export const BEFRAGUNG_TITLE_FIT_LINES = [
-  "Das Entscheidungsbarometer",
+  "Das",
+  "Entscheidungsbarometer",
   "basiert auf einer",
-  "anonymen Befragung Ihrer",
-  "Mitarbeitenden.",
+  "anonymen Befragung",
+  "Ihrer Mitarbeitenden.",
 ] as const;
+
+// Cancels the section's px-[6vw] so the heading spans the viewport, keeping a
+// 1vw gutter either side. Only the widest line actually needs the room.
+export const BEFRAGUNG_TITLE_MOBILE_CLASS = "-mx-[6vw] px-[1vw]";
 
 const BEFRAGUNG_TITLE_MOBILE = [
   { text: BEFRAGUNG_TITLE_FIT_LINES[0] },
   { text: BEFRAGUNG_TITLE_FIT_LINES[1] },
-  { text: BEFRAGUNG_TITLE_FIT_LINES[2], purple: true },
+  { text: BEFRAGUNG_TITLE_FIT_LINES[2] },
   { text: BEFRAGUNG_TITLE_FIT_LINES[3], purple: true },
+  { text: BEFRAGUNG_TITLE_FIT_LINES[4], purple: true },
 ] as const;
 
 const BEFRAGUNG_TITLE_DESKTOP = [
@@ -509,7 +517,9 @@ export function BefragungSection({
     >
       <Reveal phase={phase} from="up">
         <SectionHeading
+          className={isMobile ? BEFRAGUNG_TITLE_MOBILE_CLASS : undefined}
           fontPx={befragungTitlePx}
+          hyphens={isMobile ? "manual" : "auto"}
           lines={isMobile ? BEFRAGUNG_TITLE_MOBILE : BEFRAGUNG_TITLE_DESKTOP}
         />
       </Reveal>
