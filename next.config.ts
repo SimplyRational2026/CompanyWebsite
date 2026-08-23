@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const isDev = process.env.NODE_ENV !== "production";
 
 const scriptSrc = `'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`;
-const connectSrc = `'self'${isDev ? " ws:" : ""}`;
+const connectSrc = `'self'${isDev ? " ws: wss:" : ""}`;
 
 const contentSecurityPolicy = [
   "default-src 'self'",
@@ -36,6 +36,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ["*.trycloudflare.com"],
   images: {
     unoptimized: true,
   },

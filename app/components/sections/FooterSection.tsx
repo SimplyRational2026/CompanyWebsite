@@ -275,6 +275,50 @@ function PurpleFooterBar({
   );
 }
 
+// Standalone version of the purple footer bar (arch + contact + legal links)
+// for sub pages that bring their own content above it.
+export function SiteFooterBar() {
+  const isAnimPlayingRef = useRef(false);
+  const { viewportW, bodyFontPx, contentScale } =
+    useSectionContentScale(isAnimPlayingRef);
+  const [mobileBodyFontPx, setMobileBodyFontPx] = useState(MOBILE_DESC_PX_DESIGN);
+
+  const isMobile = viewportW < 1024;
+  const mobileScale = Math.min(1, viewportW / MOBILE_DESIGN_WIDTH);
+
+  useLayoutEffect(() => {
+    if (!isMobile) {
+      return;
+    }
+    const bricolageFont =
+      getComputedStyle(document.documentElement)
+        .getPropertyValue("--font-bricolage-grotesque")
+        .trim() || "sans-serif";
+    setMobileBodyFontPx(fitMobileBodyFontPx(viewportW, bricolageFont));
+  }, [viewportW, isMobile]);
+
+  const contentW = sectionAvailableWidth(viewportW);
+  const contactFontPx = isMobile
+    ? mobileBodyFontPx
+    : scalePx(FOOTER_CONTACT_PX_DESIGN, contentScale, 13);
+  const smallFontPx = isMobile
+    ? Math.max(11, Math.round(mobileBodyFontPx * 0.82))
+    : Math.max(12, Math.round(bodyFontPx * 0.76));
+
+  return (
+    <PurpleFooterBar
+      contentW={contentW}
+      contentScale={contentScale}
+      viewportW={viewportW}
+      contactFontPx={contactFontPx}
+      smallFontPx={smallFontPx}
+      isMobile={isMobile}
+      mobileBodyFontPx={mobileBodyFontPx}
+      mobileScale={mobileScale}
+    />
+  );
+}
+
 export default function FooterSection() {
   const content = useContent();
   const isAnimPlayingRef = useRef(false);

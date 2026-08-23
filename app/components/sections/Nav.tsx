@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { D800, EASE, EASE_BOUNCE, STEPS } from "@/app/lib/anim";
 import { useContactModal } from "@/app/components/ui/ContactModalProvider";
@@ -81,14 +82,20 @@ export default function Nav({
                   ease: EASE_BOUNCE,
                 }}
               >
-                <Image
-                  src="/simply-rational-logo.png"
-                  alt="Simply Rational"
-                  width={1024}
-                  height={512}
-                  priority
-                  className="block h-auto w-full"
-                />
+                <Link
+                  href="/"
+                  aria-label="Zur Startseite"
+                  className="block transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple"
+                >
+                  <Image
+                    src="/simply-rational-logo.png"
+                    alt="Simply Rational"
+                    width={1024}
+                    height={512}
+                    priority
+                    className="block h-auto w-full"
+                  />
+                </Link>
               </motion.div>
             )}
           </div>
@@ -97,15 +104,13 @@ export default function Nav({
             {showExtras &&
               (staticExtras ? (
                 <div className="hidden items-center gap-6 lg:flex">
-                  <a
-                    href="/20260608SR_FourPager_EntscheidungsbarometerWirtschaft_final.pdf"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <Link
+                    href="/entscheidungsbarometer"
                     className={pdfLinkClass}
                     style={{ fontSize: buttonFontSize }}
                   >
                     {content.nav.pdf1}
-                  </a>
+                  </Link>
                   <a
                     href="/20260618_FourPager_.Insurance_Entscheidungsintelligenz.pdf"
                     target="_blank"
@@ -124,15 +129,13 @@ export default function Nav({
                   exit={{ opacity: 0 }}
                   transition={navExtraTransition}
                 >
-                  <a
-                    href="/20260608SR_FourPager_EntscheidungsbarometerWirtschaft_final.pdf"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <Link
+                    href="/entscheidungsbarometer"
                     className={pdfLinkClass}
                     style={{ fontSize: buttonFontSize }}
                   >
                     {content.nav.pdf1}
-                  </a>
+                  </Link>
                   <a
                     href="/20260618_FourPager_.Insurance_Entscheidungsintelligenz.pdf"
                     target="_blank"
@@ -333,15 +336,13 @@ export default function Nav({
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
           >
-            <a
-              href="/20260608SR_FourPager_EntscheidungsbarometerWirtschaft_final.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/entscheidungsbarometer"
               onClick={() => setMobileMenuOpen(false)}
               className="font-bricolage text-base font-semibold tracking-wide text-ink transition-opacity hover:opacity-60"
             >
               {content.nav.pdf1}
-            </a>
+            </Link>
             <a
               href="/20260618_FourPager_.Insurance_Entscheidungsintelligenz.pdf"
               target="_blank"
