@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { D800, EASE, EASE_BOUNCE, STEPS } from "@/app/lib/anim";
 import { useContactModal } from "@/app/components/ui/ContactModalProvider";
@@ -34,6 +35,7 @@ export default function Nav({
   staticExtras = false,
 }: NavProps) {
   const { openContactModal } = useContactModal();
+  const pathname = usePathname();
   const { locale, setLocale } = useLocale();
   const content = useContent();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -56,8 +58,12 @@ export default function Nav({
         delay: D800 * 0.2,
       };
 
+  const barometerActive = pathname === "/entscheidungsbarometer";
   const pdfLinkClass =
     "font-bricolage cursor-pointer whitespace-nowrap font-semibold tracking-wide text-ink transition-opacity hover:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple";
+  const barometerLinkClass = `font-bricolage cursor-pointer whitespace-nowrap font-semibold tracking-wide transition-opacity hover:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple ${
+    barometerActive ? "text-purple" : "text-ink"
+  }`;
   const ctaClass =
     "font-bricolage cursor-pointer whitespace-nowrap bg-purple font-semibold tracking-wide text-cream shadow-[0_10px_28px_-10px_rgba(102,26,174,0.55)] transition hover:bg-purple-deep focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple";
 
@@ -106,7 +112,8 @@ export default function Nav({
                 <div className="hidden items-center gap-6 lg:flex">
                   <Link
                     href="/entscheidungsbarometer"
-                    className={pdfLinkClass}
+                    aria-current={barometerActive ? "page" : undefined}
+                    className={barometerLinkClass}
                     style={{ fontSize: buttonFontSize }}
                   >
                     {content.nav.pdf1}
@@ -131,7 +138,8 @@ export default function Nav({
                 >
                   <Link
                     href="/entscheidungsbarometer"
-                    className={pdfLinkClass}
+                    aria-current={barometerActive ? "page" : undefined}
+                    className={barometerLinkClass}
                     style={{ fontSize: buttonFontSize }}
                   >
                     {content.nav.pdf1}
@@ -339,7 +347,10 @@ export default function Nav({
             <Link
               href="/entscheidungsbarometer"
               onClick={() => setMobileMenuOpen(false)}
-              className="font-bricolage text-base font-semibold tracking-wide text-ink transition-opacity hover:opacity-60"
+              aria-current={barometerActive ? "page" : undefined}
+              className={`font-bricolage text-base font-semibold tracking-wide transition-opacity hover:opacity-60 ${
+                barometerActive ? "text-purple" : "text-ink"
+              }`}
             >
               {content.nav.pdf1}
             </Link>

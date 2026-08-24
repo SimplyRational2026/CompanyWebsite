@@ -81,6 +81,7 @@ export interface Content {
     subject: string;
     message: string;
     privacy: string;
+    privacyRequired: string;
     submitIdle: string;
     submitSending: string;
     submitSuccess: string;
@@ -239,6 +240,7 @@ const de: Content = {
     message: "Ihre Nachricht",
     privacy:
       "Mit dem Absenden dieses Formulars akzeptiere ich die Verarbeitung meiner pers\u00f6nlichen Daten gem\u00e4\u00df den Datenschutzbestimmungen.",
+    privacyRequired: "Hier klicken, wenn Sie fortfahren m\u00f6chten",
     submitIdle: "Klarheit in Entscheidungen bringen",
     submitSending: "Wird gesendet \u2026",
     submitSuccess: "Gesendet \u2713",
@@ -405,6 +407,7 @@ const en: Content = {
     message: "Your Message",
     privacy:
       "By submitting this form, you consent to the processing of your personal data in accordance with our Privacy Policy.",
+    privacyRequired: "Please tick this box if you would like to continue",
     submitIdle: "Bring clarity to your decisions",
     submitSending: "Sending \u2026",
     submitSuccess: "Sent \u2713",

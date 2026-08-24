@@ -182,6 +182,12 @@ export default function ContactForm({ formId }: { formId?: string }) {
           type="checkbox"
           name="privacy"
           required
+          onInvalid={(event) =>
+            event.currentTarget.setCustomValidity(
+              content.contactForm.privacyRequired,
+            )
+          }
+          onChange={(event) => event.currentTarget.setCustomValidity("")}
           className="mt-1 size-4 shrink-0 rounded border-cream bg-white accent-purple"
         />
         <span>{content.contactForm.privacy}</span>
